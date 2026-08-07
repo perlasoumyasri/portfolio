@@ -649,6 +649,11 @@ img, video { max-width: 100%; }
   }
   .hs .panel.med figure { height: auto; max-height: 62vh; }
   .hs .panel.med video, .hs .panel.med img { height: auto; }
+  /* A reel's clips are absolutely positioned, so the frame must carry its
+     own height here or it collapses to nothing and every clip disappears.
+     16:10 fits the tallest clip; wider ones letterbox on the plate. */
+  .hs .panel.med figure.reel { aspect-ratio: 16 / 10; max-height: 62vh; }
+  .hs .panel.med .reel video { height: 100%; }
   .hs .st { opacity: 1 !important; transform: none !important; transition: none !important; }
   .cr { grid-template-columns: 12px 1fr; gap: 0 var(--s4); }
   .cr-n { grid-column: 2; text-align: left; padding: 12px 0 0; }
