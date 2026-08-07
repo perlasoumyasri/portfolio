@@ -1,0 +1,1041 @@
+/* ============================================================
+   Soumya Perla · portfolio
+
+   ONE STYLESHEET, ONE SOURCE OF TRUTH.
+   Every selector is defined exactly once. If something needs to
+   change, change it here. Do not append an override block at the
+   bottom of this file: that is what turned the last version into
+   fifty !important declarations fighting each other.
+
+   THE SYSTEM
+   Surface   Ivory paper sheet on a warm page. The work plays on a
+             near-black plate set into the paper, like a full bleed
+             photographic plate in a printed magazine.
+   Type      Fraunces (serif) for headlines only, and never under
+             21px, because at small sizes it reads gothic.
+             Familjen Grotesk for everything a person reads.
+             JetBrains Mono for wayfinding only: eyebrows, section
+             labels, numbers, counters, pills. Never for content.
+   Ink       Four stops on paper, four on the plate. No ad-hoc greys.
+   Accent    One yellow. On the plate it is type and marks. On paper
+             it is only ever the dark variant, which passes contrast.
+   Shape     Square. Hairline borders and hard corners, like print.
+             Only controls are round: pills, the button, the toast.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Familjen+Grotesk:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&display=swap');
+
+:root {
+  /* ---- Surface ---- */
+  --page:   #e6e2d6;
+  --paper:  #fbf9f3;
+  --panel:  #f2eee2;
+  /* The stage is deep midnight blue, not black and not a lifted brown.
+     Cream type and the yellow accent sit on it the way brass sits on
+     navy, and the warm ivory screens in the recordings are its natural
+     complement, so the same white content that seared on black reads
+     as composed on this. Desaturated enough that it never reads as
+     "blue", only as an expensive dark. */
+  --plate:  #141a26;
+  --plate2: #1c2330;
+
+  /* ---- Ink on paper. Four stops. ---- */
+  --ink:    #15130e;
+  --muted:  #555147;
+  --faint:  #85806f;
+  --line:   #e2ddcd;   /* hairline inside a section */
+  --rule:   #15130e;   /* structural hairline between sections */
+
+  /* ---- Ink on the plate. Four stops. ---- */
+  --iv1: #f4f1e9;
+  --iv2: rgba(244,241,233,.78);
+  --iv3: rgba(244,241,233,.56);
+  --iv4: rgba(244,241,233,.40);
+  --ivline: rgba(244,241,233,.14);
+  --ivline2: rgba(244,241,233,.09);
+
+  /* ---- Accent. One yellow, two weights. ---- */
+  --accent: #ffd54a;   /* on the plate */
+  --deep:   #a87400;   /* on paper, dark enough to read at label size */
+
+  --good: #2f7d4f;
+  --bad:  #b4341c;
+
+  /* ---- Type ---- */
+  --serif: 'Fraunces', Georgia, serif;
+  --sans:  'Familjen Grotesk', system-ui, sans-serif;
+  --mono:  'JetBrains Mono', ui-monospace, monospace;
+
+  /* The vh term matters. Panel one now carries the record as well as the
+     claim, so on a short laptop the headline has to give way rather than
+     push the evidence off the bottom of the stage. */
+  --t-display: clamp(31px, min(4.5vw, 7.4vh), 62px);
+  --t-title:   clamp(30px, 4vw, 46px);
+  --t-h2:      clamp(26px, 2.8vw, 34px);
+  --t-h3:      21px;
+  --t-lead:    18px;
+  --t-body:    16px;
+  --t-small:   14.5px;
+  --t-label:   12px;
+  --t-micro:   10.5px;
+
+  /* ---- Space ---- */
+  --gut: clamp(22px, 4.2vw, 56px);
+  --s1: 4px;  --s2: 8px;  --s3: 12px; --s4: 16px; --s5: 24px;
+  --s6: 32px; --s7: 48px; --s8: 64px; --s9: 88px;
+
+  /* ---- Motion ---- */
+  --ease-out:  cubic-bezier(.23, 1, .32, 1);
+  --ease-soft: cubic-bezier(.4, 0, .2, 1);
+  --d-press:  130ms;
+  --d-hover:  180ms;
+  --d-swap:   240ms;
+  --d-reveal: 620ms;
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: var(--t-body);
+  line-height: 1.6;
+  padding: 0 16px 32px;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection { background: var(--accent); color: var(--ink); }
+
+:focus-visible { outline: 2px solid var(--deep); outline-offset: 3px; }
+.hs :focus-visible { outline-color: var(--accent); }
+
+.sheet {
+  max-width: 1160px;
+  margin: 0 auto;
+  background: var(--paper);
+  box-shadow: 0 1px 2px rgba(20,18,13,.05), 0 14px 46px rgba(20,18,13,.10);
+  overflow: clip;
+}
+
+img, video { max-width: 100%; }
+
+/* ---- Shared primitives ------------------------------------ */
+
+/* Every small uppercase mono label on the site. One definition. */
+.eyebrow, .section-label, .card-tag, .card-go, .expl-tag, .expl-go,
+.hire-card .k, .situation, .side-label, .qhead, .th-label {
+  font-family: var(--mono);
+  font-size: var(--t-micro);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--faint);
+  line-height: 1.6;
+}
+
+.section-label { margin-bottom: var(--s5); }
+
+.cta {
+  display: inline-block;
+  background: var(--ink); border-radius: 99px; padding: 14px 28px;
+  font-weight: 600; font-size: 15px; color: var(--accent);
+  text-decoration: none; white-space: nowrap;
+  transition: background var(--d-hover) var(--ease-soft),
+              transform var(--d-press) var(--ease-out);
+}
+.cta:active { transform: scale(.97); }
+@media (hover: hover) and (pointer: fine) { .cta:hover { background: #2c2820; } }
+
+/* ============================================================
+   TOP BAR
+   Two weights only: the contact details are quiet, and one solid
+   pill carries the single outbound link.
+   ============================================================ */
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--s4); padding: 20px var(--gut);
+  background: var(--plate);
+  border-bottom: 1px solid var(--ivline2);
+}
+.wordmark {
+  font-family: var(--serif); font-weight: 700; font-size: 20px;
+  color: var(--iv1); text-decoration: none; letter-spacing: -.01em;
+}
+.wordmark span { color: var(--accent); }
+.topbar .links { display: flex; gap: var(--s2); align-items: center; }
+
+.pill {
+  border: 1px solid var(--ivline); border-radius: 99px;
+  padding: 8px 15px; font-family: var(--mono); font-size: 11.5px;
+  color: var(--iv2); text-decoration: none; white-space: nowrap; cursor: pointer;
+  transition: background var(--d-hover) var(--ease-soft),
+              border-color var(--d-hover) var(--ease-soft),
+              color var(--d-hover) var(--ease-soft),
+              transform var(--d-press) var(--ease-out);
+}
+.pill.solid {
+  background: var(--accent); color: var(--ink);
+  border-color: var(--accent); font-weight: 500;
+}
+.pill:active { transform: scale(.97); }
+@media (hover: hover) and (pointer: fine) {
+  .pill:hover { border-color: rgba(244,241,233,.34); color: var(--iv1); }
+  .pill.solid:hover { background: #ffe27a; border-color: #ffe27a; }
+}
+
+/* ============================================================
+   THE PINNED HORIZONTAL FIRST SCREEN
+
+   Scroll down, the panels move sideways, then the pin releases
+   and the page carries on. The bar lives inside the pin and the
+   body has no head padding, so the strip owns the viewport from
+   pixel zero and the very first wheel tick moves sideways.
+   Touch and reduced motion get a native swipe strip instead.
+   ============================================================ */
+.hs { position: relative; background: var(--plate); }
+
+.hs-pin {
+  position: sticky; top: 0; height: 100vh;
+  overflow: hidden; display: flex; flex-direction: column;
+}
+.hs-pin .topbar { position: static; flex: none; z-index: 2; }
+
+/* One warm wash from the top, so the plate reads as lit rather than
+   as a black rectangle. It is the only gradient on the site. */
+.hs-pin::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  background: radial-gradient(120% 62% at 50% 0%, rgba(255,213,74,.055), transparent 64%);
+}
+
+.hs-view { flex: 1; position: relative; overflow: hidden; z-index: 1; }
+.hs-track {
+  position: absolute; inset: 0; display: flex; align-items: stretch;
+  /* Wide enough that the next card reads as a deliberate peek rather than
+     a smudge of video behind the one you are looking at, and tight enough
+     that the work still reads as one sequence. A card is 880 in a 1160
+     stage, so the neighbour shows by (140 - gap). This leaves about 45. */
+  gap: clamp(32px, 6.6vw, 96px); padding: 0 0 0 var(--gut);
+  will-change: transform;
+}
+/* Trailing padding on a flex container is left out of scrollWidth, which
+   is what JS measures the travel from. A margin on the last card is
+   counted, so the final panel keeps its gutter instead of ending flush
+   against the edge of the screen. */
+.hs-track > :last-child { margin-right: var(--gut); }
+
+/* ---- One object, one size --------------------------------- *
+   Every panel is exactly the same width and every framed thing
+   exactly the same height, so the strip moves like a deck of
+   equal cards: same travel per step, same peek at the edges. */
+.hs .panel {
+  flex: none;
+  width: min(880px, 92%);
+  display: flex; flex-direction: column; justify-content: center;
+  will-change: opacity, transform;
+}
+.hs .panel.med { justify-content: flex-start; padding-top: clamp(16px, 5vh, 56px); }
+
+/* ---- Panel 1 · the claim ---------------------------------- */
+/* The work does not peek in beside the introduction. A screenshot bleeding
+   in at fifteen percent opacity reads as a mistake, not as a promise, so
+   the first card is given enough room after it to clear the stage on a wide
+   screen. The introduction gets the screen to itself, then the work starts. */
+.hs .panel.say { max-width: none; margin-right: clamp(24px, 16vw, 230px); }
+.hs .panel.say .eyebrow { color: var(--iv4); margin-bottom: var(--s5); }
+.hs .panel.say h2 {
+  font-family: var(--serif); font-weight: 600;
+  font-size: var(--t-display); line-height: 1.08; letter-spacing: -.025em;
+  color: var(--iv1); max-width: 21ch;
+}
+/* Yellow type, not a highlighter band. On ink a marker stroke only
+   covers part of the line and the dark type falls off its edges. */
+.hs .panel.say h2 em { font-style: italic; color: var(--accent); }
+
+.sub-claim {
+  margin-top: var(--s5); font-size: 17px; font-weight: 500;
+  line-height: 1.45; color: var(--iv2); max-width: 40ch;
+}
+.hs .panel.say > p {
+  margin-top: var(--s3); font-size: 15.5px; line-height: 1.65;
+  color: var(--iv3); max-width: 58ch;
+}
+/* What the founder gets is louder than what I do. He is not buying the
+   process, he is buying the thing he can run afterwards. */
+.hs .panel.say > p b { font-weight: 500; color: var(--iv2); }
+
+.go {
+  margin-top: var(--s7); font-family: var(--mono); font-size: 9.5px;
+  letter-spacing: .18em; text-transform: uppercase; color: var(--iv4);
+  display: flex; align-items: center; gap: 10px;
+}
+/* On the pinned strip the cue is anchored to the foot of the stage, so
+   the claim can sit at the optical centre and the screen still reads as
+   composed top to bottom rather than as a block floating in a void. */
+@media (min-width: 701px) {
+  .hs .panel.say { position: relative; }
+  .hs .panel.say .go { position: absolute; left: 0; bottom: 18px; margin-top: 0; }
+}
+.go i { font-style: normal; color: var(--accent); animation: nudge 1.9s var(--ease-soft) infinite; }
+@keyframes nudge { 0%,100% { transform: translateX(0) } 50% { transform: translateX(6px) } }
+
+/* ---- The record, under the claim -------------------------- *
+   Experience belongs on the first screen, because a founder scans
+   and does not swipe to verify. It is set as data, not as prose:
+   a status rail on the left, the engagement in the middle, the
+   figure hanging on the right margin. The eye lands on the two
+   numbers first, then reads back to find out what they are.
+   Current work leads. The steel plant is the backing, not the
+   headline, because a founder sees himself in the founder.
+   ------------------------------------------------------------- */
+.creds { margin-top: clamp(24px, 3.4vh, 40px); border-top: 1px solid var(--ivline); }
+.cr {
+  display: grid; grid-template-columns: 12px 1fr auto;
+  gap: 0 var(--s5); align-items: start;
+  padding: 18px 0 19px; border-bottom: 1px solid var(--ivline2);
+}
+/* Everything in a row hangs from the first line, so the marker, the client
+   name and the figure read across as one line however many lines of
+   description sit under them. */
+.cr-dot {
+  width: 9px; height: 9px; border-radius: 50%; justify-self: center;
+  margin-top: 7px; border: 1.5px solid var(--iv4); background: transparent;
+}
+.cr.now .cr-dot {
+  background: var(--accent); border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(255,213,74,.14);
+}
+.cr-k {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  font-size: 15.5px; font-weight: 600; color: var(--iv1); line-height: 1.3;
+}
+.cr-k span { font-size: 13px; font-weight: 400; color: var(--iv4); }
+.cr-t { margin-top: 4px; font-size: 14px; line-height: 1.45; color: var(--iv3); }
+.cr-x { margin-top: 3px; font-size: 13px; line-height: 1.45; color: var(--iv4); }
+
+/* The figures hang on one right margin, so 300 and 30,000 can be
+   compared without the eye hunting for them inside a sentence. */
+.cr-n { text-align: right; padding-left: var(--s4); margin-top: -7px; }
+.cr-n b {
+  display: block; font-size: clamp(26px, 2.4vw, 34px); font-weight: 700;
+  letter-spacing: -.03em; line-height: 1; color: var(--iv1);
+  font-variant-numeric: tabular-nums;
+}
+.cr-n span { display: block; margin-top: 6px; font-size: 12.5px; color: var(--iv3); white-space: nowrap; }
+
+.live {
+  display: inline-block; font-style: normal; font-family: var(--mono);
+  font-size: 9px; letter-spacing: .14em; text-transform: uppercase; font-weight: 500;
+  color: var(--ink); background: var(--accent);
+  padding: 3px 8px; border-radius: 99px;
+}
+
+/* The two rows arrive after the sentence above them, one then the
+   other, so the claim is read before the evidence for it lands. */
+.js-stagger .panel .cr { opacity: 0; transform: translateY(10px); }
+.js-stagger .panel.on .cr { opacity: 1; transform: none; }
+.js-stagger .panel .cr {
+  transition: opacity 460ms var(--ease-out), transform 460ms var(--ease-out);
+  transition-delay: var(--cd, 0ms);
+}
+.js-stagger .panel .cr:first-child { --cd: 620ms; }
+.js-stagger .panel .cr:last-child  { --cd: 780ms; }
+
+/* ---- Panels 3 to 7 · the work ------------------------------ *
+   Every figure hangs from the same top line and captions grow
+   downward, so caption length can never move the media. */
+.hs .panel.med figure {
+  height: clamp(320px, 50vh, 480px);
+  display: flex; align-items: center; justify-content: center;
+  /* The plate colour, not pure black. A clip is letterboxed inside this
+     frame, and matching the surface makes the bars disappear so the frame
+     is defined by its hairline and its shadow instead of by a black slab. */
+  border: 1px solid var(--ivline); background: var(--plate);
+  overflow: hidden; line-height: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,.5), 0 40px 88px rgba(0,0,0,.55);
+}
+.hs .panel.med video, .hs .panel.med img {
+  width: 100%; height: 100%; object-fit: contain; display: block;
+  /* The recordings are of near white app screens. Knocking their
+     brightness down a step turns full white into warm paper, which is
+     the other half of closing the black-on-white gap. Slight, and
+     deliberately not applied to the WhatsApp collage, whose shots are
+     already dark. */
+  filter: brightness(.93);
+}
+.hs .panel.med.proof img { filter: none; }
+
+/* ---- Panel 2 · a happy client ------------------------------- *
+   Three real messages from the client, popping in one after
+   another, tap tap tap, the way YouTube videos present the
+   comments they got. The first appears alone in the middle, then
+   slides to its place in the collage while the other two pop into
+   theirs. Every message stays fully visible at the end, spread
+   left, right-top and right-bottom, so the frame reads as one
+   balanced pile of appreciation rather than a stack.
+
+   The shots are screenshots of type, so each card's width is set
+   by what makes its own type readable, not by a grid.
+   ------------------------------------------------------------- */
+.hs .panel.med.proof figure {
+  position: relative;
+  height: clamp(340px, 53vh, 500px);
+  background: var(--plate2); padding: clamp(16px, 2.4vw, 30px);
+  display: block;
+}
+.reax-stage { position: absolute; inset: clamp(16px, 2.4vw, 30px); }
+
+.reax-card {
+  position: absolute; top: 50%; left: 50%;
+  line-height: 0;
+  transform-origin: 50% 50%;
+  /* Every card owns four numbers, set per spot below. JS never writes a
+     position, it only adds and removes classes, so the whole composition
+     is art directed here. */
+  --tx: 0%; --ty: 0%; --sc: 1; --rt: 0deg;
+  transform: translate(-50%, -50%) translate(var(--tx), var(--ty)) scale(var(--sc)) rotate(var(--rt));
+  transition: transform 620ms var(--ease-out);
+  opacity: 0; pointer-events: none;
+}
+.reax-card.on { opacity: 1; }
+.reax-card img {
+  display: block; width: 100%; height: auto;
+  border: 1px solid var(--ivline);
+  box-shadow: 0 1px 3px rgba(0,0,0,.5), 0 18px 40px rgba(0,0,0,.55);
+}
+
+/* The collage. The long thread holds the left half, the one-line reply
+   sits high on the right, the tall two-bubble one sits low on the right,
+   so the three different shapes balance each other around the middle.
+
+   The scatter is tuned, not even. The big card sits closest to the
+   middle and a touch low, the small one is thrown furthest, up into the
+   corner, and the tall one lands between those two distances, so the
+   three gaps all read differently, which is what makes it look dropped
+   rather than arranged. Their corners overlap a little on wallpaper,
+   never on words.
+
+   The leans follow the same idea: the big card barely tilts, because a
+   large tilted mass is what makes a collage feel about to slide, and
+   the two small cards lean opposite ways with the same energy. Weighted
+   by the size of what is leaning, the leans cancel out. */
+.reax-card[data-spot="a"] { width: 58%; --tx: -33%; --ty:   4%; --rt: -1.2deg; z-index: 1; }
+.reax-card[data-spot="b"] { width: 38%; --tx:  44%; --ty: -86%; --rt:  2.4deg; z-index: 2; }
+.reax-card[data-spot="c"] { width: 30%; --tx:  66%; --ty:  30%; --rt: -2.2deg; z-index: 3; }
+
+/* The first message gets the middle to itself before the others arrive.
+   Bigger than its parked size, straight, on top. Removing this class is
+   the shift: the transform transitions from here to the spot above. */
+.reax-card.is-center { --tx: 0%; --ty: 0%; --sc: 1.3; --rt: 0deg; z-index: 4; }
+
+/* The arrival. Small and under, then past the mark and back. A plain
+   fade would be an appearance; the overshoot is what makes it a pop.
+   The keyframes resolve each card's own spot variables, so one animation
+   serves every landing position.
+
+   No fill mode, deliberately. The last frame matches what .on already
+   says, so if the animation never runs the card still sits in place. */
+@keyframes reax-pop {
+  0%   { opacity: 0; transform: translate(-50%, -50%) translate(var(--tx), var(--ty)) translateY(26px) scale(calc(var(--sc) * .7)) rotate(var(--rt)); }
+  60%  { opacity: 1; transform: translate(-50%, -50%) translate(var(--tx), var(--ty)) scale(calc(var(--sc) * 1.06)) rotate(var(--rt)); }
+  100% { opacity: 1; transform: translate(-50%, -50%) translate(var(--tx), var(--ty)) scale(var(--sc)) rotate(var(--rt)); }
+}
+.reax-card.pop { animation: reax-pop 460ms var(--ease-out); }
+
+/* The corner label names where the messages came from. It is one static
+   line, because all three are from the same place. */
+.reax-tag {
+  position: absolute; right: clamp(16px, 2.4vw, 30px); bottom: clamp(12px, 1.8vw, 20px);
+  font-family: var(--mono); font-size: 9.5px; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--iv4);
+  background: rgba(16,13,9,.82); padding: 5px 9px; z-index: 6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reax-card.pop { animation: none; }
+  .reax-card { transition: opacity 1ms linear; }
+}
+
+/* On a phone the strip unrolls into a normal column and framed media is
+   allowed to size itself. This stage cannot, because its cards are taken
+   out of flow, so it keeps a stated height. The collage keeps its three
+   spots but every card grows, because a 32% card on a phone is a smudge
+   rather than a message. */
+@media (max-width: 700px) {
+  .hs .panel.med.proof figure { height: 64vw; min-height: 250px; max-height: 360px; }
+  .reax-card[data-spot="a"] { width: 64%; --tx: -20%; --ty: 4%; }
+  .reax-card[data-spot="b"] { width: 44%; --tx: 38%; --ty: -92%; }
+  .reax-card[data-spot="c"] { width: 34%; --tx: 48%; --ty: 30%; }
+}
+
+/* The number sits above the caption rather than beside it, so the frame,
+   the sentence, the data tiles and the fine print all hang from one left
+   edge. A hanging number would push every line 28px off the picture. */
+.hs .panel.med .cap { margin-top: var(--s5); }
+.hs .panel.med .num {
+  display: block; margin-bottom: 10px;
+  font-family: var(--mono); font-size: var(--t-micro); letter-spacing: .12em;
+  color: var(--iv4);
+}
+.hs .panel.med .cap p { color: var(--iv2); font-size: 15px; line-height: 1.55; max-width: 72ch; }
+.hs .panel.med .cap p b { display: block; font-size: 17px; font-weight: 600; line-height: 1.4; color: var(--iv1); }
+.fine { font-size: 14.5px; line-height: 1.6; color: var(--iv3); max-width: 76ch; }
+
+/* Card 03. The line under the video describes the clip that is playing
+   and changes with it. This one stays put underneath it all: the claim
+   the four clips are evidence for. The yellow tick marks it as the
+   through line rather than one more caption. */
+.reel-claim {
+  margin-top: 16px; padding-left: 12px;
+  border-left: 2px solid var(--accent);
+  font-size: 14.5px; line-height: 1.5; color: var(--iv3);
+}
+
+/* ---- The reel ---------------------------------------------- *
+   Three clips stacked in one frame, crossfading. Every clip gets
+   the whole frame when it plays, because a screen recording shown
+   at a quarter size is unreadable. The rail underneath names all
+   three at once, so nothing is hidden to make room, and the line
+   below the rail changes with the clip.
+   ------------------------------------------------------------- */
+.reel { position: relative; }
+.reel video {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain;
+  opacity: 0; filter: blur(6px); transform: scale(1.012);
+  transition: opacity var(--d-swap) var(--ease-out),
+              filter var(--d-swap) var(--ease-out),
+              transform var(--d-swap) var(--ease-out);
+}
+/* The blur bridges the two clips, so the eye reads one surface changing
+   rather than two videos swapping. */
+.reel video.is-live { opacity: 1; filter: blur(0); transform: scale(1); }
+
+/* Carousel dots, like every photo strip the reader already knows. The
+   active dot stretches into a small pill and fills with yellow at the pace
+   of its clip, so it is the position marker and the timer in one mark. */
+/* The changing line sits directly under the video, because it narrates
+   the clip the way subtitles narrate a film. Static, full brightness:
+   the video is already moving, and text that also moves cannot be read
+   over it. Held at three lines so a short caption and a long one leave
+   the dots and the heading on the same line, and nothing jumps. */
+.subt {
+  font-size: 16px; line-height: 1.6; max-width: 68ch;
+  min-height: calc(1.6em * 3); color: var(--iv1);
+}
+
+.dots { display: flex; gap: 9px; align-items: center; margin-top: var(--s3); }
+
+/* ---- The statement card ------------------------------------ *
+   The claim gets a stage of its own between the introduction and
+   the clips that prove it. Its children arrive in reading order
+   through the stagger: label, claim, how, who. */
+.hs .panel.state { justify-content: center; }
+.hs .panel.state .eyebrow { color: var(--iv4); margin-bottom: var(--s5); }
+.hs .panel.state h3 {
+  font-family: var(--serif); font-weight: 600;
+  font-size: clamp(25px, 2.6vw, 37px); line-height: 1.18; letter-spacing: -.02em;
+  color: var(--iv1); max-width: 24ch; text-wrap: pretty;
+}
+.hs .panel.state h3 em { font-style: italic; color: var(--accent); }
+.st-sub {
+  margin-top: var(--s5); font-size: 17px; line-height: 1.6;
+  color: var(--iv2); max-width: 52ch;
+}
+/* The client line is a credential, not a footnote. It reads at body size
+   and the name itself sits at full brightness. */
+.st-client {
+  margin-top: var(--s6); padding-top: var(--s4);
+  border-top: 1px solid var(--ivline);
+  font-size: 16px; color: var(--iv2);
+}
+.st-client b { color: var(--iv1); font-weight: 600; }
+.rb {
+  position: relative; width: 7px; height: 7px; border-radius: 99px;
+  background: rgba(244,241,233,.28); border: 0; padding: 0;
+  cursor: pointer; overflow: hidden; flex: none;
+  transition: width 340ms var(--ease-out), background var(--d-hover) var(--ease-soft);
+}
+@media (hover: hover) and (pointer: fine) {
+  .rb:hover { background: rgba(244,241,233,.5); }
+}
+.rb.on { width: 34px; background: rgba(244,241,233,.22); }
+.rb .bar {
+  position: absolute; inset: 0; border-radius: 99px;
+  background: var(--accent); transform: scaleX(0); transform-origin: 0 50%;
+}
+.rb.on .bar { animation: reelbar var(--rt, 6000ms) linear forwards; }
+@keyframes reelbar { from { transform: scaleX(0) } to { transform: scaleX(1) } }
+/* A dot is a small target, so it earns a bigger touch area than it shows. */
+.rb::after { content: ""; position: absolute; inset: -8px; border-radius: 99px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reel video { filter: none; transform: none; transition: opacity 150ms linear; }
+  .rb .bar { display: none; }
+  .rb.on { background: var(--accent); }
+}
+
+/* Numbers inside a paragraph read as a claim. Numbers set as data
+   read as a fact. That is the whole reason this exists. */
+.facts {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+  background: var(--ivline2); border: 1px solid var(--ivline2);
+  margin: var(--s4) 0 var(--s4);
+}
+.facts > div { background: var(--plate2); padding: 15px 17px 17px; }
+.facts b {
+  display: block; font-family: var(--sans); font-weight: 700;
+  font-size: 30px; line-height: 1; letter-spacing: -.02em; color: var(--iv1);
+}
+.facts span { display: block; margin-top: 9px; font-size: 12.5px; line-height: 1.45; color: var(--iv3); }
+
+/* ---- Panel 8 · the figures --------------------------------- */
+.hs .panel.nums .grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+  background: var(--ivline2); border: 1px solid var(--ivline2);
+  margin: 0;
+}
+.hs .panel.nums .n { background: var(--plate2); padding: clamp(24px, 3vw, 38px); }
+.hs .panel.nums .n b {
+  display: block; font-family: var(--sans); font-weight: 700;
+  font-size: clamp(30px, 3.4vw, 46px); line-height: 1; letter-spacing: -.025em; color: var(--iv1);
+}
+.hs .panel.nums .n span { display: block; margin-top: 12px; color: var(--iv3); font-size: 14px; line-height: 1.5; }
+
+/* ---- The one progress indicator ---------------------------- *
+   A pinned section without one feels like a trap. */
+.hs-prog {
+  flex: none; z-index: 1; display: flex; align-items: center;
+  gap: var(--s4); padding: 16px var(--gut) 20px;
+}
+.hs-prog .rail { flex: 1; height: 2px; background: var(--ivline2); position: relative; }
+.hs-prog .fill {
+  position: absolute; inset: 0 auto 0 0; width: 0;
+  background: var(--accent); box-shadow: 0 0 10px rgba(255,213,74,.45);
+}
+.hs-prog .count { font-family: var(--mono); font-size: var(--t-micro); letter-spacing: .16em; color: var(--iv4); }
+
+/* ---- Progressive disclosure -------------------------------- *
+   A panel's children enter one after the other on arrival, so the
+   reader is handed one item at a time in reading order. Hiding is
+   scoped to .js-stagger, which only JS applies, so a dead script
+   can never leave the screen blank. */
+.js-stagger .panel .st {
+  opacity: 0; transform: translateY(12px);
+  transition: opacity 480ms var(--ease-out), transform 480ms var(--ease-out);
+  transition-delay: var(--d, 0ms);
+}
+.js-stagger .panel.on .st { opacity: 1; transform: translateY(0); }
+
+/* ---- Touch and reduced motion ------------------------------ *
+   The panels stack and the page scrolls the way it always does.
+   Hijacking scroll on a phone is wrong, and a sideways swipe strip
+   leaves the short panels sitting in a screen of empty black. */
+@media (max-width: 700px), (prefers-reduced-motion: reduce) {
+  .hs { height: auto !important; }
+  .hs-pin { position: static; height: auto; }
+  .hs-view { overflow: visible; }
+  .hs-track {
+    position: static; transform: none !important;
+    flex-direction: column; align-items: stretch;
+    gap: clamp(40px, 9vw, 72px); padding: var(--s7) var(--gut) var(--s8);
+  }
+  .hs-track > :last-child, .hs .panel.say { margin-right: 0; }
+  .hs .panel {
+    width: 100%; justify-content: flex-start; padding-top: 0;
+    opacity: 1 !important; transform: none !important;
+  }
+  .hs .panel.med figure { height: auto; max-height: 62vh; }
+  .hs .panel.med video, .hs .panel.med img { height: auto; }
+  .hs .st { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .cr { grid-template-columns: 12px 1fr; gap: 0 var(--s4); }
+  .cr-n { grid-column: 2; text-align: left; padding: 12px 0 0; }
+  .cr-n b { font-size: 26px; }
+  .cr-n span { margin-top: 3px; }
+  .js-stagger .panel .cr { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .hs-prog { display: none; }
+}
+
+/* ============================================================
+   SECTIONS ON PAPER
+   ============================================================ */
+.section, .work {
+  padding: clamp(56px, 6vw, 88px) var(--gut);
+  border-top: 1px solid var(--rule);
+}
+.section h2, .work h2 {
+  font-family: var(--serif); font-weight: 600; font-size: var(--t-h2);
+  line-height: 1.14; letter-spacing: -.02em; margin-bottom: var(--s4);
+  max-width: 24ch; text-wrap: balance;
+}
+.section p { color: var(--muted); }
+.section p:not([class]) { max-width: 64ch; margin-bottom: var(--s3); }
+.section p:not([class]):last-child { margin-bottom: 0; }
+.section p b, .section p strong { color: var(--ink); font-weight: 600; }
+
+/* ---- The two case studies ---------------------------------- */
+.grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: var(--s5); align-items: stretch; }
+.work .grid { margin-top: var(--s6); }
+
+.card {
+  display: flex; flex-direction: column; text-decoration: none; color: inherit;
+  border: 1px solid var(--rule); background: var(--paper);
+  transition: transform var(--d-hover) var(--ease-out),
+              box-shadow var(--d-hover) var(--ease-out);
+}
+.card:active { transform: scale(.995); }
+@media (hover: hover) and (pointer: fine) {
+  .card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(20,18,13,.15); }
+  .card:hover .card-shot img { transform: scale(1.03); }
+  .card:hover .card-go { color: var(--ink); }
+}
+.card-shot {
+  position: relative; overflow: hidden; background: var(--plate);
+  border-bottom: 1px solid var(--rule); aspect-ratio: 16 / 10;
+}
+.card-shot img, .card-shot video {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: top center; display: block;
+  transition: transform 420ms var(--ease-out), opacity var(--d-swap) var(--ease-out);
+}
+/* The thumbnail is a still until you show interest, and then it is
+   the work. Nothing downloads until the pointer arrives. */
+.card-shot video { opacity: 0; }
+.card-shot video.is-live { opacity: 1; }
+
+.card-body { padding: var(--s5); display: flex; flex-direction: column; gap: 10px; flex: 1; }
+/* The tag is a label, so it holds one line. Letterspaced caps run wide,
+   and a wrapped label reads as a sentence that failed. */
+.card-tag { letter-spacing: .1em; }
+.card-tag b { color: var(--deep); font-weight: 500; }
+.card h3 {
+  font-family: var(--serif); font-weight: 600; font-size: 23px;
+  line-height: 1.18; letter-spacing: -.018em; text-wrap: balance;
+}
+.card.lead-card h3 { font-size: 28px; max-width: 20ch; }
+/* Body copy only. A bare p is prose; a p with a class is a label, and a
+   label must never be dragged to body size by a loose descendant rule.
+   This is the shape of the bug that used to be patched with !important. */
+.card p:not([class]) { font-size: var(--t-small); color: var(--muted); line-height: 1.55; }
+.card-go { margin-top: auto; padding-top: var(--s4); transition: color var(--d-hover) var(--ease-soft); }
+
+/* The lead card carries the bigger picture. The second card lets its
+   picture absorb the leftover height, so the two cards finish flush
+   instead of one ending in a pocket of empty paper. */
+.card:not(.lead-card) .card-shot { aspect-ratio: auto; flex: 1; min-height: 260px; }
+.card:not(.lead-card) .card-body { flex: none; }
+
+.also {
+  margin-top: var(--s6); padding-top: var(--s4); border-top: 1px solid var(--line);
+  font-size: var(--t-small); color: var(--muted); max-width: 78ch;
+}
+.also b { color: var(--ink); font-weight: 600; }
+
+/* ---- Explorations ------------------------------------------ */
+.expl-lead { margin-top: var(--s4); max-width: 64ch; }
+.expl {
+  display: grid; grid-template-columns: 1.4fr 1fr; gap: 1px;
+  background: var(--rule); border: 1px solid var(--rule); margin-top: var(--s6);
+}
+.expl-card { background: var(--paper); text-decoration: none; color: inherit; display: flex; flex-direction: column; }
+.expl-shot { background: var(--plate); aspect-ratio: 16/10; overflow: hidden; }
+.expl-shot video, .expl-shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.expl-body { padding: var(--s5); display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.expl-tag b { color: var(--deep); font-weight: 500; }
+.expl-body h3 {
+  font-family: var(--serif); font-weight: 600; font-size: 23px;
+  line-height: 1.18; letter-spacing: -.018em;
+}
+.expl-body p:not([class]) { color: var(--muted); font-size: var(--t-small); line-height: 1.55; }
+.expl-go { margin-top: auto; padding-top: var(--s4); color: var(--ink); }
+@media (hover: hover) and (pointer: fine) { .expl-card:hover .expl-go { color: var(--deep); } }
+
+.expl-quote { background: var(--panel); padding: var(--s5); display: flex; flex-direction: column; gap: var(--s4); }
+.expl-quote > p { font-size: var(--t-small); color: var(--muted); line-height: 1.55; }
+.expl-quote figure { border: 1px solid var(--line); overflow: hidden; background: var(--plate); }
+.expl-quote img { width: 100%; display: block; }
+
+/* A slot with nothing in it yet closes cleanly rather than showing
+   a hole. Drop the file in and it comes back on its own. */
+.expl-shot.empty, .expl-quote figure.empty { display: none; }
+.expl:has(.expl-quote figure.empty) { grid-template-columns: 1fr; }
+.expl:has(.expl-quote figure.empty) .expl-quote { display: none; }
+
+/* ---- Working together -------------------------------------- */
+.hire-section { background: var(--panel); }
+.hire {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+  background: var(--rule); border: 1px solid var(--rule); margin: var(--s6) 0 var(--s5);
+}
+.hire-card { background: var(--paper); padding: var(--s5); display: flex; flex-direction: column; gap: 10px; }
+.hire-card .k { color: var(--deep); }
+.hire-card p:not([class]) { font-size: var(--t-small); color: var(--muted); line-height: 1.55; max-width: none; margin: 0; }
+.hire-card .e {
+  margin-top: auto; padding-top: var(--s4); border-top: 1px solid var(--line);
+  font-size: 13px; color: var(--faint); line-height: 1.55;
+}
+.hire-note { max-width: 72ch; margin-bottom: var(--s6); }
+
+/* ---- About -------------------------------------------------- */
+.about { display: grid; grid-template-columns: 240px 1fr; gap: var(--s7); align-items: start; }
+.portrait { position: relative; }
+.portrait img { width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block; border: 1px solid var(--ink); }
+/* No portrait yet, so no empty frame either. A visible placeholder on
+   a live portfolio reads as unfinished, which costs more than the
+   missing picture does. */
+.portrait.empty { display: none; }
+/* With no picture, the prose sets in two columns rather than running as
+   one long ribbon down the left with half the page left blank. */
+.about:has(.portrait.empty) { grid-template-columns: 1fr; }
+.about:has(.portrait.empty) > div {
+  display: grid; grid-template-columns: 1fr 1fr; gap: var(--s4) var(--s7); align-items: start;
+}
+.about:has(.portrait.empty) > div h2 { grid-column: 1 / -1; margin-bottom: var(--s2); }
+@media (max-width: 760px) { .about:has(.portrait.empty) > div { grid-template-columns: 1fr; } }
+.sticker {
+  position: absolute; left: -14px; bottom: -14px;
+  background: var(--accent); border: 1px solid var(--ink);
+  padding: 8px 14px; font-family: var(--mono); font-size: var(--t-micro);
+  letter-spacing: .1em; transform: rotate(-2deg);
+}
+
+/* ---- The closing band --------------------------------------- */
+.quote {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--s6); padding: clamp(44px, 5vw, 68px) var(--gut);
+  border-top: 1px solid var(--rule); background: var(--panel);
+}
+.quote .mk { font-family: var(--serif); font-weight: 700; font-size: 76px; line-height: .62; color: var(--deep); }
+.quote p { font-family: var(--serif); font-size: 23px; font-style: italic; line-height: 1.32; flex: 1; max-width: 44ch; }
+.quote cite {
+  font-family: var(--mono); font-style: normal; font-size: var(--t-micro);
+  letter-spacing: .14em; color: var(--faint); display: block; margin-top: var(--s3);
+}
+.quote h2 {
+  font-family: var(--serif); font-weight: 600; font-size: var(--t-h2);
+  line-height: 1.14; letter-spacing: -.02em; max-width: 20ch;
+}
+.quote .close-k { font-family: var(--mono); font-size: var(--t-micro); letter-spacing: .16em;
+  text-transform: uppercase; color: var(--faint); margin-bottom: var(--s3); }
+
+footer {
+  padding: var(--s5) var(--gut) var(--s6); border-top: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 11px; color: var(--faint);
+  display: flex; justify-content: space-between; gap: var(--s4); flex-wrap: wrap;
+}
+footer a { color: var(--muted); }
+@media (hover: hover) and (pointer: fine) { footer a:hover { color: var(--ink); } }
+
+/* ---- The copy toast ---------------------------------------- *
+   Bottom centre. At the top it covered the very bar you had just
+   tapped, which is the one place a confirmation must never sit. */
+.toast {
+  position: fixed; bottom: 40px; left: 50%; z-index: 99;
+  transform: translate(-50%, 10px); opacity: 0;
+  display: flex; align-items: center; gap: 10px;
+  background: var(--ink); color: var(--iv1);
+  border: 1px solid rgba(244,241,233,.18);
+  font-family: var(--mono); font-size: 11.5px; letter-spacing: .06em;
+  padding: 11px 18px; border-radius: 99px;
+  box-shadow: 0 10px 34px rgba(0,0,0,.34);
+  transition: opacity 240ms var(--ease-soft), transform 240ms var(--ease-soft);
+}
+.toast.in { opacity: 1; transform: translate(-50%, 0); }
+.toast a { color: var(--accent); font-weight: 500; text-decoration: none; border-bottom: 1px solid currentColor; }
+
+/* ============================================================
+   CASE STUDY PAGES
+   ============================================================ */
+.cs-head { padding: clamp(40px, 5vw, 60px) var(--gut) var(--s7); }
+.back { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; color: var(--faint); text-decoration: none; }
+@media (hover: hover) and (pointer: fine) { .back:hover { color: var(--ink); } }
+.cs-head h1 {
+  font-family: var(--serif); font-weight: 600; font-size: var(--t-title);
+  line-height: 1.1; letter-spacing: -.024em; margin: var(--s5) 0 var(--s6);
+  max-width: 28ch; text-wrap: pretty;
+}
+.meta { display: grid; gap: 10px; border-top: 1px solid var(--line); padding-top: var(--s5); }
+.meta span { font-size: 15px; color: var(--muted); max-width: 76ch; }
+.meta b {
+  color: var(--ink); font-family: var(--mono); font-size: var(--t-micro);
+  letter-spacing: .12em; text-transform: uppercase; display: block; margin-bottom: 3px;
+}
+.meta a { color: var(--ink); }
+
+.cs-body { padding: 0 var(--gut) var(--s5); }
+.cs-body h2 {
+  font-family: var(--serif); font-weight: 600; font-size: var(--t-h2); line-height: 1.16;
+  letter-spacing: -.02em; margin: var(--s9) 0 var(--s4); max-width: 24ch; text-wrap: balance;
+}
+.cs-body h3 { font-family: var(--sans); font-weight: 600; font-size: var(--t-h3); margin: var(--s6) 0 10px; }
+.cs-body p:not([class]) { margin-bottom: 15px; max-width: 68ch; color: var(--muted); }
+.cs-body p[class] { margin-bottom: 15px; }
+.cs-body p b, .cs-body p strong { color: var(--ink); font-weight: 600; }
+.cs-body ul { margin: 0 0 18px 20px; max-width: 68ch; color: var(--muted); }
+.cs-body li { margin-bottom: 7px; }
+.cs-body .muted { color: var(--faint); font-size: 13.5px; line-height: 1.7; max-width: 72ch; }
+.lede { font-size: var(--t-lead); line-height: 1.5; color: var(--ink); max-width: 58ch; }
+.situation { margin: var(--s9) 0 10px; }
+.situation + h2, .situation + h3 { margin-top: 0; }
+
+.hook {
+  font-family: var(--serif); font-size: 21px; line-height: 1.38; color: var(--ink);
+  max-width: 54ch; margin: 0 0 var(--s5); padding-left: 20px; border-left: 3px solid var(--accent);
+}
+.pull {
+  font-family: var(--serif); font-size: 26px; font-style: italic; line-height: 1.32;
+  color: var(--ink); max-width: 30ch; margin: var(--s7) 0; padding-left: var(--s5);
+  border-left: 3px solid var(--accent);
+}
+
+.owned { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--ink); border: 1px solid var(--ink); margin: var(--s5) 0; }
+.owned .o { background: var(--paper); padding: 15px 17px; }
+.owned .o b { display: block; font-size: 15px; font-weight: 600; }
+.owned .o span { color: var(--faint); font-family: var(--mono); font-size: 12px; }
+
+.result, .rej-inline { border: 1px solid var(--ink); padding: 18px 20px; margin: var(--s5) 0; background: #fff; }
+.result { border-left: 4px solid var(--accent); }
+.rej-inline { border-left: 4px solid var(--faint); background: var(--panel); }
+.result > b, .rej-inline > b {
+  display: block; font-family: var(--mono); font-size: var(--t-micro); letter-spacing: .16em;
+  text-transform: uppercase; margin-bottom: var(--s2);
+}
+.result > b { color: var(--deep); }
+.rej-inline > b { color: var(--faint); }
+.result p, .rej-inline p { margin: 0; max-width: 70ch; }
+.result p + p, .rej-inline p + p { margin-top: 10px; }
+
+.note { border: 1px solid var(--ink); background: #fffbe9; padding: 20px 22px; margin: var(--s6) 0; }
+.note p { margin: 0; max-width: 72ch; }
+.note p + p { margin-top: var(--s3); }
+
+.decision { border: 1px solid var(--ink); background: #fff; padding: 20px 22px; margin: var(--s5) 0; }
+.opt { padding: 10px 0; }
+.opt .label { font-family: var(--mono); font-size: var(--t-micro); letter-spacing: .16em; text-transform: uppercase; font-weight: 500; }
+.opt.rej .label { color: var(--faint); }
+.opt.cho .label { color: var(--deep); }
+.opt p { margin: 6px 0 0; max-width: 70ch; }
+.principle { border-top: 1px solid var(--line); margin-top: var(--s3); padding-top: var(--s3); }
+.principle b { color: var(--ink); }
+
+.smaller { border-left: 3px solid var(--accent); padding-left: var(--s5); margin: var(--s5) 0; }
+.smaller .item { margin-bottom: var(--s5); }
+.smaller .item:last-child { margin-bottom: 0; }
+.smaller .item b { display: block; margin-bottom: 5px; font-size: 16px; }
+.smaller .item p { margin: 0; }
+
+.stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--ink); border: 1px solid var(--ink); margin: var(--s6) 0; }
+.stats .s { background: var(--paper); padding: 22px; }
+.stats .s .n { font-family: var(--sans); font-size: 34px; font-weight: 700; letter-spacing: -.025em; line-height: 1; }
+.stats .s .l { color: var(--muted); font-size: 13px; margin-top: 8px; line-height: 1.5; }
+
+/* ---- Diagrams ---------------------------------------------- */
+.dgm { margin: var(--s6) 0; }
+.dgm-cap { font-family: var(--mono); font-size: 11.5px; line-height: 1.6; color: var(--faint); margin-top: var(--s3); max-width: 72ch; }
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s4); }
+.side { border: 1px solid var(--ink); background: #fff; padding: 18px; }
+.side-label { font-weight: 500; margin-bottom: var(--s3); }
+.side-label.rej { color: var(--faint); }
+.side-label.cho { color: var(--deep); }
+
+.stream { position: relative; }
+.stream::after { content: ""; position: absolute; left: 0; right: 0; bottom: 20px; height: 44px; background: linear-gradient(to bottom, rgba(255,255,255,0), #fff); pointer-events: none; }
+.stream .fadeout { font-family: var(--mono); font-size: var(--t-micro); color: var(--faint); text-align: center; margin-top: var(--s2); letter-spacing: .1em; }
+.chip { border: 1px solid var(--line); padding: 7px 10px; font-size: 13px; margin-bottom: 6px; background: var(--paper); }
+.chip.talk { background: #fff; color: var(--faint); font-style: italic; }
+.chip.mat { border-color: var(--ink); background: #fffbe9; }
+
+.lane { border: 1px solid var(--line); padding: 13px 14px; margin-bottom: 10px; }
+.lane.a { border-color: var(--ink); background: #fffbe9; }
+.lane b { display: block; font-size: 15px; }
+.lane span { display: block; font-size: 13px; color: var(--muted); margin-top: 3px; }
+.lane em { display: block; font-family: var(--mono); font-size: var(--t-micro); color: var(--faint); margin-top: var(--s2); font-style: normal; }
+
+.tiers { display: grid; grid-template-columns: 1fr auto 1fr; gap: var(--s3); align-items: center; }
+.tierbox { border: 1px solid var(--ink); background: #fff; padding: var(--s4); }
+.trow { display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--line); padding: 8px 11px; margin-bottom: 6px; font-size: 14px; }
+.trow.tagged { border-color: var(--ink); background: var(--accent); font-weight: 600; }
+.trow .rank { font-family: var(--mono); font-size: var(--t-micro); color: var(--faint); }
+.trow.tagged .rank { color: var(--ink); }
+.arrow { font-family: var(--mono); color: var(--faint); font-size: 18px; text-align: center; }
+.verdict { font-size: 13px; line-height: 1.5; margin-top: var(--s3); padding-top: var(--s3); border-top: 1px solid var(--line); }
+.verdict.bad { color: var(--bad); }
+.verdict.good { color: var(--good); }
+.verdict + .verdict { border-top: none; margin-top: var(--s2); padding-top: 0; }
+
+.qrow { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); padding: 9px 11px; margin-bottom: 6px; font-size: 14px; background: var(--paper); }
+.qrow .who { flex: 1; }
+.qrow .tier { font-family: var(--mono); font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); border: 1px solid var(--line); border-radius: 99px; padding: 2px 8px; }
+.qrow .wait { font-family: var(--mono); font-size: var(--t-micro); color: var(--faint); }
+.qrow.buried { border-color: var(--bad); background: #fdf0ec; }
+.qrow.buried .wait { color: var(--bad); font-weight: 500; }
+.qrow.top { border-color: var(--ink); background: var(--accent); }
+.qrow.top .wait, .qrow.top .tier { color: var(--ink); font-weight: 500; border-color: var(--ink); }
+.qhead { margin: var(--s3) 0 7px; letter-spacing: .14em; }
+.qhead:first-child { margin-top: 0; }
+
+.mock { border: 1px solid var(--ink); overflow: hidden; height: 260px; display: flex; flex-direction: column; background: var(--paper); }
+.mock .bar { background: #e8e3d5; border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: 9.5px; color: var(--faint); padding: 5px 9px; }
+.mock .chatarea { background: #fff; border: 1px dashed var(--deep); margin: var(--s2); display: flex; align-items: center; justify-content: center; text-align: center; font-family: var(--mono); font-size: var(--t-micro); color: var(--deep); padding: var(--s2); line-height: 1.5; }
+.mock .chatarea.small { height: 78px; flex: none; }
+.mock .chatarea.big { flex: 1; background: #fffbe9; }
+.mock .tabs { display: flex; gap: 6px; padding: 7px var(--s2) 0; }
+.mock .tab { font-family: var(--mono); font-size: 9.5px; padding: 4px 9px; border: 1px solid var(--line); border-bottom: none; color: var(--faint); }
+.mock .tab.on { background: var(--accent); color: var(--ink); font-weight: 500; border-color: var(--ink); }
+
+/* ---- Screenshot and video slots ---------------------------- */
+.shot { margin: var(--s6) 0; }
+.shot img, .shot video { width: 100%; height: auto; display: block; border: 1px solid var(--ink); background: #fff; }
+.shot figcaption { font-family: var(--mono); font-size: 11px; color: var(--faint); margin-top: 10px; max-width: 68ch; line-height: 1.6; }
+/* A missing file closes the slot instead of printing a note to
+   myself where a client would read it. */
+.shot.empty { display: none; }
+
+.raw { margin: var(--s6) 0; max-width: 660px; }
+.raw img { width: 100%; display: block; border: 1px solid var(--line); }
+.raw figcaption { margin-top: var(--s3); font-family: var(--mono); font-size: 11px; line-height: 1.6; color: var(--faint); max-width: 64ch; }
+.raw.empty { display: none; }
+
+/* ---- Reveal on entry --------------------------------------- *
+   Only prevents things popping in. It never delays reading,
+   because the element is in place and only the mask moves. */
+.rv {
+  clip-path: inset(0 0 14% 0); opacity: 0;
+  transition: clip-path var(--d-reveal) var(--ease-out), opacity var(--d-reveal) var(--ease-out);
+}
+.rv.in { clip-path: inset(0 0 0 0); opacity: 1; }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 980px) {
+  .grid, .hire, .split, .tiers, .expl { grid-template-columns: 1fr; }
+  .about { grid-template-columns: 1fr; gap: var(--s6); }
+  .portrait { width: 200px; }
+  .owned { grid-template-columns: repeat(2, 1fr); }
+  .arrow { transform: rotate(90deg); }
+}
+
+@media (max-width: 700px) {
+  body { padding: 0; }
+  .sheet { box-shadow: none; }
+  .topbar { flex-wrap: wrap; gap: var(--s3); }
+  .quote { flex-direction: column; align-items: flex-start; gap: var(--s4); }
+  .owned, .stats, .facts { grid-template-columns: 1fr; }
+  .hs .panel.nums .grid { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   REDUCED MOTION
+   Fewer and gentler, not none. Nothing moves; state still reads.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .rv { clip-path: none; transition: opacity 200ms linear; }
+  .card:hover { transform: none; box-shadow: none; }
+  .card:hover .card-shot img { transform: none; }
+  .card-shot img { transition: none; }
+  .pill:active, .cta:active, .card:active { transform: none; }
+  .go i { animation: none; }
+}
