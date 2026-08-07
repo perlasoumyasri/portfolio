@@ -328,7 +328,7 @@
         var b = document.createElement('button');
         b.className = 'rb' + (n === i ? ' on' : '');
         b.type = 'button';
-        b.style.setProperty('--rt', bar(v) + 'ms');
+        b.style.setProperty('--rt', barTime(v) + 'ms');
         b.setAttribute('aria-label', 'Clip ' + (n + 1) + ' of ' + vids.length);
         b.innerHTML = '<span class="bar"></span>';
         b.addEventListener('click', function () { show(n); restart(); });
@@ -364,7 +364,7 @@
       /* A static copy. rail.children is live, and replacing a node while
          walking it makes the highlight land on the wrong button. */
       var btns = [].slice.call(rail.children);
-      if (btns[i]) btns[i].style.setProperty('--rt', bar(vids[i]) + 'ms');
+      if (btns[i]) btns[i].style.setProperty('--rt', barTime(vids[i]) + 'ms');
       btns.forEach(function (b) { b.classList.remove('on'); });
       var act = btns[i];
       if (act) {
@@ -380,7 +380,7 @@
       if (live && live.readyState < 1) {
         live.addEventListener('loadedmetadata', function () {
           var b = rail.children[i];
-          if (b) b.style.setProperty('--rt', bar(live) + 'ms');
+          if (b) b.style.setProperty('--rt', barTime(live) + 'ms');
           restart();
         }, { once: true });
       }
@@ -415,7 +415,7 @@
        falls back to the minimum and is corrected on the next pass. */
     /* The pill fills over the clip's true length, so it reaches full at
        the same moment the clip ends and the reel moves on. */
-    function bar(v) {
+    function barTime(v) {
       var d = v && v.duration;
       if (!d || !isFinite(d)) return REEL_MIN;
       return Math.min(REEL_MAX, Math.round(d * 1000));
