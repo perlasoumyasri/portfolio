@@ -572,6 +572,10 @@ img, video { max-width: 100%; }
 .rb::after { content: ""; position: absolute; inset: -8px; border-radius: 99px; }
 
 @media (prefers-reduced-motion: reduce) {
+  /* The introduction's entrance is exempted from the mobile kill above,
+     so it must be silenced here for anyone who asked for less motion. */
+  .js-stagger .panel.say .st,
+  .js-stagger .panel.say .cr { opacity: 1 !important; transform: none !important; transition: none !important; }
   .reel video { filter: none; transform: none; transition: opacity 150ms linear; }
   .rb .bar { display: none; }
   .rb.on { background: var(--accent); }
@@ -640,7 +644,7 @@ img, video { max-width: 100%; }
   .hs-track {
     position: static; transform: none !important;
     flex-direction: column; align-items: stretch;
-    gap: clamp(40px, 9vw, 72px); padding: var(--s7) var(--gut) var(--s8);
+    gap: clamp(60px, 14vw, 104px); padding: var(--s7) var(--gut) var(--s8);
   }
   .hs-track > :last-child, .hs .panel.say { margin-right: 0; }
   .hs .panel {
@@ -654,12 +658,30 @@ img, video { max-width: 100%; }
      16:10 fits the tallest clip; wider ones letterbox on the plate. */
   .hs .panel.med figure.reel { aspect-ratio: 16 / 10; max-height: 62vh; }
   .hs .panel.med .reel video { height: 100%; }
-  .hs .st { opacity: 1 !important; transform: none !important; transition: none !important; }
+  /* The sideways cue makes no sense when the page stacks vertically. */
+  .hs .panel.say .go { display: none; }
+  /* A chapter break, not a card gap: the introduction ends here and the
+     client work begins, so this seam gets more air than the rest. */
+  .hs .panel.state { margin-top: clamp(16px, 6vw, 44px); }
+  /* All three contact pills stay reachable: the row scrolls sideways.
+     The padding lets the last pill clear the screen edge when it lands. */
+  .topbar { flex-wrap: nowrap; }
+  .topbar .links {
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; padding-right: var(--gut);
+  }
+  .topbar .links::-webkit-scrollbar { display: none; }
+  /* The stagger is kept alive for the introduction panel alone: its
+     lines and the two record rows still arrive one by one on load, the
+     same entrance the desktop gets. Everything else appears in place.
+     (Reduced-motion users get the .say exception removed again in the
+     reduced-motion block further down.) */
+  .hs .panel:not(.say) .st { opacity: 1 !important; transform: none !important; transition: none !important; }
   .cr { grid-template-columns: 12px 1fr; gap: 0 var(--s4); }
   .cr-n { grid-column: 2; text-align: left; padding: 12px 0 0; }
   .cr-n b { font-size: 26px; }
   .cr-n span { margin-top: 3px; }
-  .js-stagger .panel .cr { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .js-stagger .panel:not(.say) .cr { opacity: 1 !important; transform: none !important; transition: none !important; }
   .hs-prog { display: none; }
 }
 

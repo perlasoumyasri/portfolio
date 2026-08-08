@@ -497,6 +497,14 @@
       return window.matchMedia('(max-width: 700px)').matches || reduced.matches;
     }
 
+    /* On the stacked layout the draw loop never runs, so nothing would
+       ever tell the introduction panel it has arrived. It is told here,
+       one beat after first paint, and its lines and the two record rows
+       make the same staggered entrance the desktop gets. */
+    if (off()) {
+      setTimeout(function () { panels[0].classList.add('on'); }, 140);
+    }
+
     function measure() {
       if (off()) { sec.style.height = ''; track.style.transform = ''; return; }
       dist = Math.max(0, track.scrollWidth - view.clientWidth);
