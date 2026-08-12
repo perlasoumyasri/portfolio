@@ -446,6 +446,39 @@
       timer = setTimeout(tick, hold(vids[i]) + 900);
     }
 
+    /* Manual navigation, only where there is more than one clip. Arrows
+       either side of the frame for mouse users, a sideways swipe on
+       touch. Both land on the same show()+restart() path the dots use,
+       so the dots and the auto-advance timer never disagree with what
+       is on screen. The controls are created here, not in the HTML, so
+       a dead script leaves no dead buttons. */
+    if (vids.length > 1) {
+      var step = function (d) { show(i + d); restart(); };
+      ['l', 'r'].forEach(function (side) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'rnav rnav-' + side;
+        b.setAttribute('aria-label', side === 'l' ? 'Previous clip' : 'Next clip');
+        b.innerHTML = side === 'l' ? '&#8249;' : '&#8250;';
+        b.addEventListener('click', function () { step(side === 'l' ? -1 : 1); });
+        box.appendChild(b);
+      });
+      var tx = 0, ty = 0, tt = 0;
+      box.addEventListener('touchstart', function (e) {
+        var t = e.changedTouches[0];
+        tx = t.clientX; ty = t.clientY; tt = e.timeStamp;
+      }, { passive: true });
+      /* A swipe is fast, mostly horizontal, and far enough to be meant.
+         Anything else is the page scrolling and is left alone. */
+      box.addEventListener('touchend', function (e) {
+        var t = e.changedTouches[0];
+        var dx = t.clientX - tx, dy = t.clientY - ty;
+        if (e.timeStamp - tt < 700 && Math.abs(dx) > 44 && Math.abs(dx) > Math.abs(dy) * 1.4) {
+          step(dx < 0 ? 1 : -1);
+        }
+      }, { passive: true });
+    }
+
     build();
     show(0);
     /* The first tick comes quickly rather than after a full hold, so a
