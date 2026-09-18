@@ -278,6 +278,14 @@
      clip can never stall the reel. */
   var REEL_MIN = 5000, REEL_MAX = 25000, REEL_PAD = 700;
 
+  /* Drawn, not typed. A glyph like &#9654; lands at a different size and
+     baseline in every font, and these three have to sit on one optical
+     line inside identical circles. */
+  var ICON_PAUSE = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7.2" y="5" width="3.5" height="14" rx="1.2"/><rect x="13.3" y="5" width="3.5" height="14" rx="1.2"/></svg>';
+  var ICON_PLAY  = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.8 5.3l9.6 6.2a.6.6 0 010 1l-9.6 6.2a.6.6 0 01-.9-.5V5.8a.6.6 0 01.9-.5z"/></svg>';
+  var ICON_PREV  = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.6 6.3L8.9 12l5.7 5.7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var ICON_NEXT  = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.4 6.3L15.1 12l-5.7 5.7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
   function reel(box) {
     var panel = box.closest('.panel');
     var rail = panel && panel.querySelector('.dots');
@@ -285,7 +293,7 @@
     if (!rail || !cap) return;
 
     var vids = [].slice.call(box.querySelectorAll('video'));
-    var i = 0, timer = null, wasOn = false, replays = 0;
+    var i = 0, timer = null, wasOn = false, replays = 0, paused = false;
 
     /* The clip's own last frame is the cue to move on. Reel clips do not
        carry the loop attribute, because a clip that restarts and plays a
@@ -348,7 +356,7 @@
          handler is the only other thing that calls play(), so a reader
          sitting still would watch a frozen poster until they moved. */
       var live = vids[i];
-      if (live && onStage()) {
+      if (live && onStage() && !paused) {
         /* preload="none" means nothing has been fetched yet, and play() on
            an empty element can sit on a still frame. Ask for the data first. */
         if (live.readyState < 2) { try { live.load(); } catch (e) {} }
@@ -397,7 +405,7 @@
     function tick() {
       var on = onStage();
       if (!on) {
-        if (wasOn) { wasOn = false; show(0); }
+        if (wasOn) { wasOn = false; clearPause(); show(0); }
         /* Off stage the reel only watches for its own entrance. A short
            poll catches the arrival within half a second, so the first
            clip gets exactly one hold. Inheriting the stale full-length
@@ -407,6 +415,7 @@
         timer = setTimeout(tick, 400);
         return;
       }
+      if (paused) return;
       if (!wasOn) { wasOn = true; show(0); }
       else { show(i + 1); }
       restart();
@@ -439,7 +448,7 @@
     }
     function restart() {
       clearTimeout(timer);
-      if (held) return;
+      if (held || paused) return;
       /* A beat behind the clip's own length, so the ended event is what
          actually advances the reel and this timer only catches a clip
          that stalled or was never allowed to play. */
@@ -452,17 +461,71 @@
        so the dots and the auto-advance timer never disagree with what
        is on screen. The controls are created here, not in the HTML, so
        a dead script leaves no dead buttons. */
+    /* Pausing is a state the reader is holding, so the button carries it
+       and the filling dot stops where it is rather than running on under
+       a still picture. The class goes on the panel because the dots live
+       in the caption, outside the frame. */
+    function syncPlay() {
+      if (!playBtn) return;
+      playBtn.innerHTML = paused ? ICON_PLAY : ICON_PAUSE;
+      playBtn.setAttribute('aria-label', paused ? 'Play' : 'Pause');
+      playBtn.setAttribute('aria-pressed', paused ? 'true' : 'false');
+    }
+    function setPaused(p) {
+      paused = p;
+      panel.classList.toggle('is-paused', paused);
+      var v = vids[i];
+      if (paused) {
+        clearTimeout(timer);
+        if (v && !v.paused) v.pause();
+      } else if (v && onStage()) {
+        var q = v.play();
+        if (q && q.catch) q.catch(function () {});
+      }
+      syncPlay();
+      if (!paused) restart();
+    }
+    /* Used when the reel leaves the stage: drop the pause without
+       starting anything, because show(0) off stage must stay still. */
+    function clearPause() {
+      if (!paused) return;
+      paused = false;
+      panel.classList.remove('is-paused');
+      syncPlay();
+    }
+
+    var step = function (d) { show(i + d); restart(); };
+
+    /* The controls sit under the video, in one row with the dots, and
+       nothing is placed on the picture. A control over the frame covers
+       the work it exists to let you watch, and on a shared screen a faded
+       arrow floating on a recording is read as part of the recording.
+       They are always visible rather than appearing on hover, because
+       someone watching a call cannot hover to discover that a control is
+       there. Built here, not in the HTML, so a dead script leaves no
+       dead buttons. */
+    var bar = document.createElement('div');
+    bar.className = 'reel-bar';
+    rail.parentNode.insertBefore(bar, rail);
+
+    function ctl(label, svg, fn) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'rctl';
+      b.setAttribute('aria-label', label);
+      b.innerHTML = svg;
+      b.addEventListener('click', fn);
+      bar.appendChild(b);
+      return b;
+    }
+
+    if (vids.length > 1) ctl('Previous clip', ICON_PREV, function () { step(-1); });
+    var playBtn = ctl('Pause', ICON_PAUSE, function () { setPaused(!paused); });
+    if (vids.length > 1) ctl('Next clip', ICON_NEXT, function () { step(1); });
+    bar.appendChild(rail);
+    syncPlay();
+
     if (vids.length > 1) {
-      var step = function (d) { show(i + d); restart(); };
-      ['l', 'r'].forEach(function (side) {
-        var b = document.createElement('button');
-        b.type = 'button';
-        b.className = 'rnav rnav-' + side;
-        b.setAttribute('aria-label', side === 'l' ? 'Previous clip' : 'Next clip');
-        b.innerHTML = side === 'l' ? '&#8249;' : '&#8250;';
-        b.addEventListener('click', function () { step(side === 'l' ? -1 : 1); });
-        box.appendChild(b);
-      });
       var tx = 0, ty = 0, tt = 0;
       box.addEventListener('touchstart', function (e) {
         var t = e.changedTouches[0];
@@ -592,9 +655,14 @@
         /* A clip whose file was missing has already removed itself from
            the document, and this list was captured before that happened. */
         if (!v.parentNode) return;
-        if (v.parentNode.classList.contains('reel') && !v.classList.contains('is-live')) {
-          if (!v.paused) v.pause();
-          return;
+        if (v.parentNode.classList.contains('reel')) {
+          /* Only the clip on screen runs, and a reel the reader has
+             paused stays paused however the page is scrolled. */
+          var rp = v.closest('.panel');
+          if (!v.classList.contains('is-live') || (rp && rp.classList.contains('is-paused'))) {
+            if (!v.paused) v.pause();
+            return;
+          }
         }
         var r = v.getBoundingClientRect();
         var seen = r.right > vr.left - 100 && r.left < vr.right + 100;
