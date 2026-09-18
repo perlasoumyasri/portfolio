@@ -52,7 +52,11 @@
   --ivline2: #eceef3;
 
   /* Headline filler words, and the chip around the phrase that matters. */
-  --dim:       #c9ccd3;
+  /* The quiet words in the headline. At #c9ccd3 they sat at 1.49:1 on
+     this page, well under the 3:1 that large text needs, so they were
+     close to invisible for a lot of people. This is 3.34:1: still
+     clearly quieter than the black words, but actually readable. */
+  --dim:       #82878f;
   --chip:      #e3ecff;   /* blue chip */
   --chip-ring: #eff4ff;
   --chip2:     #ffe9db;   /* orange chip */
@@ -260,7 +264,43 @@ img, video { max-width: 100%; }
 /* The headline device. Filler words drop to light grey so the eye lands
    on the words that carry the claim, and the phrase that matters sits in
    a soft yellow chip with a small mark, like a word picked out on a map. */
-.hs .panel.say h2 .dim, .hs .panel.state h3 .dim { color: var(--dim); }
+/* The opening words are quieter than the rest of the claim, and on
+   arrival a selection sweeps across them from left to right, the way a
+   cursor drags over a phrase. It draws the eye to the start of the
+   sentence, and it leaves the words at full contrast rather than at the
+   whisper they would otherwise stay at.
+
+   The text darkens as the box fills, and that part is not decoration.
+   The box alone would take these words from 1.49:1 to 1.36:1, because
+   light grey on light blue is worse than light grey on white. Black on
+   the same blue is 16.69:1. The sweep is only safe because the ink
+   travels with it.
+
+   Drawn as a background that grows rather than a second copy of the
+   text laid over the first: generated content gets read out by some
+   screen readers, and having a screen reader say the opening of the
+   headline twice is a strange way to fix an accessibility problem. */
+.hs .panel.say h2 .dim, .hs .panel.state h3 .dim {
+  color: var(--dim);
+  background-image: linear-gradient(var(--chip), var(--chip));
+  background-repeat: no-repeat;
+  background-size: 0% 100%;
+  border-radius: .05em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+/* Once, on arrival, and it holds where it finishes. */
+.hs .panel.say.on h2 .dim {
+  animation: dim-select 820ms var(--ease-soft) 780ms forwards;
+}
+@keyframes dim-select {
+  from { background-size: 0% 100%;   color: var(--dim); }
+  /* It finishes readable, not loud. On the box these words land at
+     4.08:1 while the claim beside them is at 18.31:1, so they are
+     comfortably above the 3:1 large text needs and still clearly the
+     quieter half of the sentence, which is the job they were given. */
+  to   { background-size: 100% 100%; color: var(--muted); }
+}
 .hs .panel.say h2 em, .hs .panel.state h3 em {
   display: inline-block; font-style: normal; color: var(--deep);
   background: var(--chip); border-radius: 99px;
@@ -636,6 +676,11 @@ img, video { max-width: 100%; }
 .rb::after { content: ""; position: absolute; inset: -8px; border-radius: 99px; }
 
 @media (prefers-reduced-motion: reduce) {
+  /* No sweep, but the words still have to be readable, so they simply
+     start where the sweep would have finished. */
+  .hs .panel.say h2 .dim, .hs .panel.say.on h2 .dim {
+    animation: none; background-size: 100% 100%; color: var(--muted);
+  }
   /* The introduction's entrance is exempted from the mobile kill above,
      so it must be silenced here for anyone who asked for less motion. */
   .js-stagger .panel.say .st,
