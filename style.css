@@ -520,42 +520,49 @@ img, video { max-width: 100%; }
    ------------------------------------------------------------- */
 .reel { position: relative; }
 
-/* The reel's controls: previous, pause, next, then the dots, in one row
-   under the video. Nothing sits on the picture. A control over the frame
-   hides the work it exists to let you watch, and on a shared screen a
-   faded arrow floating on a recording is read as part of the recording.
-   Always visible, on every device, because a control that only appears
-   on hover cannot be found by someone watching a call. */
-.reel-bar { display: flex; align-items: center; gap: 10px; margin-top: var(--s4); }
-.reel-bar .dots { margin-top: 0; margin-left: 6px; }
-
-.rctl {
-  flex: none; width: 38px; height: 38px; border-radius: 50%;
+/* The reel's controls. The picture itself is the pause target, so the
+   only furniture on the frame is the pair of arrows, sitting inside its
+   edges and staying quiet until the pointer arrives. Touch screens get
+   none of them: there the frame is swiped, and a phone has no hover with
+   which to reveal them. */
+.reel { cursor: pointer; }
+.rnav {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 3;
+  width: 40px; height: 40px; border-radius: 50%;
   border: 1px solid var(--line); background: #fff; color: var(--ink);
   display: flex; align-items: center; justify-content: center;
   padding: 0; cursor: pointer;
-  box-shadow: 0 1px 2px rgba(15,20,32,.06), 0 4px 12px rgba(15,20,32,.08);
-  /* colour crossfades with the fill, not before it. Snapping the icon to
-     white while the circle is still white leaves it invisible for the
-     length of the fade, which reads as the icon disappearing on click. */
-  transition: background var(--d-hover) var(--ease-soft),
-              border-color var(--d-hover) var(--ease-soft),
-              color var(--d-hover) var(--ease-soft),
+  box-shadow: 0 2px 10px rgba(15,20,32,.18);
+  opacity: 0;
+  transition: opacity var(--d-hover) var(--ease-soft),
+              background var(--d-hover) var(--ease-soft),
               transform var(--d-press) var(--ease-out);
 }
-.rctl svg { width: 19px; height: 19px; fill: currentColor; display: block; }
-.rctl:active { transform: scale(.94); }
-@media (hover: hover) and (pointer: fine) {
-  .rctl:hover { background: var(--ring); border-color: var(--faint); }
+.rnav svg { width: 20px; height: 20px; display: block; }
+.reel:hover .rnav, .rnav:focus-visible { opacity: 1; }
+.rnav:active { transform: translateY(-50%) scale(.94); }
+@media (hover: hover) and (pointer: fine) { .rnav:hover { background: var(--ring); } }
+.rnav-l { left: 16px; }
+.rnav-r { right: 16px; }
+@media (hover: none), (max-width: 700px) { .rnav { display: none; } }
+
+/* A stopped clip has to say so. A frozen picture with nothing on it is
+   read as a video that failed rather than one being held, and the mark
+   sits in a corner because the middle belongs to the work. */
+.rpause {
+  position: absolute; left: 20px; bottom: 20px; z-index: 4;
+  display: flex; align-items: center; gap: 7px;
+  padding: 7px 13px 7px 11px; border-radius: 99px;
+  background: rgba(255,255,255,.94); color: var(--ink);
+  font-family: var(--sans); font-size: 13px; font-weight: 600; line-height: 1;
+  box-shadow: 0 2px 10px rgba(15,20,32,.22);
+  opacity: 0; transform: translateY(4px); pointer-events: none;
+  transition: opacity var(--d-hover) var(--ease-soft),
+              transform var(--d-hover) var(--ease-soft);
 }
-/* Held down, so it reads as held: the one control carrying a state is
-   the one control that is filled in. */
-.rctl[aria-pressed="true"] {
-  background: var(--accent); border-color: var(--accent); color: #fff;
-}
-@media (hover: hover) and (pointer: fine) {
-  .rctl[aria-pressed="true"]:hover { background: var(--deep); border-color: var(--deep); }
-}
+.rpause svg { width: 13px; height: 13px; fill: currentColor; display: block; }
+.reel.is-paused .rpause { opacity: 1; transform: none; }
+
 /* A stopped reel stops its clock too. The filling dot holding steady is
    what says the pause is real and the reel has not simply stalled. */
 .panel.is-paused .rb.on .bar { animation-play-state: paused; }
@@ -655,19 +662,27 @@ img, video { max-width: 100%; }
 .facts span { display: block; margin-top: 9px; font-size: 12.5px; line-height: 1.45; color: var(--iv3); }
 
 /* ---- Panel 8 · the figures --------------------------------- */
+/* The launch card names what its three figures belong to. Without it the
+   numbers read as the whole record rather than as this one project's. */
+.hs .panel.nums .eyebrow { margin-bottom: var(--s5); }
 .hs .panel.nums .grid {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
   margin: 0;
 }
+/* A card of three figures and nothing else has a whole screen to fill,
+   and on a shared screen it is read from across a room. The figures are
+   sized to carry the card on their own rather than to sit politely in
+   the middle of it. */
 .hs .panel.nums .n {
   background: var(--plate2); border: 1px solid var(--line); border-radius: 20px;
-  padding: clamp(24px, 3vw, 38px);
+  padding: clamp(26px, 3.4vw, 44px);
 }
 .hs .panel.nums .n b {
-  display: block; font-family: var(--sans); font-weight: 700;
-  font-size: clamp(30px, 3.4vw, 46px); line-height: 1; letter-spacing: -.025em; color: var(--iv1);
+  display: block; font-family: var(--sans); font-weight: 800;
+  font-size: clamp(36px, 4.4vw, 64px); line-height: 1; letter-spacing: -.04em; color: var(--iv1);
+  font-variant-numeric: tabular-nums;
 }
-.hs .panel.nums .n span { display: block; margin-top: 12px; color: var(--iv3); font-size: 14px; line-height: 1.5; }
+.hs .panel.nums .n span { display: block; margin-top: 14px; color: var(--iv3); font-size: 15.5px; line-height: 1.5; }
 
 /* ---- The one progress indicator ---------------------------- *
    A pinned section without one feels like a trap. */

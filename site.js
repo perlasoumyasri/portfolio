@@ -461,19 +461,15 @@
        so the dots and the auto-advance timer never disagree with what
        is on screen. The controls are created here, not in the HTML, so
        a dead script leaves no dead buttons. */
-    /* Pausing is a state the reader is holding, so the button carries it
-       and the filling dot stops where it is rather than running on under
-       a still picture. The class goes on the panel because the dots live
-       in the caption, outside the frame. */
-    function syncPlay() {
-      if (!playBtn) return;
-      playBtn.innerHTML = paused ? ICON_PLAY : ICON_PAUSE;
-      playBtn.setAttribute('aria-label', paused ? 'Play' : 'Pause');
-      playBtn.setAttribute('aria-pressed', paused ? 'true' : 'false');
-    }
+    /* The picture is the control. Clicking the clip stops it, clicking it
+       again lets it run, which is what a person already expects a video to
+       do and costs the card no furniture. A stopped clip says so with a
+       small mark in the corner, never over the middle: a frozen picture
+       with nothing on it reads as broken rather than held. */
     function setPaused(p) {
       paused = p;
       panel.classList.toggle('is-paused', paused);
+      box.classList.toggle('is-paused', paused);
       var v = vids[i];
       if (paused) {
         clearTimeout(timer);
@@ -482,7 +478,6 @@
         var q = v.play();
         if (q && q.catch) q.catch(function () {});
       }
-      syncPlay();
       if (!paused) restart();
     }
     /* Used when the reel leaves the stage: drop the pause without
@@ -491,41 +486,43 @@
       if (!paused) return;
       paused = false;
       panel.classList.remove('is-paused');
-      syncPlay();
+      box.classList.remove('is-paused');
     }
 
     var step = function (d) { show(i + d); restart(); };
 
-    /* The controls sit under the video, in one row with the dots, and
-       nothing is placed on the picture. A control over the frame covers
-       the work it exists to let you watch, and on a shared screen a faded
-       arrow floating on a recording is read as part of the recording.
-       They are always visible rather than appearing on hover, because
-       someone watching a call cannot hover to discover that a control is
-       there. Built here, not in the HTML, so a dead script leaves no
-       dead buttons. */
-    var bar = document.createElement('div');
-    bar.className = 'reel-bar';
-    rail.parentNode.insertBefore(bar, rail);
+    /* The corner mark. It is not a button: the whole picture is already
+       the target, and a second thing to aim at would only compete with
+       it. Shown to a screen reader as the reel's state instead. */
+    var flag = document.createElement('div');
+    flag.className = 'rpause';
+    flag.setAttribute('aria-hidden', 'true');
+    flag.innerHTML = ICON_PLAY + '<span>Paused</span>';
+    box.appendChild(flag);
 
-    function ctl(label, svg, fn) {
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'rctl';
-      b.setAttribute('aria-label', label);
-      b.innerHTML = svg;
-      b.addEventListener('click', fn);
-      bar.appendChild(b);
-      return b;
-    }
-
-    if (vids.length > 1) ctl('Previous clip', ICON_PREV, function () { step(-1); });
-    var playBtn = ctl('Pause', ICON_PAUSE, function () { setPaused(!paused); });
-    if (vids.length > 1) ctl('Next clip', ICON_NEXT, function () { step(1); });
-    bar.appendChild(rail);
-    syncPlay();
+    /* A swipe ends in a click too, so a sideways drag would both change
+       the clip and stop it. The swipe sets this, and the click that
+       follows it is spent clearing the flag rather than pausing. */
+    var swiped = false;
+    box.addEventListener('click', function (e) {
+      if (e.target.closest('.rnav')) return;
+      if (swiped) { swiped = false; return; }
+      setPaused(!paused);
+    });
 
     if (vids.length > 1) {
+      /* Arrows sit on the frame, inside its edges, quiet until the
+         pointer arrives. Touch screens get none of them: there the frame
+         itself is swiped, and a phone has no hover to reveal them. */
+      ['l', 'r'].forEach(function (side) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'rnav rnav-' + side;
+        b.setAttribute('aria-label', side === 'l' ? 'Previous clip' : 'Next clip');
+        b.innerHTML = side === 'l' ? ICON_PREV : ICON_NEXT;
+        b.addEventListener('click', function () { step(side === 'l' ? -1 : 1); });
+        box.appendChild(b);
+      });
       var tx = 0, ty = 0, tt = 0;
       box.addEventListener('touchstart', function (e) {
         var t = e.changedTouches[0];
@@ -537,6 +534,7 @@
         var t = e.changedTouches[0];
         var dx = t.clientX - tx, dy = t.clientY - ty;
         if (e.timeStamp - tt < 700 && Math.abs(dx) > 44 && Math.abs(dx) > Math.abs(dy) * 1.4) {
+          swiped = true;
           step(dx < 0 ? 1 : -1);
         }
       }, { passive: true });
