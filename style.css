@@ -970,8 +970,12 @@ img, video { max-width: 100%; }
 }
 
 /* ---- The closing band --------------------------------------- */
+/* The two sides meet on one bottom line. Centring them instead measured
+   the left side as the label PLUS the headline, so the small label above
+   dragged the buttons 15px higher than the words they belong to, which
+   reads as a near miss rather than as a relationship. */
 .quote {
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex; align-items: flex-end; justify-content: space-between;
   gap: var(--s6); padding: clamp(56px, 6vw, 88px) var(--gut);
   border-top: 1px solid var(--rule); background: var(--page);
 }
@@ -980,6 +984,13 @@ img, video { max-width: 100%; }
 .quote cite {
   font-family: var(--mono); font-style: normal; font-size: var(--t-micro);
   letter-spacing: .14em; color: var(--faint); display: block; margin-top: var(--s3);
+}
+/* Both ways of reaching her, side by side. The email is the one to press,
+   the number is there to be read out or copied. */
+.quote-ways { display: flex; align-items: center; gap: var(--s3); flex-wrap: wrap; }
+.cta.ghost { background: #fff; color: var(--ink); border: 1px solid var(--line); }
+@media (hover: hover) and (pointer: fine) {
+  .cta.ghost:hover { background: var(--ring); border-color: var(--faint); }
 }
 .quote h2 {
   font-family: var(--sans); font-weight: 800; font-size: clamp(32px, 3.8vw, 52px);
@@ -999,19 +1010,32 @@ footer a { color: var(--muted); }
 /* ---- The copy toast ---------------------------------------- *
    Bottom centre. At the top it covered the very bar you had just
    tapped, which is the one place a confirmation must never sit. */
+/* The confirmation was set in --iv1, which used to be the cream ink for
+   the dark plate and is now near black for the light page, so it was
+   being drawn in black on a black pill: 1.00:1, invisible. It is white
+   here, and stated rather than abbreviated, because the whole job of
+   this thing is to tell you the copy worked. */
 .toast {
-  position: fixed; bottom: 40px; left: 50%; z-index: 99;
-  transform: translate(-50%, 10px); opacity: 0;
-  display: flex; align-items: center; gap: 10px;
-  background: var(--ink); color: var(--iv1);
-  border: 1px solid rgba(244,241,233,.18);
-  font-family: var(--mono); font-size: 11.5px; letter-spacing: .06em;
-  padding: 11px 18px; border-radius: 99px;
-  box-shadow: 0 10px 34px rgba(0,0,0,.34);
+  position: fixed; bottom: 32px; left: 50%; z-index: 99;
+  transform: translate(-50%, 12px); opacity: 0;
+  display: flex; align-items: center; gap: 14px;
+  background: var(--ink); color: #fff;
+  font-family: var(--sans); font-size: 14.5px; font-weight: 500; letter-spacing: 0;
+  padding: 11px 11px 11px 20px; border-radius: 99px;
+  max-width: calc(100vw - 32px);
+  box-shadow: 0 8px 30px rgba(15,20,32,.30);
   transition: opacity 240ms var(--ease-soft), transform 240ms var(--ease-soft);
 }
 .toast.in { opacity: 1; transform: translate(-50%, 0); }
-.toast a { color: var(--accent); font-weight: 500; text-decoration: none; border-bottom: 1px solid currentColor; }
+/* The action is a button, not an underlined word inside a sentence. It
+   was the accent on near black, which measures 3.83:1 and reads as
+   decoration rather than as the thing to press. */
+.toast a {
+  background: #fff; color: var(--ink); border-radius: 99px;
+  padding: 8px 16px; font-weight: 600; text-decoration: none; white-space: nowrap;
+  transition: background var(--d-hover) var(--ease-soft);
+}
+@media (hover: hover) and (pointer: fine) { .toast a:hover { background: #e4e7ec; } }
 
 /* ============================================================
    CASE STUDY PAGES

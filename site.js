@@ -749,12 +749,20 @@
       if (t) t.remove();
       t = document.createElement('div');
       t.className = 'toast';
-      t.innerHTML = msg + (actLabel ? ' <a href="' + actHref + '" target="_blank" rel="noopener">' + actLabel + '</a>' : '');
+      /* Announced, not just shown. Someone using a screen reader gets no
+         confirmation at all from a pill that silently appears. */
+      t.setAttribute('role', 'status');
+      t.setAttribute('aria-live', 'polite');
+      t.innerHTML = '<span>' + msg + '</span>' +
+        (actLabel ? '<a href="' + actHref + '" target="_blank" rel="noopener">' + actLabel + '</a>' : '');
       document.body.appendChild(t);
       requestAnimationFrame(function () { t.classList.add('in'); });
+      /* A confirmation on its own can go quickly. One carrying something
+         to press has to outlast the time it takes to notice it, read it
+         and move the pointer to it. */
       setTimeout(function () {
         if (t) { t.classList.remove('in'); setTimeout(function () { if (t) { t.remove(); t = null; } }, 300); }
-      }, 3400);
+      }, actLabel ? 6000 : 3000);
     }
     [].forEach.call(document.querySelectorAll('[data-copy]'), function (el) {
       el.addEventListener('click', function (e) {
