@@ -569,6 +569,17 @@
     var vids   = [].slice.call(track.querySelectorAll('video'));
     var dist = 0, top = 0, active = -1, ticking = false;
 
+    /* The opening beat. Before the strip moves sideways at all, the first
+       stretch of scrolling is spent on the introduction alone: the claim
+       starts centred on the screen by itself and lifts into its resting
+       place while the record rises into view under it. The record is the
+       evidence, and evidence reads better once the claim it supports has
+       been read. Reversible, because it is tied to scroll position and
+       not to a one-shot trigger. */
+    var lead = 0, shift = 0, RISE = 72;
+    var sayLead = panels[0] && panels[0].querySelector('.say-lead');
+    var sayCreds = panels[0] && panels[0].querySelector('.creds');
+
     /* Progressive disclosure. A text panel's children enter one after the
        other when the panel arrives at centre, so the reader is handed the
        parts in reading order rather than a whole screen at once. It is a
@@ -581,7 +592,16 @@
     sec.classList.add('js-stagger');
     panels.forEach(function (p) {
       if (p.className.indexOf('med') !== -1) return;
-      [].forEach.call(p.children, function (el, i) {
+      /* The claim sits inside a wrapper so the scroll can move it as one
+         thing, but the entrance is still handed out line by line, so the
+         wrapper is stepped through rather than counted as one child. */
+      var wrap = p.querySelector('.say-lead');
+      var kids = [];
+      [].forEach.call(p.children, function (el) {
+        if (el === wrap) [].push.apply(kids, [].slice.call(el.children));
+        else kids.push(el);
+      });
+      kids.forEach(function (el, i) {
         el.classList.add('st');
         el.style.setProperty('--d', (i * 110) + 'ms');
       });
@@ -600,16 +620,54 @@
     }
 
     function measure() {
-      if (off()) { sec.style.height = ''; track.style.transform = ''; return; }
+      if (off()) {
+        sec.style.height = ''; track.style.transform = '';
+        /* Stacked, everything sits where it belongs and nothing is held
+           back, so any inline state from a wider window is cleared. */
+        sec.classList.remove('js-beat');
+        if (sayLead) sayLead.style.transform = '';
+        if (sayCreds) { sayCreds.style.transform = ''; sayCreds.style.opacity = ''; }
+        return;
+      }
+      /* The record is driven by the scroll here, so it must not also be
+         running the entrance transition. Two things animating one element
+         is the record lagging the scroll by the length of the stagger,
+         which reads as broken rather than smooth. Stacked, the class is
+         off and the entrance takes it back. */
+      sec.classList.add('js-beat');
       dist = Math.max(0, track.scrollWidth - view.clientWidth);
-      sec.style.height = (window.innerHeight + dist) + 'px';
+      /* How far the claim has to travel is measured, not guessed: it is
+         half of what the record occupies, which is exactly the distance
+         that leaves the claim optically centred while the record is out
+         of sight. */
+      if (sayLead && sayCreds) {
+        var cs = window.getComputedStyle(sayCreds);
+        shift = (sayCreds.offsetHeight + (parseFloat(cs.marginTop) || 0)) / 2;
+        lead = Math.round(Math.min(window.innerHeight * 0.6, 520));
+      } else { lead = 0; shift = 0; }
+      sec.style.height = (window.innerHeight + lead + dist) + 'px';
       top = sec.getBoundingClientRect().top + window.scrollY;
       draw();
     }
 
     function draw() {
       if (off()) return;
-      var s = window.scrollY - top;
+      var y = window.scrollY - top;
+
+      /* The opening beat runs first, and the strip does not begin to move
+         until it has finished. Smoothstepped, so the movement eases in and
+         out of the scroll instead of tracking it in a straight line. */
+      var p = lead > 0 ? (y < 0 ? 0 : y > lead ? 1 : y / lead) : 1;
+      var e = p * p * (3 - 2 * p);
+      if (sayLead) {
+        sayLead.style.transform = 'translate3d(0,' + ((1 - e) * shift).toFixed(1) + 'px,0)';
+      }
+      if (sayCreds) {
+        sayCreds.style.transform = 'translate3d(0,' + ((1 - e) * RISE).toFixed(1) + 'px,0)';
+        sayCreds.style.opacity = e.toFixed(3);
+      }
+
+      var s = y - lead;
       s = s < 0 ? 0 : s > dist ? dist : s;
 
       track.style.transform = 'translate3d(' + (-s) + 'px,0,0)';

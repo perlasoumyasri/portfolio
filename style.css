@@ -203,7 +203,13 @@ img, video { max-width: 100%; }
    Scroll down, the panels move sideways, then the pin releases
    and the page carries on. The bar lives inside the pin and the
    body has no head padding, so the strip owns the viewport from
-   pixel zero and the very first wheel tick moves sideways.
+   pixel zero.
+
+   The first stretch of scrolling is not sideways. It is spent on
+   the introduction alone: the claim starts centred by itself and
+   lifts into place while the record rises under it. Only after
+   that does the strip begin to travel. The section is made taller
+   by that lead-in, and JS splits the scroll between the two.
    Touch and reduced motion get a native swipe strip instead.
    ============================================================ */
 .hs { position: relative; background: var(--plate); }
@@ -250,6 +256,19 @@ img, video { max-width: 100%; }
 .hs .panel.med { justify-content: flex-start; padding-top: clamp(16px, 5vh, 56px); }
 
 /* ---- Panel 1 · the claim ---------------------------------- */
+/* The claim moves as one thing during the opening beat, and the record
+   rises under it. Both are driven from the scroll position in JS rather
+   than by a transition, so dragging the scrollbar back takes the beat
+   backwards with it. No hiding here: if the script never runs, the
+   introduction simply sits there whole, which is the right failure. */
+.say-lead, .creds { will-change: transform, opacity; }
+/* While the scroll is driving the record, its entrance transition is off.
+   Otherwise the scroll and the transition animate the same element at
+   once and the record trails the scroll by the length of the stagger,
+   which reads as a stutter rather than as movement. The rows inside it
+   keep their own entrance: they are gated by this wrapper's opacity, so
+   they never fight it. */
+.js-beat .panel.say .creds { transition: none; }
 /* The work does not peek in beside the introduction. A screenshot bleeding
    in at fifteen percent opacity reads as a mistake, not as a promise, so
    the first card is given enough room after it to clear the stage on a wide
