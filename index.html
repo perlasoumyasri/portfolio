@@ -14,6 +14,11 @@
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:image" content="https://perlasoumyasri.github.io/portfolio/assets/og.png" />
+  <!-- Runs before the first paint. The opening panel stays hidden until
+       site.js has set its opening state, so the record never shows for a
+       moment and then vanishes while the script is still downloading.
+       If site.js fails, the page shows itself after 3.5s anyway. -->
+  <script>document.documentElement.classList.add('js-early');setTimeout(function(){document.documentElement.classList.remove('js-early')},3500);</script>
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" href="favicon.ico" sizes="any" />
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />

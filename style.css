@@ -271,6 +271,15 @@ img, video { max-width: 100%; }
    keep their own entrance: they are gated by this wrapper's opacity, so
    they never fight it. */
 .js-beat .panel.say .creds, .js-beat .panel.say .go { transition: none; }
+
+/* Before site.js has run, the opening panel is held back entirely. On a
+   real connection the page and its styles arrive before the script, and
+   without this the record was visible for the first second or so, then
+   vanished, then rose: it read as being there from the start. Only where
+   the opening beat runs; stacked and reduced motion show it at once. */
+@media (min-width: 701px) and (prefers-reduced-motion: no-preference) {
+  .js-early .hs .panel.say { opacity: 0; }
+}
 /* The work does not peek in beside the introduction. A screenshot bleeding
    in at fifteen percent opacity reads as a mistake, not as a promise, so
    the first card is given enough room after it to clear the stage on a wide

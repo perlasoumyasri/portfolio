@@ -569,14 +569,17 @@
     var vids   = [].slice.call(track.querySelectorAll('video'));
     var dist = 0, top = 0, active = -1, ticking = false;
 
-    /* The opening beat. Before the strip moves sideways at all, the first
-       stretch of scrolling is spent on the introduction alone: the claim
-       starts centred on the screen by itself and lifts into its resting
-       place while the record rises into view under it. The record is the
-       evidence, and evidence reads better once the claim it supports has
-       been read. Reversible, because it is tied to scroll position and
-       not to a one-shot trigger. */
-    var lead = 0, shift = 0, RISE = 72;
+    /* The opening beat. The claim opens centred on the screen by itself,
+       and after a short pause it lifts into its resting place while the
+       record rises into view under it. The record is the evidence, and
+       evidence reads better once the claim it supports has been read.
+
+       It runs on a timer, not on the scroll. Tied to the scroll, the
+       record only appeared for someone who scrolled, so a visitor who sat
+       on the first screen never saw the experience at all. A scroll that
+       comes before the timer brings it forward, so nobody waits on it. */
+    var shift = 0, RISE = 72, risen = false, riseTimer = null;
+    var RISE_AFTER = 1800;   /* after the lines and the headline sweep land */
     var sayLead = panels[0] && panels[0].querySelector('.say-lead');
     var sayCreds = panels[0] && panels[0].querySelector('.creds');
     /* "Keep scrolling" has done its job the moment the reader scrolls, and
@@ -629,16 +632,15 @@
         /* Stacked, everything sits where it belongs and nothing is held
            back, so any inline state from a wider window is cleared. */
         sec.classList.remove('js-beat');
-        if (sayLead) sayLead.style.transform = '';
-        if (sayCreds) { sayCreds.style.transform = ''; sayCreds.style.opacity = ''; }
-        if (sayGo) sayGo.style.opacity = '';
+        [sayLead, sayCreds, sayGo].forEach(function (el) {
+          if (el) { el.style.transition = ''; el.style.transform = ''; el.style.opacity = ''; }
+        });
         return;
       }
-      /* The record is driven by the scroll here, so it must not also be
+      /* The record's rise is driven from here, so it must not also be
          running the entrance transition. Two things animating one element
-         is the record lagging the scroll by the length of the stagger,
-         which reads as broken rather than smooth. Stacked, the class is
-         off and the entrance takes it back. */
+         fight, and the record arrives late or not at all. Stacked, the
+         class is off and the entrance takes it back. */
       sec.classList.add('js-beat');
       dist = Math.max(0, track.scrollWidth - view.clientWidth);
       /* How far the claim has to travel is measured, not guessed: it is
@@ -648,32 +650,50 @@
       if (sayLead && sayCreds) {
         var cs = window.getComputedStyle(sayCreds);
         shift = (sayCreds.offsetHeight + (parseFloat(cs.marginTop) || 0)) / 2;
-        lead = Math.round(Math.min(window.innerHeight * 0.6, 520));
-      } else { lead = 0; shift = 0; }
-      sec.style.height = (window.innerHeight + lead + dist) + 'px';
+      } else { shift = 0; }
+      sec.style.height = (window.innerHeight + dist) + 'px';
       top = sec.getBoundingClientRect().top + window.scrollY;
+      place(false);
+      if (!risen && !riseTimer) riseTimer = setTimeout(rise, RISE_AFTER);
       draw();
+    }
+
+    /* Held or risen, with or without the movement. Inline styles, so they
+       win over the entrance rules without a fight over specificity. */
+    function place(animate) {
+      var up = risen;
+      var ease = 'cubic-bezier(.23, 1, .32, 1)';
+      if (sayLead) {
+        sayLead.style.transition = animate ? 'transform 900ms ' + ease : 'none';
+        sayLead.style.transform = 'translate3d(0,' + (up ? 0 : shift).toFixed(1) + 'px,0)';
+      }
+      if (sayCreds) {
+        sayCreds.style.transition = animate ? 'transform 900ms ' + ease + ', opacity 700ms ' + ease : 'none';
+        sayCreds.style.transform = 'translate3d(0,' + (up ? 0 : RISE) + 'px,0)';
+        sayCreds.style.opacity = up ? '1' : '0';
+      }
+      /* "Keep scrolling" leaves as the record arrives. Once the record has
+         risen it would sit on top of the Tata Steel row. */
+      if (sayGo) {
+        sayGo.style.transition = animate ? 'opacity 400ms ' + ease : 'none';
+        sayGo.style.opacity = up ? '0' : '1';
+      }
+    }
+    function rise() {
+      if (risen) return;
+      risen = true;
+      clearTimeout(riseTimer);
+      place(true);
     }
 
     function draw() {
       if (off()) return;
       var y = window.scrollY - top;
+      /* Scrolling before the pause is over is an answer in itself: the
+         reader is ready, so the record comes up now. */
+      if (!risen && y > 4) rise();
 
-      /* The opening beat runs first, and the strip does not begin to move
-         until it has finished. Smoothstepped, so the movement eases in and
-         out of the scroll instead of tracking it in a straight line. */
-      var p = lead > 0 ? (y < 0 ? 0 : y > lead ? 1 : y / lead) : 1;
-      var e = p * p * (3 - 2 * p);
-      if (sayLead) {
-        sayLead.style.transform = 'translate3d(0,' + ((1 - e) * shift).toFixed(1) + 'px,0)';
-      }
-      if (sayCreds) {
-        sayCreds.style.transform = 'translate3d(0,' + ((1 - e) * RISE).toFixed(1) + 'px,0)';
-        sayCreds.style.opacity = e.toFixed(3);
-      }
-      if (sayGo) sayGo.style.opacity = (1 - e).toFixed(3);
-
-      var s = y - lead;
+      var s = y;
       s = s < 0 ? 0 : s > dist ? dist : s;
 
       track.style.transform = 'translate3d(' + (-s) + 'px,0,0)';
@@ -788,7 +808,13 @@
 
   function reels() { [].forEach.call(document.querySelectorAll('.reel'), reel); }
 
-  function init() { theatre(); reels(); horizontal(); copyPills(); progress(); reveal(); compare(); inviewVideo(); hoverVideo(); }
+  function init() {
+    theatre(); reels(); horizontal();
+    /* The opening state is set, so the panel can be shown. Same task as
+       the setup above, so no frame is ever painted in between. */
+    document.documentElement.classList.remove('js-early');
+    copyPills(); progress(); reveal(); compare(); inviewVideo(); hoverVideo();
+  }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
