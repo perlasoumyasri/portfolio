@@ -372,8 +372,12 @@ img, video { max-width: 100%; }
   .hs .panel.say { position: relative; }
   .hs .panel.say .go { position: absolute; left: 0; bottom: 18px; margin-top: 0; }
 }
-.go i { font-style: normal; color: var(--accent); animation: nudge 1.9s var(--ease-soft) infinite; }
-@keyframes nudge { 0%,100% { transform: translateX(0) } 50% { transform: translateX(6px) } }
+/* The cue points and moves the way the hand moves, which is down. The
+   strip travels sideways, but nobody scrolls sideways to make it do so,
+   and a right arrow that also nudged right was telling people to swipe
+   or scroll in a direction their mouse does not go. */
+.go i { font-style: normal; color: var(--accent); display: inline-block; animation: nudge 1.9s var(--ease-soft) infinite; }
+@keyframes nudge { 0%,100% { transform: translateY(0) } 50% { transform: translateY(4px) } }
 
 /* ---- The record, under the claim -------------------------- *
    Experience belongs on the first screen, because a founder scans
