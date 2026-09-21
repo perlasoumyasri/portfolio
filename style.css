@@ -80,7 +80,9 @@
   /* The vh term matters. Panel one now carries the record as well as the
      claim, so on a short laptop the headline has to give way rather than
      push the evidence off the bottom of the stage. */
-  --t-display: clamp(38px, min(5.6vw, 8.4vh), 76px);
+  /* A step smaller than before, so the claim and the button that acts on
+     it share the first screen without the button being pushed off it. */
+  --t-display: clamp(36px, min(5vw, 7.4vh), 66px);
   --t-title:   clamp(30px, 4vw, 46px);
   --t-h2:      clamp(26px, 2.8vw, 34px);
   --t-h3:      21px;
@@ -268,7 +270,7 @@ img, video { max-width: 100%; }
    which reads as a stutter rather than as movement. The rows inside it
    keep their own entrance: they are gated by this wrapper's opacity, so
    they never fight it. */
-.js-beat .panel.say .creds { transition: none; }
+.js-beat .panel.say .creds, .js-beat .panel.say .go { transition: none; }
 /* The work does not peek in beside the introduction. A screenshot bleeding
    in at fifteen percent opacity reads as a mistake, not as a promise, so
    the first card is given enough room after it to clear the stage on a wide
@@ -340,13 +342,23 @@ img, video { max-width: 100%; }
   margin-top: var(--s5); font-size: 18px; font-weight: 500;
   line-height: 1.45; color: var(--ink); max-width: 40ch;
 }
-.hs .panel.say > p {
+/* The claim's lines sit inside .say-lead now, so these rules name that
+   wrapper. When it was added they still said `.panel.say > p`, matched
+   nothing, and the lines silently lost their colour, size and spacing. */
+.hs .panel.say .say-lead > p {
   margin-top: var(--s3); font-size: 16.5px; line-height: 1.6;
   color: var(--muted); max-width: 58ch;
 }
 /* What the founder gets is louder than what I do. He is not buying the
    process, he is buying the thing he can run afterwards. */
-.hs .panel.say > p b { font-weight: 500; color: var(--iv2); }
+.hs .panel.say .say-lead > p b { font-weight: 500; color: var(--iv2); }
+
+/* The call to action. The solid button is the thing to press; the ghost
+   beside it is the quieter alternative, so the eye is not asked to choose
+   between two equals. */
+.say-cta { display: flex; flex-wrap: wrap; gap: var(--s3); margin-top: clamp(20px, 3.2vh, 30px); }
+.say-cta .cta { display: inline-flex; align-items: center; gap: 9px; padding: 13px 24px; }
+.say-cta .cta svg { width: 18px; height: 18px; fill: currentColor; flex: none; }
 
 .go {
   margin-top: var(--s7); font-family: var(--sans); font-size: 13px; font-weight: 500;
@@ -424,6 +436,21 @@ img, video { max-width: 100%; }
 }
 .js-stagger .panel .cr:first-child { --cd: 620ms; }
 .js-stagger .panel .cr:last-child  { --cd: 780ms; }
+
+/* Short screens. A 1440 by 900 laptop gives the page only about 790px once
+   the browser's own bar is counted, and a shared screen on a call is often
+   smaller still, so this is the ordinary case rather than the edge. With
+   the button added, the claim and the record ran into the progress rail
+   at 720 tall. The space comes out of the gaps and the headline's height
+   term, never out of the content. */
+@media (min-width: 701px) and (max-height: 820px) {
+  :root { --t-display: clamp(34px, min(5vw, 6.6vh), 66px); }
+  .hs .panel.say .say-lead > p.sub-claim { margin-top: 14px; }
+  .say-cta { margin-top: 16px; }
+  .say-cta .cta { padding: 11px 21px; }
+  .creds { margin-top: 16px; }
+  .cr { padding: 11px 0 12px; }
+}
 
 /* ---- Panels 3 to 7 · the work ------------------------------ *
    Every figure hangs from the same top line and captions grow

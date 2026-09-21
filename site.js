@@ -579,6 +579,10 @@
     var lead = 0, shift = 0, RISE = 72;
     var sayLead = panels[0] && panels[0].querySelector('.say-lead');
     var sayCreds = panels[0] && panels[0].querySelector('.creds');
+    /* "Keep scrolling" has done its job the moment the reader scrolls, and
+       once the record has risen it would sit on top of it, so it leaves
+       as the record arrives. */
+    var sayGo = panels[0] && panels[0].querySelector('.go');
 
     /* Progressive disclosure. A text panel's children enter one after the
        other when the panel arrives at centre, so the reader is handed the
@@ -627,6 +631,7 @@
         sec.classList.remove('js-beat');
         if (sayLead) sayLead.style.transform = '';
         if (sayCreds) { sayCreds.style.transform = ''; sayCreds.style.opacity = ''; }
+        if (sayGo) sayGo.style.opacity = '';
         return;
       }
       /* The record is driven by the scroll here, so it must not also be
@@ -666,6 +671,7 @@
         sayCreds.style.transform = 'translate3d(0,' + ((1 - e) * RISE).toFixed(1) + 'px,0)';
         sayCreds.style.opacity = e.toFixed(3);
       }
+      if (sayGo) sayGo.style.opacity = (1 - e).toFixed(3);
 
       var s = y - lead;
       s = s < 0 ? 0 : s > dist ? dist : s;
