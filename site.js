@@ -924,7 +924,7 @@
    * mark, so "20% to 80%" is drawn as a single stroke, the way a person
    * would underline it.
    * ------------------------------------------------------------------ */
-  var FIG = /\d[\d,.]*[+%]?(?:\s(?:students|cohorts|leads|hours?|days?|weeks?|months?))?(?:\sto\s\d[\d,.]*[+%]?)?/g;
+  var FIG = /\d[\d,.]*[+%]?(?:\s(?:students|cohorts|leads|people|hours?|days?|weeks?|months?))?(?:\sto\s\d[\d,.]*[+%]?)?/g;
 
   function esc(t) {
     return t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
