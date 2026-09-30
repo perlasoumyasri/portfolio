@@ -769,6 +769,16 @@ img, video { max-width: 100%; }
    the clips that prove it. Its children arrive in reading order
    through the stagger: label, claim, how, who. */
 .hs .panel.state { justify-content: center; }
+/* A statement card opens a project, so it belongs to the clips after it,
+   not the ones before it. Two moves make that read without a label:
+   a chapter break in front of it, the same extra room the claim leaves
+   before the first project, and a card only as wide as its words, so
+   the space after it is the ordinary small step into its own clips.
+   Only on the pinned strip; stacked on a phone the order says it. */
+@media (min-width: 701px) and (prefers-reduced-motion: no-preference) {
+  .hs .panel.state { width: min(760px, 92%); }
+  .hs .panel.med + .panel.state { margin-left: clamp(24px, 16vw, 230px); }
+}
 .hs .panel.state .eyebrow { color: var(--iv4); margin-bottom: var(--s5); }
 .hs .panel.state h3 {
   font-family: var(--sans); font-weight: 800;
