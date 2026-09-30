@@ -294,6 +294,8 @@
 
     var vids = [].slice.call(box.querySelectorAll('video'));
     var i = 0, timer = null, wasOn = false, replays = 0, paused = false;
+    /* The caption and the filmstrip sit side by side (see .cap-film). */
+    if (rail.parentNode) rail.parentNode.classList.add('cap-film');
 
     /* The clip's own last frame is the cue to move on. Reel clips do not
        carry the loop attribute, because a clip that restarts and plays a
@@ -337,8 +339,13 @@
         b.className = 'rb' + (n === i ? ' on' : '');
         b.type = 'button';
         b.style.setProperty('--rt', barTime(v) + 'ms');
-        b.setAttribute('aria-label', 'Clip ' + (n + 1) + ' of ' + vids.length);
-        b.innerHTML = '<span class="bar"></span>';
+        /* The clip's own poster frame, so the strip shows what each clip
+           is. The label reads its caption's first sentence aloud. */
+        var still = v.getAttribute('poster');
+        var line = (v.getAttribute('data-cap') || '').split('. ')[0];
+        b.setAttribute('aria-label', 'Clip ' + (n + 1) + ' of ' + vids.length + (line ? ': ' + line : ''));
+        b.innerHTML = (still ? '<img src="' + still + '" alt="" decoding="async">' : '') +
+                      '<span class="bar"></span>';
         b.addEventListener('click', function () { show(n); restart(); });
         rail.appendChild(b);
       });
@@ -382,7 +389,7 @@
         if (bar) { bar.style.animation = 'none'; void bar.offsetWidth; bar.style.animation = ''; }
         act.classList.add('on');
       }
-      cap.textContent = vids[i].getAttribute('data-cap') || '';
+      marked(cap, vids[i].getAttribute('data-cap') || '');
       /* Metadata often lands after the first show, so the bar is corrected
          once the real duration is known. */
       if (live && live.readyState < 1) {
@@ -405,7 +412,10 @@
     function tick() {
       var on = onStage();
       if (!on) {
-        if (wasOn) { wasOn = false; clearPause(); show(0); }
+        /* Leaving keeps the place. A visitor who scrolls on during clip
+           two and comes back meets clip two again, not clip one a second
+           time while the rest stay unseen. */
+        if (wasOn) { wasOn = false; clearPause(); show(i); }
         /* Off stage the reel only watches for its own entrance. A short
            poll catches the arrival within half a second, so the first
            clip gets exactly one hold. Inheriting the stale full-length
@@ -416,7 +426,7 @@
         return;
       }
       if (paused) return;
-      if (!wasOn) { wasOn = true; show(0); }
+      if (!wasOn) { wasOn = true; show(i); }
       else { show(i + 1); }
       restart();
     }
@@ -603,9 +613,10 @@
          thing, but the entrance is still handed out line by line, so the
          wrapper is stepped through rather than counted as one child. */
       var wrap = p.querySelector('.say-lead');
+      var grid = p.querySelector('.grid');
       var kids = [];
       [].forEach.call(p.children, function (el) {
-        if (el === wrap) [].push.apply(kids, [].slice.call(el.children));
+        if (el === wrap || el === grid) [].push.apply(kids, [].slice.call(el.children));
         else kids.push(el);
       });
       kids.forEach(function (el, i) {
@@ -806,14 +817,190 @@
     });
   }
 
+  /* ------------------------------------------------------------------ *
+   * The figures count up
+   *
+   * These numbers are the whole argument of the page: they are what the
+   * client got. So when a figure card arrives, each number runs up to
+   * itself instead of being sitting there already.
+   *
+   * The final value is always in the HTML and is never cleared, so a
+   * browser that refuses the animation, a phone, or a reader who asked
+   * for less motion all see the real number with nothing missing. The
+   * count resets when the card leaves, so scrolling back plays it again,
+   * which is what happens on a call when she scrolls up to make a point.
+   * ------------------------------------------------------------------ */
+  function figures() {
+    var cards = document.querySelectorAll('.panel.nums');
+    if (!cards.length || !window.MutationObserver) return;
+
+    function parse(txt) {
+      var m = /^([^0-9]*)([0-9][0-9,]*(?:\.[0-9]+)?)(.*)$/.exec(txt);
+      if (!m) return null;
+      var raw = m[2];
+      var dot = raw.indexOf('.');
+      return {
+        pre: m[1], post: m[3],
+        end: parseFloat(raw.replace(/,/g, '')),
+        dp: dot === -1 ? 0 : raw.length - dot - 1,
+        group: raw.indexOf(',') !== -1
+      };
+    }
+
+    function render(f, v) {
+      var t = f.dp ? v.toFixed(f.dp) : String(Math.round(v));
+      if (f.group) {
+        var bits = t.split('.');
+        bits[0] = bits[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        t = bits.join('.');
+      }
+      return f.pre + t + f.post;
+    }
+
+    [].forEach.call(cards, function (card) {
+      var nums = [].slice.call(card.querySelectorAll('.n b'));
+      var plan = nums.map(function (el) {
+        var f = parse(el.textContent.trim());
+        /* A single digit has nothing to count through: a 1 that sits at 0
+           and then flips reads as a glitch, not as a count. */
+        if (f && f.end < 10) return null;
+        if (f) f.el = el, f.full = el.textContent;
+        return f;
+      }).filter(Boolean);
+      if (!plan.length) return;
+
+      var raf = null, running = false;
+
+      function stop() {
+        if (raf) cancelAnimationFrame(raf), raf = null;
+        running = false;
+        plan.forEach(function (f) { f.el.textContent = f.full; f.el.style.removeProperty('--p'); });
+      }
+
+      function run() {
+        if (running || reduced.matches) return;
+        running = true;
+        /* The tiles themselves arrive on a stagger, so each number waits
+           for its own tile before it starts moving. */
+        var DUR = 1000, LAG = 110;
+        var t0 = performance.now();
+        (function frame(now) {
+          var live = false;
+          plan.forEach(function (f, i) {
+            var t = (now - t0 - i * LAG) / DUR;
+            if (t < 0) { f.el.textContent = render(f, 0); f.el.style.setProperty('--p', 0); live = true; return; }
+            if (t >= 1) { f.el.textContent = f.full; f.el.style.removeProperty('--p'); return; }
+            live = true;
+            var e = 1 - Math.pow(1 - t, 3);   /* ease out, lands softly */
+            f.el.textContent = render(f, f.end * e);
+            /* The stroke under the figure fills with the count. */
+            f.el.style.setProperty('--p', e.toFixed(3));
+          });
+          raf = live ? requestAnimationFrame(frame) : null;
+          if (!live) running = false;
+        })(t0);
+      }
+
+      function here() { return card.classList.contains('on') || card.classList.contains('seen'); }
+      new MutationObserver(function () {
+        if (here()) run();
+        else stop();
+      }).observe(card, { attributes: true, attributeFilter: ['class'] });
+
+      if (here()) run();
+    });
+  }
+
+  /* ------------------------------------------------------------------ *
+   * The marker
+   *
+   * Every number that says what the client gained is marked in orange,
+   * and on a desktop the mark is drawn by a pen that travels through the
+   * line in reading order. The drawing itself is CSS; this finds the
+   * numbers and numbers the marks, so each one knows its turn.
+   *
+   * A number here is a figure with its unit if it has one: "300+
+   * students", "20%", "3 cohorts". Two figures joined by "to" are one
+   * mark, so "20% to 80%" is drawn as a single stroke, the way a person
+   * would underline it.
+   * ------------------------------------------------------------------ */
+  var FIG = /\d[\d,.]*[+%]?(?:\s(?:students|cohorts|leads|hours?|days?|weeks?|months?))?(?:\sto\s\d[\d,.]*[+%]?)?/g;
+
+  function esc(t) {
+    return t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function marked(el, text) {
+    var n = 0;
+    el.innerHTML = esc(text).replace(FIG, function (m) {
+      /* A figure that ends a sentence brings its full stop along in the
+         match; the stop belongs to the sentence, not to the mark. */
+      var tail = '';
+      if (/[.,]$/.test(m)) { tail = m.slice(-1); m = m.slice(0, -1); }
+      return '<mark class="mk" style="--i:' + (n++) + '">' + m + '</mark>' + tail;
+    });
+  }
+
+  function marks() {
+    /* Lines written into the page get the same treatment as the captions. */
+    [].forEach.call(document.querySelectorAll('.reel-claim'), function (el) {
+      marked(el, el.textContent);
+    });
+    [].forEach.call(document.querySelectorAll('.st-sub'), function (el) {
+      [].forEach.call(el.querySelectorAll('.mk'), function (m, k) {
+        m.style.setProperty('--i', k);
+      });
+    });
+    /* The pen draws wherever motion is allowed: on the pinned strip a card
+       arrives when it reaches the centre (.on), on a phone when it scrolls
+       into view (.seen). Under reduced motion the marks are simply there. */
+    var mq = window.matchMedia('(prefers-reduced-motion: no-preference)');
+    function sync() { document.documentElement.classList.toggle('mk-arm', mq.matches); }
+    sync();
+    if (mq.addEventListener) mq.addEventListener('change', sync);
+    else if (mq.addListener) mq.addListener(sync);
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Arriving, on a phone
+   *
+   * On a phone the strip is a plain stack that scrolls the ordinary way,
+   * so no card ever reaches "the centre" and nothing gets .on. This gives
+   * the phone its own arrival: a card is .seen once a third of it is on
+   * screen, and loses it when it has fully left, so scrolling back plays
+   * it again. The marker, the count and the chip all listen for it.
+   * Scrolling itself is never touched.
+   * ------------------------------------------------------------------ */
+  function arrivals() {
+    if (!('IntersectionObserver' in window)) return;
+    var mq = window.matchMedia('(max-width: 700px) and (prefers-reduced-motion: no-preference)');
+    var panels = [].slice.call(document.querySelectorAll('#track > .panel'));
+    var io = null;
+    function sync() {
+      if (io) { io.disconnect(); io = null; }
+      panels.forEach(function (p) { p.classList.remove('seen'); });
+      if (!mq.matches) return;
+      io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.intersectionRatio >= 0.34) e.target.classList.add('seen');
+          else if (!e.isIntersecting) e.target.classList.remove('seen');
+        });
+      }, { threshold: [0, 0.34] });
+      panels.forEach(function (p) { io.observe(p); });
+    }
+    sync();
+    if (mq.addEventListener) mq.addEventListener('change', sync);
+    else if (mq.addListener) mq.addListener(sync);
+  }
+
   function reels() { [].forEach.call(document.querySelectorAll('.reel'), reel); }
 
   function init() {
-    theatre(); reels(); horizontal();
+    marks(); theatre(); reels(); horizontal();
     /* The opening state is set, so the panel can be shown. Same task as
        the setup above, so no frame is ever painted in between. */
     document.documentElement.classList.remove('js-early');
-    copyPills(); progress(); reveal(); compare(); inviewVideo(); hoverVideo();
+    copyPills(); progress(); reveal(); compare(); inviewVideo(); hoverVideo(); figures(); arrivals();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

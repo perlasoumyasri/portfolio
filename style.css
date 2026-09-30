@@ -7,69 +7,81 @@
    bottom of this file: that is what turned the last version into
    fifty !important declarations fighting each other.
 
-   THE SYSTEM (v4, the white version)
-   Surface   White. The work sits inside device frames: a thick pale
-             ring, a large radius and a soft shadow, the way a product
-             company shows its screens. Data sits in rounded tiles.
+   THE SYSTEM (v4, dark since 2026-10-01)
+   Surface   Deep blue-black. The work sits inside device frames: a
+             lifted bezel, a large radius, a deep shadow with a hairline
+             of light on the top edge. Data sits in lifted tiles.
    Type      Inter, and only Inter. Headlines at 800 with tight
-             spacing; filler words in the headline drop to light grey
-             and the one phrase that matters sits in a yellow chip.
-             Labels are small, medium weight, sentence case. Nothing
-             is letterspaced uppercase and nothing is mono.
-   Ink       Four stops of grey on white. No ad-hoc greys.
-   Accent    One yellow, used as marks: the chip, the live dot, the
-             progress fill, the dot bar. Yellow text on white is only
-             ever the dark variant, which passes contrast.
-   Shape     Round. Pills at full radius, frames at 28px, tiles at
-             16 to 20px. Hairlines are light grey, never black.
+             spacing; filler words in the headline drop to a quiet grey
+             and the phrase that matters sits in a chip.
+   Ink       Near white and three quieter stops. No ad-hoc greys.
+   Colour    Two, each with one meaning. Blue is who she is: the headline
+             sweep, the live dot, the progress, the playing clip. Orange
+             is what a client got: the outcome chips, the marker drawn
+             through every number, the stroke under each figure.
+   Shape     Round. Pills at full radius, frames at 26px, tiles at
+             16 to 20px. Hairlines are a lifted blue-grey, never white.
    ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
-  /* ---- Surface. White, with two quiet greys for tiles. ---- */
-  --page:   #f5f6f8;   /* a cool, very light grey, so white lifts off it */
-  --paper:  #f5f6f8;
-  --panel:  #e6eefc;   /* the soft blue stage behind the WhatsApp collage */
-  --plate:  #f5f6f8;   /* the strip's stage is the page itself */
-  --plate2: #ffffff;   /* tile fill */
-  --bezel:  #0f1420;   /* the dark frame around every recording */
+  /* ---- Surface. Deep blue-black, with a lifted panel for tiles. ----
+     Chosen 2026-10-01 over the white page, which read as bland. On a
+     dark page her recordings are the brightest thing on screen, so the
+     work leads without any help. Not pure black: pure black makes big
+     white type vibrate and crushes to a flat hole on a Zoom share. */
+  --page:   #0a0e1a;
+  --paper:  #0a0e1a;
+  --plate:  #0a0e1a;   /* the strip's stage is the page itself */
+  --plate2: #121829;   /* tile fill, lifted off the page */
+  --panel:  #16223f;   /* the blue stage behind the WhatsApp collage */
+  --bezel:  #1a2233;   /* the frame around every recording reads as a device */
 
-  /* ---- Ink. Four stops of grey on white. ---- */
-  --ink:    #0a0a0a;
-  --muted:  #6b7280;
-  --faint:  #9ca3af;
-  --line:   #e3e6ec;   /* hairline inside a section */
-  --rule:   #e3e6ec;   /* structural hairline between sections */
+  /* ---- Ink. Near white, not pure white. 17.49:1 on the page. ---- */
+  --ink:    #f2f4f8;
+  --muted:  #a3abbb;   /* 8.34:1 */
+  --faint:  #79839a;   /* 5.07:1 */
+  --line:   #232a3d;   /* hairline inside a section */
+  --rule:   #232a3d;   /* structural hairline between sections */
 
   /* The strip's ink tokens keep their names so every rule below still
-     reads, but they now point at the same dark stops as the page. */
-  --iv1: #0a0a0a;
-  --iv2: #4b5563;
-  --iv3: #6b7280;
-  --iv4: #9ca3af;
-  --ivline: #e3e6ec;
-  --ivline2: #eceef3;
+     reads. They point at the same stops as the page. */
+  --iv1: #f2f4f8;
+  --iv2: #c3cad8;
+  --iv3: #a3abbb;
+  --iv4: #79839a;
+  --ivline: #232a3d;
+  --ivline2: #1b2236;
 
-  /* Headline filler words, and the chip around the phrase that matters. */
-  /* The quiet words in the headline. At #c9ccd3 they sat at 1.49:1 on
-     this page, well under the 3:1 that large text needs, so they were
-     close to invisible for a lot of people. This is 3.34:1: still
-     clearly quieter than the black words, but actually readable. */
-  --dim:       #82878f;
-  --chip:      #e3ecff;   /* blue chip */
-  --chip-ring: #eff4ff;
-  --chip2:     #ffe9db;   /* orange chip */
-  --chip2-ring:#fff3eb;
-  --chip2-ink: #e8590c;
-  --ring:      #eceef3;   /* the quiet fill a control takes on hover */
+  /* A filled button is near white, so its label is the page colour, and
+     it brightens to pure white on hover. */
+  --on-ink:    #0a0e1a;
+  --ink-hover: #ffffff;
 
-  /* ---- Accent. Blue, the colour that made nextdoor's map read. ---- */
-  --accent: #2563eb;   /* marks: live dot, progress fill, dot bar, chip text */
-  --deep:   #1d4ed8;   /* accent as text on the light page */
+  /* Headline filler words. 3.41:1, clear of the 3:1 large text needs and
+     still well behind the bright words. */
+  --dim:       #5d6780;
+  --chip:      #1b2b52;   /* blue chip */
+  --chip-ring: #24365f;
+  --chip2:     #3a2113;   /* orange chip */
+  --chip2-ring:#4a2a18;
+  --chip2-ink: #ffb27a;   /* 8.46:1 on its chip */
+  --ring:      #1b2236;   /* the quiet fill a control takes on hover */
 
-  --good: #2f7d4f;
-  --bad:  #b4341c;
+  /* The marker. Orange means an outcome: every number that says what a
+     client gained is marked in it, the way the blue sweep marks who she
+     is. Text on the marker 7.46:1. */
+  --mark:     #6b3a17;
+  --mark-ink: #ffe0c7;
+  --nib-rgb:  255 154 77;   /* the bright leading edge of the stroke */
+
+  /* ---- Accent. Blue, opened up so it carries on dark. ---- */
+  --accent: #3b82f6;   /* 5.24:1, for marks: live dot, progress, rings */
+  --deep:   #93b4ff;   /* 9.36:1, for accent as text */
+
+  --good: #4ade80;
+  --bad:  #f87171;
 
   /* ---- Type ---- */
   /* One family. The three names stay so no rule has to change. */
@@ -155,13 +167,13 @@ img, video { max-width: 100%; }
 .cta {
   display: inline-block;
   background: var(--ink); border-radius: 99px; padding: 14px 28px;
-  font-weight: 600; font-size: 15px; color: #fff;
+  font-weight: 600; font-size: 15px; color: var(--on-ink);
   text-decoration: none; white-space: nowrap;
   transition: background var(--d-hover) var(--ease-soft),
               transform var(--d-press) var(--ease-out);
 }
 .cta:active { transform: scale(.97); }
-@media (hover: hover) and (pointer: fine) { .cta:hover { background: #262626; } }
+@media (hover: hover) and (pointer: fine) { .cta:hover { background: var(--ink-hover); } }
 
 /* ============================================================
    TOP BAR
@@ -190,13 +202,13 @@ img, video { max-width: 100%; }
               transform var(--d-press) var(--ease-out);
 }
 .pill.solid {
-  background: var(--ink); color: #fff;
+  background: var(--ink); color: var(--on-ink);
   border-color: var(--ink); font-weight: 600; padding: 10px 18px;
 }
 .pill:active { transform: scale(.97); }
 @media (hover: hover) and (pointer: fine) {
   .pill:hover { background: var(--ring); }
-  .pill.solid:hover { background: #262626; border-color: #262626; }
+  .pill.solid:hover { background: var(--ink-hover); border-color: var(--ink-hover); }
 }
 
 /* ============================================================
@@ -226,7 +238,7 @@ img, video { max-width: 100%; }
    colour in it before the work arrives. */
 .hs-pin::before {
   content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
-  background: radial-gradient(56% 48% at 50% 0%, rgba(37,99,235,.09), transparent 72%);
+  background: radial-gradient(56% 48% at 50% 0%, rgba(59,130,246,.20), transparent 72%);
 }
 
 .hs-view { flex: 1; position: relative; overflow: hidden; z-index: 1; }
@@ -347,6 +359,22 @@ img, video { max-width: 100%; }
   fill: currentColor;
 }
 
+/* The chip settles a beat after the line it sits in. The line is already
+   readable when this happens, so nothing is being withheld: the movement
+   only pulls the eye back to the phrase that carries the point. Scoped to
+   .js-stagger and to .on, the two classes JS owns, so a page without the
+   script shows the chip finished. */
+.js-stagger .panel.state h3 em {
+  transform: scale(.93);
+  transition: transform 520ms var(--ease-out) 440ms;
+}
+.js-stagger .panel.state.on h3 em,
+.js-stagger .panel.state.seen h3 em { transform: none; }
+/* Reduced motion: no card ever arrives, so the chip is simply finished. */
+@media (prefers-reduced-motion: reduce) {
+  .js-stagger .panel.state h3 em { transform: none !important; transition: none !important; }
+}
+
 .sub-claim {
   margin-top: var(--s5); font-size: 18px; font-weight: 500;
   line-height: 1.45; color: var(--ink); max-width: 40ch;
@@ -435,7 +463,9 @@ img, video { max-width: 100%; }
 .live {
   display: inline-block; font-style: normal; font-family: var(--sans);
   font-size: 10px; letter-spacing: .06em; text-transform: uppercase; font-weight: 700;
-  color: #fff; background: var(--accent);
+  /* The deeper blue, not the accent: white 10px type needs 4.5:1, and
+     on the brighter accent it only reaches 3.68:1. This is 5.17:1. */
+  color: #fff; background: #2563eb;
   padding: 3px 9px; border-radius: 99px;
 }
 
@@ -457,6 +487,9 @@ img, video { max-width: 100%; }
    at 720 tall. The space comes out of the gaps and the headline's height
    term, never out of the content. */
 @media (min-width: 701px) and (max-height: 820px) {
+  /* A smaller strip on a short laptop screen, so the reel with the
+     longest caption still clears the progress rail. */
+  .rb { width: 64px; height: 40px; border-radius: 8px; }
   :root { --t-display: clamp(34px, min(5vw, 6.6vh), 66px); }
   .hs .panel.say .say-lead > p.sub-claim { margin-top: 14px; }
   .say-cta { margin-top: 16px; }
@@ -477,7 +510,7 @@ img, video { max-width: 100%; }
      so a clip of any shape sits inside it cleanly. */
   padding: 12px; background: var(--bezel); border-radius: 26px;
   overflow: hidden; line-height: 0;
-  box-shadow: 0 2px 6px rgba(15,20,32,.10), 0 28px 70px rgba(15,20,32,.18);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.07), 0 2px 6px rgba(0,0,0,.5), 0 28px 70px rgba(0,0,0,.55);
 }
 .hs .panel.med video, .hs .panel.med img {
   width: 100%; height: 100%; object-fit: contain; display: block;
@@ -520,7 +553,7 @@ img, video { max-width: 100%; }
 .reax-card img {
   display: block; width: 100%; height: auto;
   border: 1px solid var(--line); border-radius: 14px;
-  box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 18px 40px rgba(0,0,0,.12);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 1px 3px rgba(0,0,0,.4), 0 18px 40px rgba(0,0,0,.45);
 }
 
 /* The collage. The long thread holds the left half, the one-line reply
@@ -563,10 +596,33 @@ img, video { max-width: 100%; }
 
 /* The corner label names where the messages came from. It is one static
    line, because all three are from the same place. */
+/* The sound button, bottom left, opposite the tag. It is a real control,
+   so it looks like the other pills on the page and is reachable by the
+   keyboard. Off, its waves are hidden and its label says so. */
+.reax-sound {
+  position: absolute; left: clamp(16px, 2.4vw, 30px); bottom: clamp(12px, 1.8vw, 20px);
+  z-index: 6; display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--sans); font-size: 12.5px; font-weight: 600; line-height: 1;
+  color: var(--ink); background: var(--plate2);
+  border: 1px solid var(--line); border-radius: 99px; padding: 7px 13px 7px 10px;
+  cursor: pointer;
+  transition: background var(--d-hover) var(--ease-soft), transform var(--d-press) var(--ease-out);
+}
+.reax-sound svg { width: 16px; height: 16px; flex: none; }
+.reax-sound svg path { fill: currentColor; }
+.reax-sound svg path.w { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.reax-sound.is-off svg path.w { opacity: .25; }
+.reax-sound:active { transform: scale(.96); }
+.reax-sound:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (hover: hover) and (pointer: fine) { .reax-sound:hover { background: var(--ring); } }
+/* On a phone the card is too narrow for the button and the tag side by
+   side, and the tag only repeats the caption underneath it, so it goes. */
+@media (max-width: 700px) { .reax-tag { display: none; } }
+
 .reax-tag {
   position: absolute; right: clamp(16px, 2.4vw, 30px); bottom: clamp(12px, 1.8vw, 20px);
   font-family: var(--sans); font-size: 11.5px; font-weight: 500;
-  color: var(--muted); background: #fff; border: 1px solid var(--line);
+  color: var(--muted); background: var(--plate2); border: 1px solid var(--line);
   border-radius: 99px; padding: 5px 11px; z-index: 6; line-height: 1.4;
 }
 
@@ -600,6 +656,22 @@ img, video { max-width: 100%; }
 .hs .panel.med .cap p b { display: block; font-size: 19px; font-weight: 700; line-height: 1.4; color: var(--iv1); letter-spacing: -.01em; }
 .fine { font-size: 15.5px; line-height: 1.6; color: var(--iv3); max-width: 76ch; }
 
+/* A reel's caption and its filmstrip share one row: the sentence on the
+   left, the stills on the right, both hanging from the top. Stacked, the
+   strip cost every video 40px of height, and these videos are what she
+   shares on a call. The drills line runs full width underneath. */
+.cap-film {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: clamp(20px, 3vw, 40px); align-items: start;
+}
+.cap-film > .subt { grid-column: 1; grid-row: 1; }
+.cap-film > .dots { grid-column: 2; grid-row: 1; margin-top: 3px; flex-wrap: nowrap; }
+.cap-film > .reel-claim { grid-column: 1 / -1; }
+@media (max-width: 700px) {
+  .cap-film { display: block; }
+  .cap-film > .dots { margin-top: var(--s3); flex-wrap: wrap; }
+}
+
 /* Card 03. The line under the video describes the clip that is playing
    and changes with it. This one stays put underneath it all: the claim
    the four clips are evidence for. The yellow tick marks it as the
@@ -628,10 +700,10 @@ img, video { max-width: 100%; }
 .rnav {
   position: absolute; top: 50%; transform: translateY(-50%); z-index: 3;
   width: 40px; height: 40px; border-radius: 50%;
-  border: 1px solid var(--line); background: #fff; color: var(--ink);
+  border: 1px solid var(--line); background: var(--plate2); color: var(--ink);
   display: flex; align-items: center; justify-content: center;
   padding: 0; cursor: pointer;
-  box-shadow: 0 2px 10px rgba(15,20,32,.18);
+  box-shadow: 0 2px 10px rgba(0,0,0,.5);
   opacity: 0;
   transition: opacity var(--d-hover) var(--ease-soft),
               background var(--d-hover) var(--ease-soft),
@@ -652,9 +724,9 @@ img, video { max-width: 100%; }
   position: absolute; left: 20px; bottom: 20px; z-index: 4;
   display: flex; align-items: center; gap: 7px;
   padding: 7px 13px 7px 11px; border-radius: 99px;
-  background: rgba(255,255,255,.94); color: var(--ink);
+  background: rgba(18,24,41,.94); color: var(--ink);
   font-family: var(--sans); font-size: 13px; font-weight: 600; line-height: 1;
-  box-shadow: 0 2px 10px rgba(15,20,32,.22);
+  box-shadow: 0 2px 10px rgba(0,0,0,.55);
   opacity: 0; transform: translateY(4px); pointer-events: none;
   transition: opacity var(--d-hover) var(--ease-soft),
               transform var(--d-hover) var(--ease-soft);
@@ -690,7 +762,7 @@ img, video { max-width: 100%; }
   min-height: calc(1.55em * 3); color: var(--iv1);
 }
 
-.dots { display: flex; gap: 9px; align-items: center; margin-top: var(--s3); }
+.dots { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: var(--s3); }
 
 /* ---- The statement card ------------------------------------ *
    The claim gets a stage of its own between the introduction and
@@ -707,6 +779,53 @@ img, video { max-width: 100%; }
   margin-top: var(--s5); font-size: 17px; line-height: 1.6;
   color: var(--iv2); max-width: 52ch;
 }
+/* The numbers are the point of the paragraph, so they sit at full
+   brightness and the words around them stay quieter. */
+.st-sub b { color: var(--iv1); font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* ---- The marker ------------------------------------------------ *
+   A highlighter stroke that travels through the text, number by number,
+   in reading order: each one starts as the last one lands, so it reads
+   as one pen moving, not several things blinking. The stroke has a
+   bright leading edge, the wet tip of the pen, which fades once the
+   stroke is complete. Then everything stays marked, so the numbers are
+   still lit while she talks over them on a call.
+
+   The finished state is the default. Only JS adds .mk-arm, and only on
+   a desktop that allows motion, so a phone, a reader who asked for less
+   motion, or a page where the script failed all see every number
+   already marked. The two registered properties let the browser animate
+   the gradient's stops; a browser without them simply shows the end. */
+@property --mk  { syntax: '<percentage>'; inherits: false; initial-value: 100%; }
+@property --nib { syntax: '<number>';     inherits: false; initial-value: 0; }
+
+.mk {
+  color: var(--mark-ink); font-weight: 700;
+  background-color: transparent;
+  background-image: linear-gradient(90deg,
+    var(--mark) 0, var(--mark) calc(var(--mk) - 3px),
+    rgb(var(--nib-rgb) / var(--nib)) calc(var(--mk) - 3px),
+    rgb(var(--nib-rgb) / var(--nib)) var(--mk),
+    transparent var(--mk));
+  background-repeat: no-repeat;
+  padding: .04em .2em .06em; margin: 0 -.06em;
+  border-radius: .28em;
+}
+.mk-arm .hs .panel .mk { --mk: 0%; --nib: 0; color: var(--iv1); }
+.mk-arm .hs .panel.on .mk,
+.mk-arm .hs .panel.seen .mk {
+  animation: mk-sweep 620ms both;
+  animation-delay: calc(var(--mk-base, 300ms) + var(--i, 0) * 470ms);
+}
+@keyframes mk-sweep {
+  0%   { --mk: 0%;   --nib: 1; color: var(--iv1); animation-timing-function: cubic-bezier(.45, 0, .2, 1); }
+  76%  { --mk: 100%; --nib: 1; color: var(--mark-ink); }
+  100% { --mk: 100%; --nib: 0; color: var(--mark-ink); }
+}
+/* The statement paragraph arrives on its own stagger first, so its pen
+   waits for the words to be there before it starts marking them. */
+.hs .panel.state .st-sub .mk { --mk-base: 820ms; }
+.hs .panel .reel-claim .mk  { --mk-base: 700ms; }
 /* The client line is a credential, not a footnote. It reads at body size
    and the name itself sits at full brightness. */
 .st-client {
@@ -715,24 +834,37 @@ img, video { max-width: 100%; }
   font-size: 16px; color: var(--iv2);
 }
 .st-client b { color: var(--iv1); font-weight: 600; }
+/* ---- The filmstrip ------------------------------------------ *
+   Each clip in a reel has a small still of itself under the caption.
+   The dots it replaced said "there is more" to nobody: a visitor who
+   scrolled on after the first clip never learnt the other three
+   existed. A row of pictures says how many there are and what they are
+   at a glance, and any one of them is a tap away. The one playing is
+   lit, ringed and fills with its own progress; the rest wait, dimmed.
+   The stills are the clips' own poster frames, which the page has
+   already downloaded, so the strip costs nothing to load. */
 .rb {
-  position: relative; width: 7px; height: 7px; border-radius: 99px;
-  background: #cfd3db; border: 0; padding: 0;
-  cursor: pointer; overflow: hidden; flex: none;
-  transition: width 340ms var(--ease-out), background var(--d-hover) var(--ease-soft);
+  position: relative; width: 76px; height: 48px; flex: none;
+  padding: 0; border: 0; border-radius: 9px; overflow: hidden;
+  background: var(--bezel); cursor: pointer; opacity: .5;
+  box-shadow: 0 0 0 1px var(--line);
+  transition: opacity var(--d-hover) var(--ease-soft),
+              box-shadow var(--d-hover) var(--ease-soft),
+              transform var(--d-press) var(--ease-out);
 }
+.rb img { display: block; width: 100%; height: 100%; object-fit: cover; }
 @media (hover: hover) and (pointer: fine) {
-  .rb:hover { background: #b3b9c4; }
+  .rb:hover { opacity: .85; }
 }
-.rb.on { width: 34px; background: #dfe3ea; }
+.rb:active { transform: scale(.96); }
+.rb:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.rb.on { opacity: 1; box-shadow: 0 0 0 2px var(--accent); }
 .rb .bar {
-  position: absolute; inset: 0; border-radius: 99px;
+  position: absolute; left: 0; right: 0; bottom: 0; height: 3px;
   background: var(--accent); transform: scaleX(0); transform-origin: 0 50%;
 }
 .rb.on .bar { animation: reelbar var(--rt, 6000ms) linear forwards; }
 @keyframes reelbar { from { transform: scaleX(0) } to { transform: scaleX(1) } }
-/* A dot is a small target, so it earns a bigger touch area than it shows. */
-.rb::after { content: ""; position: absolute; inset: -8px; border-radius: 99px; }
 
 @media (prefers-reduced-motion: reduce) {
   /* No sweep, but the words still have to be readable, so they simply
@@ -786,6 +918,14 @@ img, video { max-width: 100%; }
   font-size: clamp(36px, 4.4vw, 64px); line-height: 1; letter-spacing: -.04em; color: var(--iv1);
   font-variant-numeric: tabular-nums;
 }
+.hs .panel.nums .n b::after {
+  /* An orange stroke under each figure. JS draws it in step with the
+     count, so the line and the number arrive together, like a meter
+     filling. With no JS, --p is unset and the stroke is simply there. */
+  content: ""; display: block; width: 44px; height: 4px; margin-top: 14px;
+  border-radius: 99px; background: rgb(var(--nib-rgb));
+  transform: scaleX(var(--p, 1)); transform-origin: left center;
+}
 .hs .panel.nums .n span { display: block; margin-top: 14px; color: var(--iv3); font-size: 15.5px; line-height: 1.5; }
 
 /* ---- The one progress indicator ---------------------------- *
@@ -794,7 +934,7 @@ img, video { max-width: 100%; }
   flex: none; z-index: 1; display: flex; align-items: center;
   gap: var(--s4); padding: 16px var(--gut) 20px;
 }
-.hs-prog .rail { flex: 1; height: 3px; border-radius: 99px; background: #e3e6ec; position: relative; overflow: hidden; }
+.hs-prog .rail { flex: 1; height: 3px; border-radius: 99px; background: var(--line); position: relative; overflow: hidden; }
 .hs-prog .fill {
   position: absolute; inset: 0 auto 0 0; width: 0;
   background: var(--accent);
@@ -863,6 +1003,7 @@ img, video { max-width: 100%; }
   .cr-n b { font-size: 26px; }
   .cr-n span { margin-top: 3px; }
   .js-stagger .panel:not(.say) .cr { opacity: 1 !important; transform: none !important; transition: none !important; }
+
   .hs-prog { display: none; }
 }
 
@@ -895,7 +1036,7 @@ img, video { max-width: 100%; }
 }
 .card:active { transform: scale(.995); }
 @media (hover: hover) and (pointer: fine) {
-  .card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(20,18,13,.15); }
+  .card:hover { transform: translateY(-3px); box-shadow: inset 0 1px 0 rgba(255,255,255,.07), 0 12px 32px rgba(0,0,0,.55); }
   .card:hover .card-shot img { transform: scale(1.03); }
   .card:hover .card-go { color: var(--ink); }
 }
@@ -1028,7 +1169,7 @@ img, video { max-width: 100%; }
 /* Both ways of reaching her, side by side. The email is the one to press,
    the number is there to be read out or copied. */
 .quote-ways { display: flex; align-items: center; gap: var(--s3); flex-wrap: wrap; }
-.cta.ghost { background: #fff; color: var(--ink); border: 1px solid var(--line); }
+.cta.ghost { background: var(--plate2); color: var(--ink); border: 1px solid var(--line); }
 @media (hover: hover) and (pointer: fine) {
   .cta.ghost:hover { background: var(--ring); border-color: var(--faint); }
 }
@@ -1059,11 +1200,11 @@ footer a { color: var(--muted); }
   position: fixed; bottom: 32px; left: 50%; z-index: 99;
   transform: translate(-50%, 12px); opacity: 0;
   display: flex; align-items: center; gap: 14px;
-  background: var(--ink); color: #fff;
+  background: var(--ink); color: var(--on-ink);
   font-family: var(--sans); font-size: 14.5px; font-weight: 500; letter-spacing: 0;
   padding: 11px 11px 11px 20px; border-radius: 99px;
   max-width: calc(100vw - 32px);
-  box-shadow: 0 8px 30px rgba(15,20,32,.30);
+  box-shadow: 0 8px 30px rgba(0,0,0,.6);
   transition: opacity 240ms var(--ease-soft), transform 240ms var(--ease-soft);
 }
 .toast.in { opacity: 1; transform: translate(-50%, 0); }
@@ -1071,11 +1212,11 @@ footer a { color: var(--muted); }
    was the accent on near black, which measures 3.83:1 and reads as
    decoration rather than as the thing to press. */
 .toast a {
-  background: #fff; color: var(--ink); border-radius: 99px;
+  background: var(--page); color: var(--ink); border-radius: 99px;
   padding: 8px 16px; font-weight: 600; text-decoration: none; white-space: nowrap;
   transition: background var(--d-hover) var(--ease-soft);
 }
-@media (hover: hover) and (pointer: fine) { .toast a:hover { background: #e4e7ec; } }
+@media (hover: hover) and (pointer: fine) { .toast a:hover { background: var(--line); } }
 
 /* ============================================================
    CASE STUDY PAGES
@@ -1173,7 +1314,7 @@ footer a { color: var(--muted); }
 .side-label.cho { color: var(--deep); }
 
 .stream { position: relative; }
-.stream::after { content: ""; position: absolute; left: 0; right: 0; bottom: 20px; height: 44px; background: linear-gradient(to bottom, rgba(255,255,255,0), #fff); pointer-events: none; }
+.stream::after { content: ""; position: absolute; left: 0; right: 0; bottom: 20px; height: 44px; background: linear-gradient(to bottom, rgba(10,14,26,0), var(--page)); pointer-events: none; }
 .stream .fadeout { font-family: var(--mono); font-size: var(--t-micro); color: var(--faint); text-align: center; margin-top: var(--s2); letter-spacing: .1em; }
 .chip { border: 1px solid var(--line); padding: 7px 10px; font-size: 13px; margin-bottom: 6px; background: var(--paper); }
 .chip.talk { background: #fff; color: var(--faint); font-style: italic; }

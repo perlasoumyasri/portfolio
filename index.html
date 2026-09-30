@@ -19,6 +19,8 @@
        moment and then vanishes while the script is still downloading.
        If site.js fails, the page shows itself after 3.5s anyway. -->
   <script>document.documentElement.classList.add('js-early');setTimeout(function(){document.documentElement.classList.remove('js-early')},3500);</script>
+  <meta name="theme-color" content="#0a0e1a" />
+  <meta name="color-scheme" content="dark" />
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" href="favicon.ico" sizes="any" />
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
@@ -59,7 +61,7 @@
               <p class="eyebrow">Product designer who codes</p>
               <h2><span class="dim">I specialise in</span> converting a founder's intent <em><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg>into reality</em>.</h2>
               <p class="sub-claim">Designer at heart, developer at night.</p>
-              <p>I design every screen and write the code.<br><b>You get back a product you can run without me.</b></p>
+              <p><b>You get back a product you can run without me.</b></p>
               <!-- The one thing to do on this page. WhatsApp is the primary
                    route because the founders she works with live on it and
                    it opens a conversation in one tap, with the first line
@@ -97,45 +99,13 @@
             <p class="go"><i>↓</i> Keep scrolling</p>
           </div>
 
-          <!-- The launch leads the work. It is the strongest business
-               result on the page, so it opens instead of closing, and its
-               numbers get the card straight after it with nothing else on
-               that card to divide the reader's attention. -->
-          <div class="panel med">
-            <figure class="reel">
-              <video class="is-live" src="assets/video/launch2.mp4" poster="assets/poster/launch2.jpg" muted playsinline preload="metadata"
-                     data-cap="The mega launch of the AI UX course, live. I designed and built the whole four day event. Each drop unlocked on its own day, and the site changed itself as every drop went live."></video>
-              <video src="assets/video/adminday1.mp4" poster="assets/poster/adminday1.jpg" muted playsinline preload="none"
-                     data-cap="The admin side, on launch day one. I built the site with sixteen different visual states, and they change with time or when the admin wants, depending on what is live."></video>
-              <video src="assets/video/dashboard.mp4" poster="assets/poster/dashboard.jpg" muted playsinline preload="none"
-                     data-cap="And the analytics dashboard I built, recorded live on launch night."></video>
-            </figure>
-            <div class="cap"><span class="num">01</span>
-              <div>
-                <p class="subt"></p>
-                <div class="dots"></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- The launch's own numbers, and only those. The rest of the
-               record waits for the closing card. -->
-          <div class="panel nums">
-            <p class="eyebrow">The AI UX mega launch</p>
-            <div class="grid">
-              <div class="n"><b>+25%</b><span>increase in customer acquisition</span></div>
-              <div class="n"><b>1,016</b><span>people went through the launch, over four days</span></div>
-              <div class="n"><b>53.3%</b><span>of day one stayed to the offer</span></div>
-            </div>
-          </div>
-
           <!-- The statement card. The claim gets the stage to itself, told in
                sequence by the stagger, and then the scroll carries the reader
                into the clips that prove it. -->
           <div class="panel state">
             <p class="eyebrow">Client work · UX Gym</p>
             <h3>Reimagining the learning platform for a design mentorship program, in the founder's vision of <em><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg>non textbook learning</em>.</h3>
-            <p class="st-sub">I built it so the client can run multiple cohorts in parallel instead of a single one. It is a dynamic tool: the client adds modules, manages students and opens cohorts himself, no developer needed, and parts of it are made for AI.</p>
+            <p class="st-sub">Admission now takes <mark class="mk">4 hours instead of 5 days</mark>. Reviewing 30 students' projects takes <mark class="mk">2 days instead of a week</mark>. By the fourth month, engagement had risen <mark class="mk">from 60% to 80%</mark>. And the founder runs every cohort himself, with no developer.</p>
             <p class="st-client">Client · <b>UX Anudeep</b> · Founder, UX Gym · ex Amazon · mentored 5,000+ designers</p>
           </div>
 
@@ -144,15 +114,15 @@
           <div class="panel med">
             <figure class="reel">
               <video class="is-live" src="assets/video/intro.mp4" poster="assets/poster/intro.jpg" muted playsinline preload="metadata"
-                     data-cap="This is the platform. I designed and built it solo, in one month. It is running multiple cohorts with hundreds of students."></video>
+                     data-cap="From an idea to a tested platform in production in one month, built by one person. It now runs 300+ students across 3 cohorts at the same time."></video>
               <video src="assets/video/canvas.mp4" poster="assets/poster/canvas.jpg" muted playsinline preload="metadata"
-                     data-cap="Interactive canvases: students zoom, drag, answer, and download their work to post on LinkedIn. I built them around the founder's vision, that learning should feel nothing like a textbook."></video>
+                     data-cap="The workbooks became canvases that students work on like Figma: zoom, drag, answer. Far more students now finish the exercise than ever finished the workbook."></video>
               <video src="assets/video/linkedin.mp4" poster="assets/poster/linkedin.jpg" muted playsinline preload="metadata"
-                     data-cap="The result, on LinkedIn. Students post their drill work in one click, and every drill keeps their streak going. It is one of the ways new people find UX Gym."></video>
+                     data-cap="Every finished drill downloads as a post. Students sharing their work on LinkedIn went from 20% to 80%, and those posts have brought UX Gym thousands of leads, without spending on ads."></video>
               <video src="assets/video/builder.mp4" poster="assets/poster/builder.jpg" muted playsinline preload="metadata"
-                     data-cap="The client has hundreds of modules to create, and setting the titles, headings and formatting by hand takes time. So I built a tool that converts markdown text, from Claude or any AI tool, into the module."></video>
+                     data-cap="Admins paste text from Claude or any AI tool, and the page builds itself with its titles, headings and formatting. Building a module now takes about 80% less of their time."></video>
             </figure>
-            <div class="cap"><span class="num">02</span>
+            <div class="cap"><span class="num">01</span>
               <div>
                 <p class="subt"></p>
                 <div class="dots"></div>
@@ -193,7 +163,7 @@
               <p class="reax-tag" aria-hidden="true">WhatsApp · during the build</p>
             </figure>
 
-            <div class="cap"><span class="num">03</span>
+            <div class="cap"><span class="num">02</span>
               <div>
                 <p><b>A happy client.</b></p>
                 <p class="fine">The founder's messages while the LMS was being built, exactly as they arrived.</p>
@@ -206,23 +176,67 @@
           <div class="panel med">
             <figure class="reel">
               <video class="is-live" src="assets/video/pokemon.mp4" poster="assets/poster/pokemon.jpg" muted playsinline preload="metadata"
-                     data-cap="The end of the first drill. The student's own answers become their UX Pokemon, and I built this reveal to feel like opening a pack of cards."></video>
+                     data-cap="The student's own answers become their UX Pokemon, revealed like opening a pack of cards. 100% of students finish this drill."></video>
               <video src="assets/video/explore.mp4" poster="assets/poster/explore.jpg" muted playsinline preload="none"
-                     data-cap="Design explorations for the module complete moment. I never present one direction: each of these is built and running, so we choose by using them."></video>
+                     data-cap="Every direction for the module complete moment is built and running, so the founder decides by using them, not by imagining them from a mockup."></video>
               <video src="assets/video/uxbehindui.mp4" poster="assets/poster/uxbehindui.jpg" muted playsinline preload="none"
-                     data-cap="I built the drills as interactive experiences, not pages. In this one, UX Behind UI, five invisible design decisions light up on a WhatsApp chat, one at a time."></video>
+                     data-cap="In UX Behind UI, five invisible design decisions light up on a WhatsApp chat, one at a time. Students see the decision happen instead of reading about it."></video>
               <video src="assets/video/pokeadmin.mp4" poster="assets/poster/pokeadmin.jpg" muted playsinline preload="none"
-                     data-cap="The admin side of the drills. I built a student preview with jump controls, so the client checks any screen exactly the way a student meets it."></video>
+                     data-cap="The founder checks any screen exactly the way a student will meet it, before a single student sees it. Mistakes are caught by him, not by his students."></video>
+            </figure>
+            <div class="cap"><span class="num">03</span>
+              <div>
+                <p class="subt"></p>
+                <div class="dots"></div>
+                <p class="reel-claim">The lessons became interactive drills, and students actually finish them. Every drill is completed by 80% to 100% of students.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- The launch's statement card. The LMS story opens with one of
+               these and the launch had only a caption under its clips, so the
+               two pieces of work did not arrive the same way. This gives the
+               launch the same stage, and leads on what the client got rather
+               than on what was built. -->
+          <div class="panel state">
+            <p class="eyebrow">Client work · UX Gym</p>
+            <h3>A four day live launch the founder could run from his own phone, which brought UX Gym <em><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg>25% more customers</em>.</h3>
+            <p class="st-sub">The site had sixteen versions of itself, and each one arrived on its own day or the moment the founder chose it. He opened every drop himself, with no developer on call, and watched who stayed on the analytics dashboard I built for launch night.</p>
+            <p class="st-client">Client · <b>UX Anudeep</b> · Founder, UX Gym · ex Amazon · mentored 5,000+ designers</p>
+          </div>
+
+
+          <!-- The launch's clips, straight after its statement card, and
+               its numbers straight after them. The LMS story is told in full
+               first, so the reader meets one client, one platform and the
+               proof it worked before the launch begins. -->
+          <div class="panel med">
+            <figure class="reel">
+              <video class="is-live" src="assets/video/launch2.mp4" poster="assets/poster/launch2.jpg" muted playsinline preload="metadata"
+                     data-cap="The mega launch of the AI UX course, live. I designed and built the whole four day event. Each drop unlocked on its own day, and the site changed itself as every drop went live."></video>
+              <video src="assets/video/adminday1.mp4" poster="assets/poster/adminday1.jpg" muted playsinline preload="none"
+                     data-cap="The admin side, on launch day one. I built the site with sixteen different visual states, and they change with time or when the admin wants, depending on what is live."></video>
+              <video src="assets/video/dashboard.mp4" poster="assets/poster/dashboard.jpg" muted playsinline preload="none"
+                     data-cap="And the analytics dashboard I built, recorded live on launch night."></video>
             </figure>
             <div class="cap"><span class="num">04</span>
               <div>
                 <p class="subt"></p>
                 <div class="dots"></div>
-                <p class="reel-claim">Bringing the founder's vision into reality, turning the lessons into interactive drills. So nothing feels like a textbook.</p>
               </div>
             </div>
           </div>
 
+          <!-- The launch's own numbers, and only those. The rest of the
+               record waits for the closing card. -->
+          <div class="panel nums">
+            <p class="eyebrow">The AI UX mega launch</p>
+            <div class="grid">
+              <div class="n"><b>+25%</b><span>increase in customer acquisition</span></div>
+              <div class="n"><b>1,016</b><span>people went through the launch, over four days</span></div>
+              <div class="n"><b>53.3%</b><span>of day one stayed to the offer</span></div>
+            </div>
+          </div>
 
           <div class="panel nums">
             <div class="grid">
@@ -232,12 +246,11 @@
             </div>
             <p class="go"><i>↓</i> Say hello below</p>
           </div>
-
         </div>
       </div>
 
       <div class="hs-prog">
-        <span class="count" id="count">01 / 08</span>
+        <span class="count" id="count">01 / 09</span>
         <div class="rail"><div class="fill" id="fill"></div></div>
       </div>
 

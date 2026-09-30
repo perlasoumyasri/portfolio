@@ -33,17 +33,20 @@
    * surface shrinking. One sine, gliding up more than an octave in a
    * tenth of a second, gone in under a fifth. Each landing is a
    * slightly smaller drop than the last, so the three read as drip,
-   * drip, drip rather than the same drop three times. It peaks well
-   * under speech volume, which is why there is no mute button: a sound
-   * this small is feedback, and nobody asks to mute feedback.
+   * drip, drip rather than the same drop three times.
    *
    * The browser will not let any audio start until the visitor has
-   * clicked, tapped or typed somewhere at least once, so the context is
-   * armed on the first gesture anywhere on the page and the drops simply
-   * work from then on.
+   * clicked, tapped or typed somewhere at least once, and scrolling does
+   * not count. At first it was armed only by a click somewhere else on
+   * the page, so a visitor who only scrolled, which is most of them,
+   * never heard a drop, and neither did Soumya. So the card now carries
+   * its own small sound button: pressing it is the permission the
+   * browser needs, and it replays the three messages with their drops.
+   * The same button mutes them afterwards.
    * ------------------------------------------------------------------ */
   var Ctx = window.AudioContext || window.webkitAudioContext;
   var ac = null;
+  var muted = false;
   // Where each drop's glide starts. Higher start = smaller drop.
   var DROPS = [330, 392, 466];
 
@@ -57,7 +60,7 @@
   });
 
   function pop(step) {
-    if (!ac || ac.state !== 'running') return;
+    if (muted || !ac || ac.state !== 'running') return;
     var t = ac.currentTime;
     var f = DROPS[step] || DROPS[0];
 
@@ -74,7 +77,7 @@
     // Soft strike, quick fade. The drop is loudest the instant it lands
     // and is already fading while the pitch is still rising.
     g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(0.07, t + 0.006);
+    g.gain.exponentialRampToValueAtTime(0.16, t + 0.006);
     g.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
 
     osc.connect(g); g.connect(ac.destination);
@@ -148,6 +151,38 @@
     settle();
     return;
   }
+
+  var ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/>' +
+             '<path class="w" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12"/></svg>';
+  var btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'reax-sound';
+  /* The first press always means "play it with sound", even if a click
+     elsewhere already armed the audio: that click happens first, on
+     pointerdown, so judging by the audio state alone would turn the very
+     first press into a mute. After the first press it is a toggle. */
+  var heard = false;
+  function label() {
+    var txt = !heard ? 'Play with sound' : muted ? 'Sound off' : 'Sound on';
+    btn.innerHTML = ICON + '<span>' + txt + '</span>';
+    btn.classList.toggle('is-off', heard && muted);
+    btn.setAttribute('aria-pressed', heard && !muted ? 'true' : 'false');
+  }
+  btn.addEventListener('click', function () {
+    arm();
+    if (!heard || muted) {
+      heard = true; muted = false;
+      /* Resuming can take a moment, so the replay waits for it. */
+      var go = function () { label(); reset(); run(); };
+      if (ac && ac.state !== 'running' && ac.resume) ac.resume().then(go, go);
+      else go();
+    } else {
+      muted = true;
+      label();
+    }
+  });
+  label();
+  box.appendChild(btn);
 
   new IntersectionObserver(function (entries) {
     if (entries[0].isIntersecting) {
