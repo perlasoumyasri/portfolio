@@ -672,7 +672,8 @@
       var kids = [];
       [].forEach.call(p.children, function (el) {
         if (el === wrap || el === grid) [].push.apply(kids, [].slice.call(el.children));
-        else kids.push(el);
+        /* the portrait has its own entrance, drawn by portrait.js */
+        else if (!el.classList.contains('say-face') && el.tagName !== 'CANVAS') kids.push(el);
       });
       kids.forEach(function (el, i) {
         el.classList.add('st');
@@ -690,6 +691,34 @@
        make the same staggered entrance the desktop gets. */
     if (off()) {
       setTimeout(function () { panels[0].classList.add('on'); }, 140);
+    }
+
+    /* The portrait opens the page: her name, then her face. Until the
+       face has landed the claim and the record wait, and the record's
+       rise is timed from the landing. Under reduced motion there is no
+       opening, so nothing waits. If portrait.js never reports (no
+       network for three.js, a script error), the claim comes in anyway. */
+    var faceSlot = panels[0] && panels[0].querySelector('.say-face');
+    var faceWait = !!faceSlot && !reduced.matches;
+    if (faceSlot) document.documentElement.classList.add('js-face');
+    function faceLanded() {
+      if (!faceWait) return;
+      faceWait = false;
+      sec.classList.remove('js-face-wait');
+      /* replay the claim's entrance now that it can be seen */
+      panels[0].classList.remove('on');
+      void panels[0].offsetWidth;
+      panels[0].classList.add('on');
+      if (!off() && !risen && !riseTimer) riseTimer = setTimeout(rise, RISE_AFTER);
+    }
+    if (faceWait) {
+      sec.classList.add('js-face-wait');
+      document.addEventListener('portrait:landed', faceLanded);
+      setTimeout(function () {
+        if (!faceWait) return;
+        document.documentElement.classList.add('face-fallback');
+        faceLanded();
+      }, 6000);
     }
 
     function measure() {
@@ -720,7 +749,7 @@
       sec.style.height = (window.innerHeight + dist) + 'px';
       top = sec.getBoundingClientRect().top + window.scrollY;
       place(false);
-      if (!risen && !riseTimer) riseTimer = setTimeout(rise, RISE_AFTER);
+      if (!risen && !riseTimer && !faceWait) riseTimer = setTimeout(rise, RISE_AFTER);
       draw();
     }
 

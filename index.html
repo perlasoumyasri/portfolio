@@ -22,6 +22,8 @@
   <meta name="theme-color" content="#0a0e1a" />
   <meta name="color-scheme" content="dark" />
   <link rel="stylesheet" href="style.css" />
+  <!-- The portrait on the first screen is drawn with three.js. -->
+  <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }</script>
   <link rel="icon" href="favicon.ico" sizes="any" />
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png" />
@@ -53,7 +55,7 @@
       <div class="hs-view">
         <div class="hs-track" id="track">
 
-          <div class="panel say">
+          <div class="panel say has-face">
             <!-- The claim, moved as one thing. It opens centred on the
                  screen by itself, and the first stretch of scrolling lifts
                  it into its resting place while the record rises under it. -->
@@ -97,6 +99,11 @@
             </div>
 
             <p class="go"><i>↓</i> Keep scrolling</p>
+
+            <!-- Her portrait, drawn in dots by portrait.js. The photo itself
+                 is the fallback: it shows if the dots cannot be drawn. -->
+            <div class="say-face" role="img" aria-label="Portrait of Soumya Perla"><img src="assets/portrait-dots.png" alt="" /></div>
+            <canvas class="face-dots" aria-hidden="true"></canvas>
           </div>
 
           <!-- The statement card. The claim gets the stage to itself, told in
@@ -264,5 +271,6 @@
 
 <script src="site.js" defer></script>
 <script src="reactions.js" defer></script>
+<script type="module" src="portrait.js"></script>
 </body>
 </html>

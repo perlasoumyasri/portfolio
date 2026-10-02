@@ -297,6 +297,48 @@ img, video { max-width: 100%; }
    the first card is given enough room after it to clear the stage on a wide
    screen. The introduction gets the screen to itself, then the work starts. */
 .hs .panel.say { max-width: none; margin-right: clamp(24px, 16vw, 230px); }
+
+/* ---- The portrait ---------------------------------------- *
+   The first panel is two columns: the claim and the record on the left,
+   her portrait on the right. The portrait is drawn in dots on a canvas
+   that covers the whole panel (portrait.js), so her name can form across
+   the screen first and then land as her face in the slot. The slot holds
+   her photo as a fallback, shown only if the dots cannot be drawn. */
+.hs .panel.say.has-face {
+  position: relative;
+  display: grid; align-content: center;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "lead face" "creds face";
+  column-gap: clamp(28px, 4vw, 72px);
+}
+.has-face > .say-lead { grid-area: lead; }
+.has-face > .creds { grid-area: creds; }
+.has-face > .say-lead, .has-face > .creds { position: relative; z-index: 1; }
+.has-face > .go { z-index: 1; }
+.say-face {
+  grid-area: face; align-self: center; position: relative; z-index: 1;
+  height: min(62vh, 560px); aspect-ratio: 180 / 190; cursor: pointer;
+}
+.say-face img { width: 100%; height: 100%; object-fit: contain; display: block; visibility: hidden; }
+/* no script at all, or the dots failed: the photo shows */
+html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: visible; }
+.face-dots { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+.face-fallback .face-dots { display: none; }
+@media (min-width: 701px) {
+  /* the page sheet is at most 1360 wide, so the panel ends where the top
+     bar ends and the face never runs past the margin */
+  .hs .panel.say.has-face { width: calc(min(1360px, 100vw) - 2 * var(--gut)); }
+}
+/* On a phone the portrait goes first and the claim follows it. */
+@media (max-width: 700px) {
+  .hs .panel.say.has-face { grid-template-columns: 1fr; grid-template-areas: "face" "lead" "creds"; row-gap: 22px; align-content: start; }
+  .say-face { justify-self: center; height: min(42vh, 340px); }
+}
+/* Until the face has landed, the claim and the record wait, so the
+   opening is her name and her face alone. site.js lifts this. */
+.js-face-wait .panel.say .say-lead,
+.js-face-wait .panel.say .creds,
+.js-face-wait .panel.say .go { opacity: 0 !important; transition: none !important; }
 .hs .panel.say .eyebrow { color: var(--iv4); margin-bottom: var(--s5); }
 .hs .panel.say h2 {
   font-family: var(--sans); font-weight: 800;
