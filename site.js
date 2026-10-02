@@ -307,6 +307,11 @@
     vids.forEach(function (v) {
       v.addEventListener('ended', function () {
         if (v !== vids[i]) return;
+        /* A clip that ends while its reel is off stage, peeking in at the
+           edge, must not move the reel on: that is how a visitor arrived
+           to find clip two already playing, clip one spent unseen. */
+        if (!onStage()) return;
+        mark(v);
         if (held && replays < 1) {
           replays++;
           try { v.currentTime = 0; } catch (e) {}
@@ -346,6 +351,7 @@
         b.setAttribute('aria-label', 'Clip ' + (n + 1) + ' of ' + vids.length + (line ? ': ' + line : ''));
         b.innerHTML = (still ? '<img src="' + still + '" alt="" decoding="async">' : '') +
                       '<span class="bar"></span>';
+        if (v.__seen) b.classList.add('seen');
         b.addEventListener('click', function () { show(n); restart(); });
         rail.appendChild(b);
       });
@@ -406,7 +412,38 @@
     function onStage() {
       var r = box.getBoundingClientRect();
       var c = r.left + r.width / 2;
-      return c > window.innerWidth * 0.12 && c < window.innerWidth * 0.88;
+      var m = r.top + r.height / 2;
+      /* Across, for the pinned strip; down, for a phone, where every reel
+         is centred across and only scrolling decides what is on screen. */
+      return c > window.innerWidth * 0.12 && c < window.innerWidth * 0.88 &&
+             m > 0 && m < window.innerHeight;
+    }
+
+    /* ---- Which clips this visitor has watched ---------------------- *
+       A clip is watched when it plays to its end on stage, or when the
+       visitor leaves with most of it seen. The first visit always opens
+       on clip one. A return opens on the first clip not yet watched,
+       counting on from where they left, so nothing is skipped and
+       nothing is shown twice before the rest have been seen. Once all
+       of them are watched, the reel simply carries on in order. A clip
+       always starts from its beginning: half a demonstration explains
+       nothing. Each watched still gets a small tick in the strip. */
+    function mark(v) {
+      if (v.__seen) return;
+      v.__seen = true;
+      var b = rail.children[vids.indexOf(v)];
+      if (b) {
+        b.classList.add('seen');
+        b.setAttribute('aria-label', b.getAttribute('aria-label') + ', watched');
+      }
+    }
+    function resumeAt() {
+      var n = vids.length;
+      for (var k = 0; k < n; k++) {
+        var j = (i + k) % n;
+        if (!vids[j].__seen) return j;
+      }
+      return (i + 1) % n;
     }
 
     function tick() {
@@ -415,7 +452,15 @@
         /* Leaving keeps the place. A visitor who scrolls on during clip
            two and comes back meets clip two again, not clip one a second
            time while the rest stay unseen. */
-        if (wasOn) { wasOn = false; clearPause(); show(i); }
+        if (wasOn) {
+          wasOn = false;
+          var cur = vids[i];
+          if (cur && cur.duration && cur.currentTime / cur.duration > 0.85) mark(cur);
+          /* Nothing plays off stage. The strip's scroll handler would pause
+             it on a desktop, but a phone has no such handler. */
+          vids.forEach(function (v) { if (!v.paused) v.pause(); });
+          clearPause(); show(i);
+        }
         /* Off stage the reel only watches for its own entrance. A short
            poll catches the arrival within half a second, so the first
            clip gets exactly one hold. Inheriting the stale full-length
@@ -426,10 +471,20 @@
         return;
       }
       if (paused) return;
-      if (!wasOn) { wasOn = true; show(i); }
+      if (!wasOn) { wasOn = true; show(resumeAt()); }
       else { show(i + 1); }
       restart();
     }
+
+    /* Arrivals and departures are noticed at once. The reel's own timer
+       runs for a whole clip, so on its own a reel only found out it had
+       been left when the clip ran out: come back quickly and the clip
+       carried on from its middle, and on a phone it kept playing to an
+       empty screen. A cheap check, three times a second, closes that. */
+    setInterval(function () {
+      if (document.hidden) return;
+      if (onStage() !== wasOn) { clearTimeout(timer); tick(); }
+    }, 300);
     /* A clip whose metadata has not arrived yet has no duration, so it
        falls back to the minimum and is corrected on the next pass. */
     /* The pill fills over the clip's true length, so it reaches full at
@@ -759,6 +814,13 @@
         }
         var r = v.getBoundingClientRect();
         var seen = r.right > vr.left - 100 && r.left < vr.right + 100;
+        /* A reel peeking in at the edge shows its still and waits. It plays
+           only once it is properly on stage, so its first clip is never
+           used up before the visitor has arrived. */
+        if (v.parentNode.classList.contains('reel')) {
+          var rc = r.left + r.width / 2;
+          seen = rc > vr.left + vr.width * 0.12 && rc < vr.right - vr.width * 0.12;
+        }
         if (seen && v.paused) { var q = v.play(); if (q && q.catch) q.catch(function () {}); }
         else if (!seen && !v.paused) { v.pause(); }
       });
