@@ -288,6 +288,97 @@
 
   var ICON_FULL  = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
+  function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
+  function ease3(q) { return 1 - Math.pow(1 - q, 3); }
+  function parseFig(txt) {
+    var m = /^([^0-9]*)([0-9][0-9,]*(?:\.[0-9]+)?)(.*)$/.exec(txt);
+    if (!m) return null;
+    return { pre: m[1], post: m[3], end: parseFloat(m[2].replace(/,/g, '')), group: m[2].indexOf(',') !== -1 };
+  }
+  function renderFig(f, v) {
+    var t = String(Math.round(v));
+    if (f.group) t = t.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return f.pre + t + f.post;
+  }
+
+  /* ---- The flight ------------------------------------------------ *
+   * Three frames come down a corridor and land. set(p) draws the whole
+   * scene for a progress p from 0 (nothing yet) to 1 (landed), so the
+   * scroll can scrub it both ways and a timer can play it. Each frame
+   * has its own window inside p, oldest first, so they arrive one after
+   * another; its figure counts up as it comes. The corridor, outlines
+   * and dust rushing past in the site's blue warming to orange, only
+   * exists while something is in flight. */
+  function flight(box) {
+    if (!box) return null;
+    var cards = [].slice.call(box.querySelectorAll('.cr'));
+    if (!cards.length) return null;
+    var tun = document.createElement('div');
+    tun.className = 'fly-tunnel';
+    tun.setAttribute('aria-hidden', 'true');
+    var RINGS = 9, DUST = 28, GAP = 380, DEPTH = 2400, rings = [], dust = [];
+    var blue = [147, 180, 255], warm = [255, 154, 77];
+    for (var i = 0; i < RINGS; i++) {
+      var r = document.createElement('i'), t = i / (RINGS - 1);
+      r.style.borderColor = 'rgba(' + blue.map(function (c, n) { return Math.round(c + (warm[n] - c) * t); }).join(',') + ',.7)';
+      tun.appendChild(r); rings.push(r);
+    }
+    for (var d = 0; d < DUST; d++) {
+      var b = document.createElement('b');
+      b.__x = (Math.random() - 0.5) * 1.2; b.__y = (Math.random() - 0.5) * 2.2;
+      b.__z = -Math.random() * RINGS * GAP;
+      tun.appendChild(b); dust.push(b);
+    }
+    box.insertBefore(tun, box.firstChild);
+    box.classList.add('fly-ready');
+    var nums = cards.map(function (c) {
+      var el = c.querySelector('.cr-n b');
+      var f = el && parseFig(el.textContent.trim());
+      if (!f || f.end < 10) return null;
+      f.el = el; f.full = el.textContent;
+      return f;
+    });
+    var span = RINGS * GAP;
+    function set(p) {
+      cards.forEach(function (c, k) {
+        /* Each frame has its own stretch of the flight, a third apart, so
+           one has landed before the next is close. It swings in from an
+           angle and out of focus, and settles flat and sharp. */
+        var q = clamp01((p - (0.04 + k * 0.24)) / 0.48), e = 1 - Math.pow(1 - q, 4), r = 1 - e;
+        if (q >= 1) {
+          c.style.transform = ''; c.style.opacity = ''; c.style.filter = '';
+          if (!c.__landed) { c.__landed = true; c.classList.remove('landed'); void c.offsetWidth; c.classList.add('landed'); }
+        } else {
+          if (c.__landed) { c.__landed = false; c.classList.remove('landed'); }
+          c.style.transform = 'translate3d(0,' + (r * 26).toFixed(1) + 'px,' + (-DEPTH * r).toFixed(1) + 'px) rotateX(' + (r * 16).toFixed(2) + 'deg) rotateY(' + ((1 - k) * r * 22).toFixed(2) + 'deg)';
+          c.style.opacity = String(clamp01(q * 1.8));
+          c.style.filter = r > 0.02 ? 'blur(' + (r * 7).toFixed(2) + 'px)' : '';
+        }
+        var f = nums[k];
+        if (f) f.el.textContent = q >= 1 ? f.full : renderFig(f, f.end * e);
+      });
+      var T = clamp01(p * 6) * clamp01((1 - p) * 3.5);
+      tun.style.opacity = String(T);
+      if (!T) return;
+      var travel = p * span * 0.8, W = box.offsetWidth, H = box.offsetHeight;
+      rings.forEach(function (r, i) {
+        var z = -i * GAP - 200 + travel;
+        /* Far ones fade into fog, near ones fade before they fill the
+           screen, so the outlines never sit across the claim. */
+        var fog = clamp01(1 + z / span) * clamp01(-z / 520);
+        r.style.opacity = (fog * 0.6).toFixed(3);
+        r.style.transform = 'translate(-50%,-50%) translateZ(' + z.toFixed(1) + 'px) rotate(' + (i * 3 + p * 12).toFixed(2) + 'deg)';
+      });
+      dust.forEach(function (b) {
+        var z = b.__z + travel * 1.2;
+        var fog = clamp01(1 + z / span) * clamp01(-z / 120);
+        b.style.opacity = fog.toFixed(3);
+        b.style.transform = 'translate(' + (b.__x * W).toFixed(1) + 'px,' + (b.__y * H).toFixed(1) + 'px) translateZ(' + z.toFixed(1) + 'px)';
+      });
+    }
+    return { set: set };
+  }
+
   function reel(box) {
     var panel = box.closest('.panel');
     var rail = panel && panel.querySelector('.dots');
@@ -474,7 +565,7 @@
         return;
       }
       if (paused) return;
-      if (!wasOn) { wasOn = true; show(resumeAt()); }
+      if (!wasOn) { wasOn = true; show(resumeAt()); hintOnce(); }
       else { show(i + 1); }
       restart();
     }
@@ -538,6 +629,7 @@
       paused = p;
       panel.classList.toggle('is-paused', paused);
       box.classList.toggle('is-paused', paused);
+      if (typeof ringLabel === 'function') ringLabel();
       var v = vids[i];
       if (paused) {
         clearTimeout(timer);
@@ -555,18 +647,64 @@
       paused = false;
       panel.classList.remove('is-paused');
       box.classList.remove('is-paused');
+      ringLabel();
     }
 
     var step = function (d) { show(i + d); restart(); };
 
-    /* The corner mark. It is not a button: the whole picture is already
-       the target, and a second thing to aim at would only compete with
-       it. Shown to a screen reader as the reel's state instead. */
-    var flag = document.createElement('div');
-    flag.className = 'rpause';
-    flag.setAttribute('aria-hidden', 'true');
-    flag.innerHTML = ICON_PLAY + '<span>Paused</span>';
-    box.appendChild(flag);
+    /* The ring, top right (her ask, 2026-10-05). It fills as the clip
+       plays, so a visitor can see how long this clip is and how much is
+       left, and its middle says what a click will do: the pause bars while
+       it plays, the play triangle once stopped. It is a real button, and
+       the whole picture still works as the same control. A label beside it
+       says so in words: on hover with a mouse, and once, briefly, on a
+       phone the first time a reel starts. It replaces the old "Paused"
+       corner mark. */
+    var R = 15, CIRC = 2 * Math.PI * R;
+    var ring = document.createElement('button');
+    ring.type = 'button';
+    ring.className = 'rring';
+    ring.innerHTML =
+      '<svg class="rr-arc" viewBox="0 0 36 36" aria-hidden="true">' +
+        '<circle class="rr-track" cx="18" cy="18" r="' + R + '"/>' +
+        '<circle class="rr-fill" cx="18" cy="18" r="' + R + '" stroke-dasharray="' + CIRC.toFixed(2) + '" stroke-dashoffset="' + CIRC.toFixed(2) + '"/>' +
+      '</svg>' +
+      '<svg class="rr-ico rr-pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="6" width="3.6" height="12" rx="1"/><rect x="13.4" y="6" width="3.6" height="12" rx="1"/></svg>' +
+      ICON_PLAY.replace('<svg ', '<svg class="rr-ico rr-play" ') +
+      '<span class="rr-tip"></span>';
+    box.appendChild(ring);
+    var fillArc = ring.querySelector('.rr-fill'), tip = ring.querySelector('.rr-tip');
+    var touchUI = !finePointer.matches;
+    function ringLabel() {
+      var verb = touchUI ? 'Tap' : 'Click';
+      tip.textContent = paused ? verb + ' to play' : verb + ' to pause';
+      ring.setAttribute('aria-label', paused ? 'Play this clip' : 'Pause this clip');
+    }
+    ringLabel();
+    ring.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setPaused(!paused);
+    });
+    /* Smooth fill: read the clip's own clock every frame, but only while
+       this reel is the one on stage. */
+    var lastFrac = -1;
+    (function tickRing() {
+      requestAnimationFrame(tickRing);
+      if (!wasOn) return;
+      var v = vids[i];
+      var f = v && v.duration ? Math.min(1, v.currentTime / v.duration) : 0;
+      if (Math.abs(f - lastFrac) < 0.001) return;
+      lastFrac = f;
+      fillArc.setAttribute('stroke-dashoffset', (CIRC * (1 - f)).toFixed(2));
+    })();
+    /* On a phone, the hint shows once, the first time this reel plays. */
+    var hinted = false;
+    function hintOnce() {
+      if (hinted || !touchUI) return;
+      hinted = true;
+      box.classList.add('rr-hint');
+      setTimeout(function () { box.classList.remove('rr-hint'); }, 2600);
+    }
 
     /* Full screen, for phones. These are desktop recordings, and at phone
        width the words inside them are a few pixels tall: the visitor sees
@@ -694,13 +832,78 @@
        on the first screen never saw the experience at all. A scroll that
        comes before the timer brings it forward, so nobody waits on it. */
     var shift = 0, RISE = 72, risen = false, riseTimer = null;
-    var RISE_AFTER = 1800;   /* after the lines and the headline sweep land */
+    /* The opening is a sequence, one motion at a time: the claim's lines,
+       the box round "Design", "builder." typed, and only then the record
+       flies in. At 1800 the flight began while "builder." was still being
+       typed, and the two fought for the eye (2026-10-05). */
+    var RISE_AFTER = 2300;
     var sayLead = panels[0] && panels[0].querySelector('.say-lead');
     var sayCreds = panels[0] && panels[0].querySelector('.creds');
     /* "Keep scrolling" has done its job the moment the reader scrolls, and
        once the record has risen it would sit on top of it, so it leaves
        as the record arrives. */
     var sayGo = panels[0] && panels[0].querySelector('.go');
+
+    /* The record flies in (2026-10-04, from her 3D Lab's scroll
+       flythrough). The first stretch of scrolling, HOLD of a screen, does
+       not move the strip: it flies the camera down a corridor and the
+       three frames of the record arrive from depth, oldest first, and land
+       in their slots. Scroll back up and they fly back out, as in the lab.
+       A visitor who never scrolls gets the same flight on a timer, after
+       which the hold is dropped so their first scroll moves the strip at
+       once. Phones get it on a timer when the record comes into view. */
+    var fly = reduced.matches ? null : flight(sayCreds);
+    var HOLD_VH = 1.2, hold = 0, baseHold = 0;
+    var flyMode = null;   /* null, 'wait', 'time', 'scroll' or 'done' */
+    var flyP = 0, flyFloor = 0, flyTarget = 0, flyLoop = 0, flyLast = 0, flyV = 0;
+    /* A full flight never takes less than this, however hard the
+       trackpad is flicked. Tied straight to the scroll, one flick flew
+       all three frames in a fraction of a second (her note, 2026-10-05:
+       "appearing very fast"). The scroll now sets where the flight is
+       heading and the flight follows at its own pace, easing in to the
+       target like the lab's camera does. */
+    var FLY_MIN = 3.6;
+    function flyTo(p) {
+      flyP = p;
+      if (fly) fly.set(p);
+      /* The claim lifts into its resting place in the first third of the
+         flight, and "Keep scrolling" has done its job once it starts. */
+      if (sayLead) {
+        var k = ease3(clamp01(p / 0.3));
+        sayLead.style.transform = 'translate3d(0,' + (shift * (1 - k)).toFixed(1) + 'px,0)';
+      }
+      if (sayGo) sayGo.style.opacity = String(1 - clamp01(p * 4));
+    }
+    function chase(now) {
+      flyLoop = 0;
+      var dt = Math.min(0.05, (now - flyLast) / 1000);
+      flyLast = now;
+      var d = flyTarget - flyP;
+      if (Math.abs(d) < 0.0006) {
+        flyV = 0;
+        flyTo(flyTarget);
+        if (flyTarget >= 1 && flyMode === 'time') {
+          flyMode = 'done';
+          /* the hold is dropped, so the next scroll moves the strip */
+          if (!off()) measure();
+        }
+        return;
+      }
+      /* Cruise at an even pace, easing out only in the last stretch, so
+         the three frames land about a second apart instead of the last
+         one crawling in. The velocity itself eases, so it never lurches. */
+      var top = 1 / FLY_MIN;
+      var want = d * 7; want = want > top ? top : want < -top ? -top : want;
+      flyV += (want - flyV) * (1 - Math.exp(-dt * 9));
+      var np = flyP + flyV * dt;
+      if ((d > 0 && np > flyTarget) || (d < 0 && np < flyTarget)) np = flyTarget;
+      flyTo(np);
+      flyLoop = requestAnimationFrame(chase);
+    }
+    function aim(t) {
+      flyTarget = t;
+      if (!flyLoop) { flyLast = performance.now(); flyLoop = requestAnimationFrame(chase); }
+    }
 
     /* Progressive disclosure. A text panel's children enter one after the
        other when the panel arrives at centre, so the reader is handed the
@@ -760,6 +963,21 @@
       void panels[0].offsetWidth;
       panels[0].classList.add('on');
       if (!off() && !risen && !riseTimer) riseTimer = setTimeout(rise, RISE_AFTER);
+      if (off()) phoneFly();
+    }
+    /* Stacked, there is no pinned scroll to scrub, so the flight plays
+       once, on a timer, when most of the record is on screen. */
+    function phoneFly() {
+      if (!fly || !off() || flyMode) return;
+      flyMode = 'wait';
+      fly.set(0);
+      var io = new IntersectionObserver(function (en) {
+        if (!en[0].isIntersecting) return;
+        io.disconnect();
+        flyMode = 'time';
+        aim(1);
+      }, { threshold: 0.6 });
+      io.observe(sayCreds);
     }
     if (faceWait) {
       sec.classList.add('js-face-wait');
@@ -780,6 +998,7 @@
         [sayLead, sayCreds, sayGo].forEach(function (el) {
           if (el) { el.style.transition = ''; el.style.transform = ''; el.style.opacity = ''; }
         });
+        if (fly && flyMode !== 'wait' && flyMode !== 'time') { if (flyMode) fly.set(1); else if (!faceWait) phoneFly(); }
         return;
       }
       /* The record's rise is driven from here, so it must not also be
@@ -801,7 +1020,9 @@
         var cs = window.getComputedStyle(sayCreds);
         shift = (sayCreds.offsetHeight + (parseFloat(cs.marginTop) || 0)) / 2;
       } else { shift = 0; }
-      sec.style.height = (window.innerHeight + dist) + 'px';
+      baseHold = Math.round(window.innerHeight * HOLD_VH);
+      hold = (fly && flyMode !== 'done') ? baseHold : 0;
+      sec.style.height = (window.innerHeight + dist + hold) + 'px';
       top = sec.getBoundingClientRect().top + window.scrollY;
       place(false);
       if (!risen && !riseTimer && !faceWait) riseTimer = setTimeout(rise, RISE_AFTER);
@@ -813,6 +1034,14 @@
     function place(animate) {
       var up = risen;
       var ease = 'cubic-bezier(.23, 1, .32, 1)';
+      /* With the flight, the record and the claim are placed by flyTo. */
+      if (fly) {
+        if (sayLead) sayLead.style.transition = 'none';
+        if (sayGo) sayGo.style.transition = 'none';
+        if (sayCreds) { sayCreds.style.transition = 'none'; sayCreds.style.transform = ''; sayCreds.style.opacity = ''; }
+        flyTo(flyP);
+        return;
+      }
       if (sayLead) {
         sayLead.style.transition = animate ? 'transform 900ms ' + ease : 'none';
         sayLead.style.transform = 'translate3d(0,' + (up ? 0 : shift).toFixed(1) + 'px,0)';
@@ -833,15 +1062,47 @@
       if (risen) return;
       risen = true;
       clearTimeout(riseTimer);
+      if (fly) {
+        /* Nobody scrolled: the flight plays by itself, and then the hold
+           goes, so the next scroll moves the strip straight away. */
+        if (flyMode === null) { flyMode = 'time'; aim(1); }
+        return;
+      }
       place(true);
     }
 
     function draw() {
       if (off()) return;
       var y = window.scrollY - top;
+      if (fly) {
+        /* A scroll takes the flight over from the timer, from wherever the
+           timer had got to, so nothing jumps backwards. */
+        if (y > 4 && !faceWait && (flyMode === null || flyMode === 'time')) {
+          if (flyMode === 'time') flyFloor = flyP;
+          flyMode = 'scroll'; risen = true; clearTimeout(riseTimer);
+        }
+        if (flyMode === 'scroll') {
+          /* The strip waits for the last frame. Scroll that runs ahead of
+             the flight lengthens the hold instead of moving the strip, and
+             the section grows by the same amount below the reader, so the
+             end of the strip is still reachable and nothing jumps. */
+          if (flyP < 1 && y > hold) {
+            if (y - baseHold < window.innerHeight * 1.5) {
+              hold = y;
+              sec.style.height = (window.innerHeight + dist + hold) + 'px';
+            } else {
+              /* A jump, not a scroll (the scrollbar, the End key): the
+                 reader wants to be somewhere else, so the flight finishes
+                 at once and the strip goes where they asked. */
+              flyFloor = 1; flyTarget = 1; flyV = 0; flyTo(1);
+            }
+          }
+          aim(Math.max(flyFloor, clamp01(hold ? y / hold : 1)));
+        }
+        y -= hold;
+      } else if (!risen && y > 4) rise();
       /* Scrolling before the pause is over is an answer in itself: the
          reader is ready, so the record comes up now. */
-      if (!risen && y > 4) rise();
 
       var s = y;
       s = s < 0 ? 0 : s > dist ? dist : s;
@@ -1141,8 +1402,53 @@
 
   function reels() { [].forEach.call(document.querySelectorAll('.reel'), reel); }
 
+  /* "builder." types itself the first time the claim is seen (her ask,
+     2026-10-05): the caret waits on the empty line, holds steady while
+     the letters arrive at a human, slightly uneven pace, then goes back
+     to blinking. It starts once her face has landed and the selection
+     box around "Design" has drawn, so the two halves of the headline
+     happen one after the other: designed, then built. The heading keeps
+     its full name for screen readers throughout. */
+  function typeBuilder() {
+    var el = document.querySelector('.db-build');
+    if (!el || reduced.matches) return;
+    var h = el.closest('h2'), panel = el.closest('.panel'), sec = el.closest('.hs');
+    var caret = h.querySelector('.db-caret');
+    var full = el.textContent;
+    h.setAttribute('aria-label', 'Design builder.');
+    el.textContent = '';
+    var queued = false;
+    function type() {
+      if (caret) caret.classList.add('typing');
+      var n = 0;
+      (function step() {
+        n++;
+        el.textContent = full.slice(0, n);
+        /* An even, confident cadence: 62ms a key with a little human
+           variance, and a beat before the full stop. Random 70 to 150ms
+           read as hesitant rather than typed. */
+        var next = full.charAt(n) === '.' ? 150 : 56 + Math.random() * 14;
+        if (n < full.length) setTimeout(step, next);
+        else setTimeout(function () { if (caret) caret.classList.remove('typing'); }, 500);
+      })();
+    }
+    function check() {
+      if (queued) return;
+      if (!panel.classList.contains('on') || (sec && sec.classList.contains('js-face-wait'))) return;
+      queued = true;
+      /* after the box has drawn and its handles have landed */
+      setTimeout(type, 1100);
+    }
+    var mo = new MutationObserver(check);
+    mo.observe(panel, { attributes: true, attributeFilter: ['class'] });
+    if (sec) mo.observe(sec, { attributes: true, attributeFilter: ['class'] });
+    check();
+    /* never leave the word missing, whatever happens to the opening */
+    setTimeout(function () { if (!queued) { queued = true; type(); } }, 9000);
+  }
+
   function init() {
-    marks(); theatre(); reels(); horizontal();
+    marks(); theatre(); reels(); horizontal(); typeBuilder();
     /* The opening state is set, so the panel can be shown. Same task as
        the setup above, so no frame is ever painted in between. */
     document.documentElement.classList.remove('js-early');

@@ -336,7 +336,7 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
      screen under it: 220px on a tall phone, down to 100px on a short one.
      At 340px the face took most of the screen and the claim started at
      the bottom edge. */
-  .say-face { justify-self: center; height: clamp(100px, calc(100svh - 578px), 220px); }
+  .say-face { justify-self: center; height: clamp(110px, calc(100svh - 540px), 300px); }
   .hs .hs-track { padding-top: var(--s5); }
 }
 /* Until the face has landed, the claim and the record wait, so the
@@ -439,6 +439,74 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
    process, he is buying the thing he can run afterwards. */
 .hs .panel.say .say-lead > p b { font-weight: 500; color: var(--iv2); }
 
+/* ---- "Design builder." (her mock, 2026-10-05) -------------------- *
+   Two words, both halves of the work. "Design" sits in a selection box
+   with four handles, as on a design canvas; "builder." is in the deep
+   blue and ends at a text caret that blinks, as in a code editor. */
+.hs .panel.say h2.db {
+  font-size: clamp(48px, min(6.6vw, 9.4vh), 112px); line-height: .98; letter-spacing: -.045em;
+  max-width: none; margin-left: -.04em;
+}
+.db-sel {
+  position: relative; display: inline-block;
+  padding: .02em .07em .06em; margin: 0 0 .1em -.07em;
+}
+/* the box draws itself once the panel arrives, then the handles pop */
+.db-sel::before {
+  content: ""; position: absolute; inset: 0; border: 2px solid var(--accent);
+  clip-path: inset(0 100% 100% 0); transition: clip-path 600ms cubic-bezier(.65, 0, .35, 1) 200ms;
+}
+/* Keyed to the face having landed, not only to .on: on a phone .on
+   arrives at load, while the claim is still hidden behind the portrait's
+   opening, so the box drew itself unseen. */
+.hs:not(.js-face-wait) .panel.say.on .db-sel::before { clip-path: inset(0 0 0 0); }
+.db-h {
+  position: absolute; width: 11px; height: 11px; margin: -5.5px 0 0 -5.5px;
+  background: #fff; border: 2px solid var(--accent); border-radius: 2px;
+  transform: scale(0); transition: transform 320ms var(--ease-out);
+}
+.db-h.tl { left: 0; top: 0; } .db-h.tr { left: 100%; top: 0; }
+.db-h.bl { left: 0; top: 100%; } .db-h.br { left: 100%; top: 100%; }
+.hs:not(.js-face-wait) .panel.say.on .db-h { transform: scale(1); }
+.hs:not(.js-face-wait) .panel.say.on .db-h.tl { transition-delay: 760ms; } .hs:not(.js-face-wait) .panel.say.on .db-h.tr { transition-delay: 810ms; }
+.hs:not(.js-face-wait) .panel.say.on .db-h.br { transition-delay: 860ms; } .hs:not(.js-face-wait) .panel.say.on .db-h.bl { transition-delay: 910ms; }
+.db-build { color: var(--deep); }
+.db-caret {
+  display: inline-block; width: .055em; height: .82em; margin-left: .06em;
+  vertical-align: -.04em; background: var(--accent); border-radius: 2px;
+  animation: db-blink 1.06s steps(1) infinite;
+}
+@keyframes db-blink { 50% { opacity: 0; } }
+/* steady while typing, like a real caret */
+.db-caret.typing { animation: none; opacity: 1; }
+.hs .panel.say .say-lead > p.db-sub {
+  margin-top: clamp(18px, 3vh, 30px); font-size: clamp(22px, 2.1vw, 30px); font-weight: 700;
+  letter-spacing: -.02em; line-height: 1.2; color: var(--ink);
+}
+.hs .panel.say .say-lead > p.db-text { margin-top: 12px; font-size: 16.5px; line-height: 1.55; max-width: 62ch; }
+@media (prefers-reduced-motion: reduce) {
+  .db-caret { animation: none; }
+  .db-sel::before { clip-path: none; transition: none; }
+  .db-h { transform: none; transition: none; }
+}
+@media (max-width: 700px) {
+  /* Phone proportions (2026-10-05): at 15vw the headline outweighed a
+     170px portrait three to one. The headline steps down and the face
+     grows, so the face leads and the words follow. */
+  .hs .panel.say h2.db { font-size: clamp(42px, 12.4vw, 60px); }
+  .hs .panel.say .say-lead > p.db-sub { font-size: clamp(18px, 5.3vw, 21px); margin-top: 14px; }
+  .db-h { width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; }
+  .hs .panel.say .say-lead > p.db-text { font-size: 15.5px; }
+}
+@media (min-width: 701px) and (max-height: 820px) {
+  .hs .panel.say h2.db { font-size: clamp(44px, min(6vw, 8.6vh), 80px); }
+  .hs .panel.say .say-lead > p.db-sub { margin-top: 12px; font-size: 22px; }
+  .hs .panel.say .say-lead > p.db-text { font-size: 15px; margin-top: 8px; }
+  .hs .panel.say .say-lead > p { margin-top: 8px; }
+  /* short laptop screens: the frames keep figure, label and name */
+  .cr-t { display: none; }
+}
+
 /* The call to action. The solid button is the thing to press; the ghost
    beside it is the quieter alternative, so the eye is not asked to choose
    between two equals. */
@@ -475,40 +543,73 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
    Current work leads. The steel plant is the backing, not the
    headline, because a founder sees himself in the founder.
    ------------------------------------------------------------- */
-.creds { margin-top: clamp(24px, 3.4vh, 40px); border-top: 1px solid var(--ivline); }
+/* Rebuilt 2026-10-04 as three frames, oldest first, so the record
+   reads as a career moving forward: the steel plant, the platform, the
+   launch. The figure leads each frame, because the eye lands on numbers
+   first and reads down to find out what they are. */
+.creds {
+  position: relative;
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px;
+  margin-top: clamp(24px, 3.4vh, 40px);
+  /* The frames fly in from depth (site.js, flight). The vanishing point
+     is the middle of the record, so each frame comes down the corridor
+     and lands in its own slot. */
+  perspective: 900px; perspective-origin: 50% 50%;
+}
 .cr {
-  display: grid; grid-template-columns: 12px 1fr auto;
-  gap: 0 var(--s5); align-items: start;
-  padding: 18px 0 19px; border-bottom: 1px solid var(--ivline2);
+  position: relative; z-index: 1;
+  padding: 16px 16px 15px;
+  border: 1px solid var(--line); border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.012));
+  backface-visibility: hidden;
 }
-/* Everything in a row hangs from the first line, so the marker, the client
-   name and the figure read across as one line however many lines of
-   description sit under them. */
-.cr-dot {
-  width: 9px; height: 9px; border-radius: 50%; justify-self: center;
-  margin-top: 7px; border: 1.5px solid var(--iv4); background: transparent;
-}
-.cr.now .cr-dot {
-  background: var(--accent); border-color: var(--accent);
-  box-shadow: 0 0 0 4px rgba(37,99,235,.16);
-}
-.cr-k {
-  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-  font-size: 15.5px; font-weight: 600; color: var(--iv1); line-height: 1.3;
-}
-.cr-k span { font-size: 13px; font-weight: 400; color: var(--iv4); }
-.cr-t { margin-top: 4px; font-size: 14px; line-height: 1.45; color: var(--iv3); }
-.cr-x { margin-top: 3px; font-size: 13px; line-height: 1.45; color: var(--iv4); }
-
-/* The figures hang on one right margin, so 300 and 30,000 can be
-   compared without the eye hunting for them inside a sentence. */
-.cr-n { text-align: right; padding-left: var(--s4); margin-top: -7px; }
+/* The live one carries the accent, like the live badge inside it. */
+.cr.now { border-color: rgba(59,130,246,.5); box-shadow: 0 0 0 3px rgba(59,130,246,.10); }
+.cr-n { margin: 0 0 12px; }
 .cr-n b {
-  display: block; font-size: clamp(26px, 2.4vw, 34px); font-weight: 700;
+  display: block; font-size: clamp(26px, 2.3vw, 34px); font-weight: 700;
   letter-spacing: -.03em; line-height: 1; color: var(--iv1);
   font-variant-numeric: tabular-nums;
 }
-.cr-n span { display: block; margin-top: 6px; font-size: 12.5px; color: var(--iv3); white-space: nowrap; }
+.cr-n span { display: block; margin-top: 6px; font-size: 12.5px; line-height: 1.35; color: var(--iv3); }
+.cr-k {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  font-size: 14.5px; font-weight: 600; color: var(--iv1); line-height: 1.3;
+}
+.cr-k span { font-size: 12.5px; font-weight: 400; color: var(--iv4); }
+.cr-t { margin-top: 5px; font-size: 13px; line-height: 1.45; color: var(--iv3); }
+
+/* The corridor the frames fly down: outlines and dust rushing past,
+   shown only while the frames are in flight. Drawn by site.js. */
+.fly-tunnel {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  perspective: 900px; perspective-origin: 50% 50%; opacity: 0;
+}
+.fly-tunnel i {
+  position: absolute; left: 50%; top: 50%; width: 112%; height: 190%;
+  border: 1.5px solid; border-radius: 22px; opacity: 0;
+}
+.fly-tunnel b {
+  position: absolute; left: 50%; top: 50%; width: 3px; height: 3px;
+  border-radius: 50%; background: #dfe6f5; opacity: 0;
+}
+/* While the flight drives them, the frames take no transition of their
+   own, or every frame of the flight would lag behind the scroll. */
+.creds.fly-ready .cr { transition: none !important; }
+/* The landing. A frame that has just arrived glows once along its edge
+   and lifts a hair, the way a card settles on a table, then goes quiet. */
+.cr.landed { animation: cr-land 900ms var(--ease-out); }
+.cr.now.landed { animation-name: cr-land-now; }
+@keyframes cr-land {
+  0%   { box-shadow: 0 0 0 0 rgba(147,180,255,0), 0 0 0 rgba(0,0,0,0); border-color: rgba(147,180,255,.75); }
+  35%  { box-shadow: 0 0 0 4px rgba(147,180,255,.16), 0 14px 34px rgba(0,0,0,.45); }
+  100% { box-shadow: 0 0 0 0 rgba(147,180,255,0), 0 0 0 rgba(0,0,0,0); }
+}
+@keyframes cr-land-now {
+  0%   { box-shadow: 0 0 0 3px rgba(59,130,246,.10); border-color: rgba(147,180,255,.9); }
+  35%  { box-shadow: 0 0 0 6px rgba(59,130,246,.22), 0 14px 34px rgba(0,0,0,.45); }
+  100% { box-shadow: 0 0 0 3px rgba(59,130,246,.10); }
+}
 
 .live {
   display: inline-block; font-style: normal; font-family: var(--sans);
@@ -527,8 +628,9 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
   transition: opacity 460ms var(--ease-out), transform 460ms var(--ease-out);
   transition-delay: var(--cd, 0ms);
 }
-.js-stagger .panel .cr:first-child { --cd: 620ms; }
-.js-stagger .panel .cr:last-child  { --cd: 780ms; }
+.js-stagger .panel .cr:nth-child(1) { --cd: 620ms; }
+.js-stagger .panel .cr:nth-child(2) { --cd: 740ms; }
+.js-stagger .panel .cr:nth-child(3) { --cd: 860ms; }
 
 /* Short screens. A 1440 by 900 laptop gives the page only about 790px once
    the browser's own bar is counted, and a shared screen on a call is often
@@ -545,7 +647,8 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
   .say-cta { margin-top: 16px; }
   .say-cta .cta { padding: 11px 21px; }
   .creds { margin-top: 16px; }
-  .cr { padding: 11px 0 12px; }
+  .cr { padding: 12px 13px 11px; }
+  .cr-n { margin-bottom: 8px; }
 }
 
 /* ---- Panels 3 to 7 · the work ------------------------------ *
@@ -631,21 +734,22 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
    large tilted mass is what makes a collage feel about to slide, and
    the two small cards lean opposite ways with the same energy. Weighted
    by the size of what is leaning, the leans cancel out. */
-/* Rebuilt 2026-10-04, her call: the convert to blocks thread is the
-   one with the most to read, and at 58% its words were 8px tall. It now
-   takes almost three quarters of the frame. The other two are placed by the
-   stage's edges rather than by their own size, so the composition holds
-   whatever height the frame gets: the tall thread pinned top right, the
-   one-line reply pinned bottom right. Both land on the empty wallpaper at
-   the right of the big thread, not on its messages. */
-.reax-card[data-spot="a"] { width: 72%; left: 36%;  top: 50%;  --tx: 0%; --ty: 0%;   --rt: -.6deg; z-index: 1; }
-.reax-card[data-spot="c"] { width: 26%; left: 87%;  top: 0%;   --tx: 0%; --ty: 50%;  --rt: 1.8deg; z-index: 2; }
-.reax-card[data-spot="b"] { width: 27%; left: 86.5%; top: 100%; --tx: 0%; --ty: -50%; --rt: -2deg;  z-index: 3; }
+/* Rebuilt again 2026-10-05, her call: all three big, and the tall
+   thread ("LMS valla matram") back over the end of her green reply, the
+   way the first collage had it, so the three read as one pile rather
+   than three tiles. The stage is a size container, so each card is sized
+   by whichever runs out first, the frame's width or its height, and the
+   pile keeps its shape from a short laptop to a tall monitor.
+   --w is each card's width; left is where its centre goes. */
+.reax-stage { container-type: size; }
+.reax-card[data-spot="a"] { --w: min(64cqw, 220cqh); width: var(--w); left: calc(var(--w) / 2);       top: 52%; --tx: 0%; --ty: 0%;  --rt: -1deg;   z-index: 1; }
+.reax-card[data-spot="c"] { --w: min(34cqw, 86cqh);  width: var(--w); left: calc(57cqw + var(--w) / 2); top: 47%; --tx: 0%; --ty: 0%;  --rt: 2.2deg;  z-index: 2; }
+.reax-card[data-spot="b"] { --w: min(38cqw, 90cqh);  width: var(--w); left: calc(100cqw - var(--w) / 2); top: 100%; --tx: 0%; --ty: -46%; --rt: -2.4deg; z-index: 3; }
 
 /* The first message gets the middle to itself before the others arrive.
    Bigger than its parked size, straight, on top. Removing this class is
    the shift: the transform transitions from here to the spot above. */
-.reax-card.is-center { left: 50%; top: 50%; --tx: 0%; --ty: 0%; --sc: 1.12; --rt: 0deg; z-index: 4; }
+.reax-card.is-center { left: 50%; top: 50%; --tx: 0%; --ty: 0%; --sc: 1.22; --rt: 0deg; z-index: 4; }
 
 /* The arrival. Small and under, then past the mark and back. A plain
    fade would be an appearance; the overshoot is what makes it a pop.
@@ -759,12 +863,13 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
    spots but every card grows, because a 32% card on a phone is a smudge
    rather than a message. */
 @media (max-width: 700px) {
-  /* Taller on a phone: the big thread runs the full width along the top
-     and the other two sit side by side under it, nothing overlapping. */
-  .hs .panel.med.proof figure { height: 96vw; min-height: 340px; max-height: 470px; }
-  .reax-card[data-spot="a"] { width: 100%; left: 50%;   top: 0%;  --ty: 50%; --rt: 0deg; }
-  .reax-card[data-spot="c"] { width: 46%;  left: 76%;   top: 41%; --ty: 50%; --rt: 1.4deg; }
-  .reax-card[data-spot="b"] { width: 50%;  left: 25.5%; top: 41%; --ty: 50%; --rt: -1.4deg; }
+  /* On a phone: the big thread across the top, the tall one over the
+     end of her reply, the short one low on the left. Taller frame, so all
+     three are as big as the width allows. */
+  .hs .panel.med.proof figure { height: 86vw; min-height: 300px; max-height: 460px; }
+  .reax-card[data-spot="a"] { --w: 100cqw; left: 50cqw; top: 0%;  --ty: 50%; --rt: -.6deg; }
+  .reax-card[data-spot="c"] { --w: 54cqw;  left: calc(100cqw - var(--w) / 2); top: 32%; --ty: 50%; --rt: 2deg; }
+  .reax-card[data-spot="b"] { --w: 50cqw;  left: calc(var(--w) / 2); top: 50%; --ty: 50%; --rt: -2deg; }
   .reax-card.is-center { --sc: 1; }
 }
 
@@ -858,13 +963,50 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
 }
 .rpause svg { width: 13px; height: 13px; fill: currentColor; display: block; }
 .reel.is-paused .rpause { opacity: 1; transform: none; }
-/* Full screen, phones only (site.js explains why). Top right, clear of
-   the pause mark bottom left, and always visible, because a phone has no
+/* The progress ring, top right of every reel (site.js explains it). */
+.rring {
+  position: absolute; top: 16px; right: 16px; z-index: 5;
+  width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%;
+  background: rgba(10, 14, 26, .72);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  box-shadow: 0 2px 10px rgba(0,0,0,.45);
+  color: var(--ink); cursor: pointer;
+  display: grid; place-items: center;
+  transition: transform var(--d-press) var(--ease-out), background var(--d-hover) var(--ease-soft);
+}
+.rring .rr-arc { position: absolute; inset: 3px; width: calc(100% - 6px); height: calc(100% - 6px); transform: rotate(-90deg); }
+.rring .rr-arc circle { fill: none; stroke-width: 2.6; }
+.rring .rr-track { stroke: rgba(255,255,255,.16); }
+.rring .rr-fill { stroke: var(--deep); stroke-linecap: round; }
+.rring .rr-ico { width: 15px; height: 15px; fill: currentColor; grid-area: 1 / 1; }
+.rring .rr-play { display: none; margin-left: 2px; }
+.reel.is-paused .rring .rr-pause { display: none; }
+.reel.is-paused .rring .rr-play { display: block; }
+.rring:active { transform: scale(.94); }
+.rring:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+/* The words, to the left of the ring: on hover with a mouse, on focus,
+   and once on a phone when the reel first plays. */
+.rr-tip {
+  position: absolute; right: calc(100% + 8px); top: 50%; transform: translate(4px, -50%);
+  white-space: nowrap; pointer-events: none;
+  font-family: var(--sans); font-size: 12.5px; font-weight: 600; line-height: 1;
+  color: var(--ink); background: rgba(10, 14, 26, .82);
+  padding: 7px 11px; border-radius: 99px; box-shadow: 0 2px 10px rgba(0,0,0,.4);
+  opacity: 0; transition: opacity 180ms var(--ease-soft), transform 180ms var(--ease-soft);
+}
+.reel:hover .rr-tip, .rring:focus-visible .rr-tip, .reel.rr-hint .rr-tip { opacity: 1; transform: translate(0, -50%); }
+@media (hover: hover) and (pointer: fine) { .rring:hover { background: rgba(27, 43, 82, .9); } }
+/* The ring says paused now, so the old corner mark is retired. */
+.rpause { display: none !important; }
+
+/* Full screen, phones only (site.js explains why). Bottom right, clear
+   of the ring top right, and always visible, because a phone has no
    hover to reveal it. */
 .rfull { display: none; }
 @media (max-width: 700px) {
+  .rring { top: 12px; right: 12px; width: 40px; height: 40px; }
   .rfull {
-    position: absolute; right: 14px; top: 14px; z-index: 5;
+    position: absolute; right: 12px; bottom: 12px; z-index: 5;
     display: flex; align-items: center; gap: 6px;
     padding: 7px 12px 7px 10px; border-radius: 99px; border: 0;
     background: rgba(18,24,41,.88); color: var(--ink);
@@ -1157,10 +1299,17 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
      (Reduced-motion users get the .say exception removed again in the
      reduced-motion block further down.) */
   .hs .panel:not(.say) .st { opacity: 1 !important; transform: none !important; transition: none !important; }
-  .cr { grid-template-columns: 12px 1fr; gap: 0 var(--s4); }
-  .cr-n { grid-column: 2; text-align: left; padding: 12px 0 0; }
-  .cr-n b { font-size: 26px; }
-  .cr-n span { margin-top: 3px; }
+  /* Three narrow frames side by side on a phone: the figure, what it
+     counts, and where. The descriptions go; the frames stay scannable. */
+  .creds { gap: 8px; }
+  .cr { padding: 12px 10px 11px; border-radius: 12px; }
+  .cr-n { margin-bottom: 8px; }
+  .cr-n b { font-size: 22px; }
+  .cr-n span { margin-top: 4px; font-size: 11.5px; }
+  .cr-k { font-size: 12.5px; gap: 5px; }
+  .cr-k span { font-size: 11px; }
+  .cr-t { display: none; }
+  .cr .live { font-size: 8.5px; padding: 2px 6px; }
   .js-stagger .panel:not(.say) .cr { opacity: 1 !important; transform: none !important; transition: none !important; }
 
   .hs-prog { display: none; }

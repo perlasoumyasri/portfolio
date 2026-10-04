@@ -4,7 +4,7 @@
    and rebuilds as her face: one dot for every pixel of her photo, each
    in that pixel's colour. When the face lands it tells site.js, which
    brings in the claim and then the record. After that the portrait
-   keeps going: the face, then "product designer", "builder", her name,
+   keeps going: the face, then her name,
    and the face again. A click on it moves on at once.
 
    The cursor parts the dots only while they are letters. On her face the
@@ -90,13 +90,14 @@ async function start() {
     fragmentShader: `
       varying vec3 vColor;
       void main(){
-        float a = 1.0 - smoothstep(0.36, 0.5, length(gl_PointCoord - 0.5));
+        float a = 1.0 - smoothstep(0.4, 0.5, length(gl_PointCoord - 0.5));
         if (a < 0.02) discard;
         gl_FragColor = vec4(vColor, a);
         #include <colorspace_fragment>
       }`,
   }));
   points.frustumCulled = false;
+  points.matrixAutoUpdate = false;
   scene.add(points);
 
   /* ---- Targets ---- */
@@ -122,7 +123,7 @@ async function start() {
       const fade = (1 - smooth(.74, 1, c.y / IH)) * (1 - smooth(.9, 1, c.x / IW)) * (1 - smooth(.9, 1, 1 - c.x / IW));
       c3.setRGB(Math.pow(c.r, .8), Math.pow(c.g, .8), Math.pow(c.b, .8), THREE.SRGBColorSpace)
         .multiplyScalar(.35 + .65 * fade).toArray(tCol, i * 3);
-      tSize[i] = cell * 1.12 * (.95 + .25 * lum) * (.25 + .75 * fade);
+      tSize[i] = cell * 1.24 * (.95 + .25 * lum) * (.25 + .75 * fade);
     }
   }
 
@@ -145,7 +146,10 @@ async function start() {
     }
     const sc = Math.min(box.w / (x1 - x0), box.h / (y1 - y0));
     const out = { pos: new Float32Array(N * 3), col: new Float32Array(N * 3), size: new Float32Array(N) };
-    const dot = Math.max(1.6, sc * 2.1);
+    /* On a phone the same 22,000 dots crowd into a small word, and at the
+       desktop's dot size they merged into a blob. Finer dots there keep
+       the letters' gaps open. */
+    const dot = innerWidth <= 700 ? Math.max(.8, sc * 1.2) : Math.max(1.6, sc * 2.1);
     for (let i = 0; i < N; i++) {
       const k = Math.floor(Math.random() * pts.length / 2) * 2;
       out.pos[i * 3] = box.cx + (pts[k] + Math.random() * 2 - (x0 + x1) / 2) * sc;
@@ -171,10 +175,11 @@ async function start() {
     words.name = await textState(['SOUMYA'], {
       cx: W / 2, cy: mob ? face.y + face.h / 2 : Math.min(H, innerHeight) / 2,
       w: mob ? W * .9 : Math.min(W * .62, 980), h: Math.min(H, innerHeight) * .3 });
-    const inSlot = (wf, hf) => ({ cx: face.x + face.w / 2, cy: face.y + face.h * .46, w: face.w * wf, h: face.h * hf });
+    /* On a phone the slot is small, and words fitted to it were too small
+       to read, so there they take most of the screen's width instead. */
+    const inSlot = (wf, hf) => ({ cx: mob ? W / 2 : face.x + face.w / 2, cy: face.y + face.h * .46,
+      w: mob ? Math.max(face.w * wf, W * .84) : face.w * wf, h: mob ? Math.max(face.h * hf, face.h * .8) : face.h * hf });
     words.slotName = await textState(['SOUMYA'], inSlot(.96, .3));
-    words.designer = await textState(['product', 'designer'], inSlot(.96, .5));
-    words.builder = await textState(['builder'], inSlot(.96, .3));
   }
   function aim(which) {
     state = which;
@@ -206,7 +211,16 @@ async function start() {
   }
 
   /* ---- The cycle, once the face has landed. The face holds longest. ---- */
-  const CYCLE = [['face', 6.5], ['designer', 3.2], ['builder', 3.2], ['slotName', 3.2]];
+  /* The first time, the face holds 3.8s: with the 3s opening before it,
+     the old 6.5s meant "product designer" waited 9.5s to appear (her
+     note, 2026-10-05: "taking too much time"). Later rounds hold 5s. */
+  /* Face and name only (2026-10-05). "product designer" and "builder"
+     said a third time what the headline and the line under it already
+     say, and a morph beside the headline pulled the eye off it while it
+     was being read. The face holds long and calm; her name surfaces now
+     and then. A click on it still moves on. */
+  const CYCLE = [['face', 10], ['slotName', 3.4]];
+  const FIRST_FACE = 9;
   let cyc = 0, since = 0, cycling = false;
   function next() {
     cyc = (cyc + 1) % CYCLE.length; since = 0;
@@ -238,24 +252,35 @@ async function start() {
     if (!visible) return;
     t += dt;
     if (cycling) { since += dt; if (since > CYCLE[cyc][1]) next(); }
-    const k = 1 - Math.pow(.035, dt), ck = 1 - Math.pow(.02, dt), damp = Math.pow(.03, dt);
+    /* Words form in about a second (was over two), so each one is
+       readable for most of its 3.2s instead of under one. */
+    const k = 1 - Math.pow(.008, dt), ck = 1 - Math.pow(.02, dt), damp = Math.pow(.03, dt);
     const isFace = state === 'face';
     push += ((isFace ? 0 : 1) - push) * (1 - Math.pow(.01, dt));
     const fcx = face.x + face.w / 2, fcy = face.y + face.h / 2;
     ptr.sx += ((ptr.on ? (ptr.x - fcx) / W : 0) - ptr.sx) * .06;
     ptr.sy += ((ptr.on ? (ptr.y - fcy) / H : 0) - ptr.sy) * .06;
     const R = 64, R2 = R * R, pushing = ptr.on && push > .02;
+    /* Landing on the face is quicker and more even than any other move.
+       The face is drawn far bigger than in the Lab, so stragglers still
+       on their way read as holes in it, and at the old pace the face spent
+       half its hold with holes. Now it is whole in about a second. */
+    const kf = 1 - Math.pow(.0025, dt), df = Math.pow(.002, dt);
     for (let i = 0; i < N; i++) {
-      const i3 = i * 3, sp = k * speed[i];
+      const i3 = i * 3, sp = isFace ? kf * (.85 + speed[i] * .15) : k * speed[i];
       let tx = tPos[i3], ty = tPos[i3 + 1];
+      /* The face holds still dot by dot. Each dot drifting on its own, and
+         each following the cursor at its own speed, pulled neighbours
+         apart and opened holes in her face (her note, 2026-10-05). The
+         face now moves as one piece, below, the way the Lab's did. */
       if (isFace) {
-        tx += Math.sin(t * 1.3 + phase[i]) * .45 + ptr.sx * (ty - fcy) * -.06 + ptr.sx * 18;
-        ty += Math.cos(t * 1.1 + phase[i]) * .45 + ptr.sy * 14;
+        /* no per-dot motion */
       } else if (state !== 'name') {
         tx += Math.sin(t * 1.6 + phase[i]) * .6;
         ty += Math.cos(t * 1.4 + phase[i]) * .6;
       }
-      vel[i3] *= damp; vel[i3 + 1] *= damp;
+      const dmp = isFace ? df : damp;
+      vel[i3] *= dmp; vel[i3 + 1] *= dmp;
       pos[i3] += vel[i3] + (tx - pos[i3]) * sp;
       pos[i3 + 1] += vel[i3 + 1] + (ty - pos[i3 + 1]) * sp;
       if (pushing) {
@@ -265,6 +290,14 @@ async function start() {
       col[i3] += (tCol[i3] - col[i3]) * ck; col[i3 + 1] += (tCol[i3 + 1] - col[i3 + 1]) * ck; col[i3 + 2] += (tCol[i3 + 2] - col[i3 + 2]) * ck;
       size[i] += (tSize[i] - size[i]) * ck;
     }
+    /* The lean toward the cursor and a slow breath, applied to the whole
+       cloud at once, so the face turns and breathes without tearing. It
+       fades out while the dots are words. */
+    const w = 1 - push;
+    const sh = ptr.sx * -.06 * w;
+    const lx = (ptr.sx * 18 + Math.sin(t * .9) * .8) * w, ly = (ptr.sy * 14 + Math.cos(t * .7) * .8) * w;
+    points.matrix.set(1, sh, 0, lx - sh * fcy, 0, 1, 0, ly, 0, 0, 1, 0, 0, 0, 0, 1);
+    points.matrixWorldNeedsUpdate = true;
     geo.attributes.position.needsUpdate = true;
     geo.attributes.aColor.needsUpdate = true;
     geo.attributes.aSize.needsUpdate = true;
@@ -277,7 +310,7 @@ async function start() {
   let timers = [];
   function finish() {
     timers.forEach(clearTimeout); timers = [];
-    if (state === 'name') { aim('face'); snap(); }
+    if (state === 'name') { aim('face'); snap(); since = CYCLE[0][1] - FIRST_FACE; }
     cycling = true;
     landed();
   }
@@ -291,7 +324,7 @@ async function start() {
   } else {
     aim('name'); scatter();
     requestAnimationFrame(frame);
-    timers.push(setTimeout(() => { burst(1); aim('face'); cycling = true; cyc = 0; since = 0; }, 2900));
+    timers.push(setTimeout(() => { burst(1); aim('face'); cycling = true; cyc = 0; since = CYCLE[0][1] - FIRST_FACE; }, 2900));
     timers.push(setTimeout(landed, 3600));
     const skip = () => { if (!landed.done) finish(); };
     ['wheel', 'keydown', 'touchstart'].forEach(ev => addEventListener(ev, skip, { passive: true }));

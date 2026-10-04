@@ -60,10 +60,13 @@
                  screen by itself, and the first stretch of scrolling lifts
                  it into its resting place while the record rises under it. -->
             <div class="say-lead">
-              <p class="eyebrow">Product designer who codes</p>
-              <h2><span class="dim">I specialise in</span> converting a founder's intent <em><span class="nb"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg>into</span> reality</em>.</h2>
-              <p class="sub-claim">For UX Gym, that cut admissions from 5 days to 4 hours.</p>
-              <p><b>You get back a product you can run without me.</b></p>
+              <!-- The headline shows both halves of the work: "Design" sits in
+                   a selection box with its handles, the way it would on a
+                   design canvas, and "builder." ends at a blinking text caret,
+                   the way it would in a code editor. -->
+              <h2 class="db"><span class="db-sel">Design<i class="db-h tl"></i><i class="db-h tr"></i><i class="db-h bl"></i><i class="db-h br"></i></span><br><span class="db-build">builder.</span><i class="db-caret" aria-hidden="true"></i></h2>
+              <p class="db-sub">Product designer who codes.</p>
+              <p class="db-text">I turn a founder's intent into a product they can run without me. A developer turned UX designer, I explore how UX and AI can eliminate cognitive load. For UX Gym, I cut the time to review 30 students' projects from <mark class="mk">a week to 2 days</mark>.</p>
               <!-- The one thing to do on this page. WhatsApp is the primary
                    route because the founders she works with live on it and
                    it opens a conversation in one tap, with the first line
@@ -78,23 +81,25 @@
               </div>
             </div>
 
+            <!-- The record, as three frames in the order the career ran:
+                 the steel plant, the platform, the launch. On the first
+                 scroll they fly in down a corridor and land here (site.js,
+                 flight), the way the dust lands as her face. -->
             <div class="creds">
+              <div class="cr">
+                <p class="cr-n"><b>30,000</b><span>people a year use it</span></p>
+                <p class="cr-k">Guest house app <span>Tata Steel</span></p>
+                <p class="cr-t">An enterprise app I designed and coded end to end, 2021 to 2024</p>
+              </div>
               <div class="cr now">
-                <span class="cr-dot"></span>
-                <div class="cr-b">
-                  <p class="cr-k">UX Gym <i class="live">live now</i></p>
-                  <p class="cr-t">Learning platform · 0 → 1 · designed and built solo</p>
-                </div>
                 <p class="cr-n"><b>300+</b><span>students · 3 batches</span></p>
+                <p class="cr-k">UX Gym <i class="live">current work</i></p>
+                <p class="cr-t">Learning platform, 0 → 1, designed and built solo</p>
               </div>
               <div class="cr">
-                <span class="cr-dot"></span>
-                <div class="cr-b">
-                  <p class="cr-k">Tata Steel <span>2021 to 2024</span></p>
-                  <p class="cr-t">Guest house system, Work Delegation system · 0 → 1 · designed and built solo</p>
-                  <p class="cr-x">Three years there, as a designer and a developer.</p>
-                </div>
-                <p class="cr-n"><b>30,000</b><span>people a year</span></p>
+                <p class="cr-n"><b>25%</b><span>more paying customers</span></p>
+                <p class="cr-k">AI UX launch</p>
+                <p class="cr-t">A four day live event the founder ran from his phone</p>
               </div>
             </div>
 
@@ -111,8 +116,8 @@
                into the clips that prove it. -->
           <div class="panel state">
             <p class="eyebrow">Client work · UX Gym</p>
-            <h3>Student engagement rose <em><span class="nb"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg>from</span> 60% to 80%</em> on a learning platform built around the founder's idea of non textbook learning.</h3>
-            <p class="st-sub">Admission now takes <mark class="mk">4 hours instead of 5 days</mark>. Reviewing 30 students' projects takes 2 days instead of a week. And the founder runs every batch himself, with no developer.</p>
+            <h3>The founder wanted learning that doesn't feel like a textbook. I designed and built it, alone, in one month, and student engagement rose <em><span class="nb"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg>from</span> 60% to 80%</em>.</h3>
+            <p class="st-sub">The lessons became interactive exercises students actually finish. Admission takes <mark class="mk">4 hours instead of 5 days</mark>, and the founder runs every batch himself, with no developer.</p>
             <p class="st-client">Client · <b>UX Anudeep</b> · Founder, UX Gym · ex Amazon · mentored 5,000+ designers</p>
           </div>
 
@@ -121,13 +126,13 @@
           <div class="panel med">
             <figure class="reel">
               <video class="is-live" src="assets/video/intro.mp4" poster="assets/poster/intro.jpg" muted playsinline preload="metadata"
-                     data-cap="From an idea to a tested platform in production in one month, built by one person. It now runs 300+ students across 3 batches at the same time."></video>
+                     data-cap="From an idea to a tested platform in production in one month, built by one person. It currently runs 300+ students across 3 batches at the same time."></video>
               <video src="assets/video/canvas.mp4" poster="assets/poster/canvas.jpg" muted playsinline preload="metadata"
-                     data-cap="The workbooks became canvases that students work on like Figma: zoom, drag, answer. Far more students now finish the exercise than ever finished the workbook."></video>
+                     data-cap="The workbooks became canvases that students work on like Figma: zoom, drag, answer. Far more students finish the exercise than ever finished the workbook."></video>
               <video src="assets/video/linkedin.mp4" poster="assets/poster/linkedin.jpg" muted playsinline preload="metadata"
                      data-cap="Every finished exercise downloads as a post. Students sharing their work on LinkedIn went from 20% to 80%, and those posts have brought UX Gym thousands of leads, without spending on ads."></video>
               <video src="assets/video/builder.mp4" poster="assets/poster/builder.jpg" muted playsinline preload="metadata"
-                     data-cap="Admins paste text from Claude or any AI tool, and the page builds itself with its titles, headings and formatting. Building a module now takes about 80% less of their time."></video>
+                     data-cap="Admins paste text from Claude or any AI tool, and the page builds itself with its titles, headings and formatting. Building a module takes about 80% less of their time."></video>
             </figure>
             <div class="cap"><span class="num">01</span>
               <div>
@@ -204,11 +209,11 @@
                so a founder convinced by this story does not have to scroll
                through the rest of the page to reach her. -->
           <div class="panel state ask">
-            <p class="eyebrow">Your platform next</p>
-            <h3>Have a course people sign up for but <em><span class="nb"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg>don't</span> finish</em>?</h3>
-            <p class="st-sub">I'll turn the way you teach into a platform your students finish, and that you run yourself.</p>
+            <p class="eyebrow">Your product next</p>
+            <h3>Have an idea people should <em><span class="nb"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg>love</span> using</em>, not just sign up for?</h3>
+            <p class="st-sub">I'll design it and build it around what you intend, and hand you a product you run yourself.</p>
             <div class="say-cta">
-              <a class="cta" href="https://wa.me/918074889819?text=Hi%20Soumya%2C%20I%20saw%20your%20LMS%20work%20and%20I%20would%20like%20to%20talk%20about%20my%20course." target="_blank" rel="noopener">
+              <a class="cta" href="https://wa.me/918074889819?text=Hi%20Soumya%2C%20I%20saw%20your%20work%20and%20I%20would%20like%20to%20talk%20about%20my%20product." target="_blank" rel="noopener">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5c-4.7 0-8.5 3.4-8.5 7.6 0 2.3 1.1 4.3 2.9 5.7l-.7 3.2 3.3-1.8c.9.3 1.9.4 3 .4 4.7 0 8.5-3.4 8.5-7.5S16.7 3.5 12 3.5z"/></svg>
                 Message
               </a>
@@ -223,7 +228,7 @@
                than on what was built. -->
           <div class="panel state">
             <p class="eyebrow">Client work · UX Gym</p>
-            <h3><em><span class="nb"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg>25%</span> more paying customers</em> than the year before, from a four day live launch the founder ran from his own phone.</h3>
+            <h3>The founder wanted to run a four day live launch from his own phone. I designed and built it, and it brought <em><span class="nb"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg>25%</span> more paying customers</em> than the year before.</h3>
             <p class="st-sub">Each day's content opened when he chose, nothing waited on a developer, and he could see exactly who was staying while it happened.</p>
             <p class="st-client">Client · <b>UX Anudeep</b> · Founder, UX Gym · ex Amazon · mentored 5,000+ designers</p>
           </div>
@@ -255,7 +260,7 @@
                on the first screen, so the last card repeated the first. -->
           <div class="panel state ask">
             <p class="eyebrow">Your launch next</p>
-            <h3>Planning a launch? Run it from <em><span class="nb"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg>your</span> own phone</em>, and see who stays while it happens.</h3>
+            <h3>Launching something? Run it from <em><span class="nb"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg>your</span> own phone</em>, and see who stays while it happens.</h3>
             <div class="say-cta">
               <a class="cta" href="https://wa.me/918074889819?text=Hi%20Soumya%2C%20I%20saw%20your%20launch%20work%20and%20I%20would%20like%20to%20talk%20about%20a%20launch." target="_blank" rel="noopener">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5c-4.7 0-8.5 3.4-8.5 7.6 0 2.3 1.1 4.3 2.9 5.7l-.7 3.2 3.3-1.8c.9.3 1.9.4 3 .4 4.7 0 8.5-3.4 8.5-7.5S16.7 3.5 12 3.5z"/></svg>
