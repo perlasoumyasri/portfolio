@@ -25,6 +25,20 @@
 
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
 
+  /* Before the first message lands the frame used to be an empty navy
+     box, which on a slow phone looked broken. Now it shows the founder
+     typing, the three dots WhatsApp shows, so the wait is the start of
+     the scene rather than a gap in it. Made here, so a dead script leaves
+     no bubble behind (the cards then simply show, see style.css). */
+  var stage = box.querySelector('.reax-stage');
+  var typing = document.createElement('div');
+  typing.className = 'reax-typing';
+  typing.setAttribute('aria-hidden', 'true');
+  typing.innerHTML = '<span class="who">UX Anudeep</span><span class="tdots"><i></i><i></i><i></i></span>';
+  (stage || box).appendChild(typing);
+  function waiting(on) { box.classList.toggle('is-waiting', on); }
+  waiting(true);
+
   /* ------------------------------------------------------------------ *
    * The drop
    * A water drop, at her call: the little plip a droplet makes falling
@@ -93,13 +107,25 @@
   function later(fn, ms) { timers.push(setTimeout(fn, ms)); }
 
   function land(card, step) {
+    waiting(false);
     card.classList.add('on', 'pop');
     pop(step);
   }
 
+  /* On a slow connection the screenshots can still be on their way when
+     the panel arrives, and a card that pops in before its picture is an
+     empty frame. So the founder keeps typing until all three are here. */
+  var imgs = cards.map(function (c) { return c.querySelector('img'); }).filter(Boolean);
+  var inView = false;
+  function ready() { return imgs.every(function (im) { return im.complete && im.naturalWidth > 0; }); }
+  imgs.forEach(function (im) {
+    im.addEventListener('load', function () { if (inView && !finished && ready()) run(); });
+  });
+
   function run() {
     clear();
     finished = false;
+    if (!ready()) { waiting(true); return; }
 
     // 1. The first message, alone in the middle, big enough to read.
     cards[0].classList.add('is-center');
@@ -129,12 +155,14 @@
     clear();
     finished = false;
     cards.forEach(function (c) { c.classList.remove('on', 'pop', 'is-center'); });
+    waiting(true);
   }
 
   function settle() {
     // Everything in place at once, no motion, no sound. Used when motion
     // is unwanted or when nothing can drive the timing.
     clear();
+    waiting(false);
     cards.forEach(function (c) { c.classList.add('on'); });
     finished = true;
   }
@@ -147,6 +175,52 @@
    * half landed collage is never left behind and every visit gets the
    * performance rather than a still picture of one.
    * ------------------------------------------------------------------ */
+  /* ------------------------------------------------------------------ *
+   * Full size
+   * However big the collage makes them, these are screenshots of type,
+   * and on a phone the words stay small. Any landed message opens full
+   * size on a tap or click, and closes on another, on Escape, or with
+   * the close button. Turned sideways, a phone shows it wide enough to
+   * read every line.
+   * ------------------------------------------------------------------ */
+  var zoom = document.createElement('div');
+  zoom.className = 'reax-zoom';
+  zoom.setAttribute('role', 'dialog');
+  zoom.setAttribute('aria-modal', 'true');
+  zoom.setAttribute('aria-label', 'Message from the founder, full size');
+  zoom.hidden = true;
+  zoom.innerHTML = '<img alt=""><p class="reax-zoom-hint">Turn your phone sideways to read it larger</p>' +
+                   '<button type="button" class="reax-zoom-x" aria-label="Close">&times;</button>';
+  document.body.appendChild(zoom);
+  var zImg = zoom.querySelector('img'), back = null;
+  function openZoom(card) {
+    var im = card.querySelector('img');
+    if (!im) return;
+    back = card;
+    zImg.src = im.currentSrc || im.src;
+    zImg.alt = im.alt;
+    zoom.hidden = false;
+    requestAnimationFrame(function () { zoom.classList.add('on'); });
+    zoom.querySelector('.reax-zoom-x').focus({ preventScroll: true });
+  }
+  function closeZoom() {
+    if (zoom.hidden) return;
+    zoom.classList.remove('on');
+    zoom.hidden = true;
+    if (back) back.focus({ preventScroll: true });
+  }
+  zoom.addEventListener('click', closeZoom);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeZoom(); });
+  cards.forEach(function (c) {
+    c.setAttribute('tabindex', '0');
+    c.setAttribute('role', 'button');
+    c.setAttribute('aria-label', 'Open this message full size');
+    c.addEventListener('click', function () { if (c.classList.contains('on')) openZoom(c); });
+    c.addEventListener('keydown', function (e) {
+      if ((e.key === 'Enter' || e.key === ' ') && c.classList.contains('on')) { e.preventDefault(); openZoom(c); }
+    });
+  });
+
   if (reduced.matches || !('IntersectionObserver' in window)) {
     settle();
     return;
@@ -185,7 +259,8 @@
   box.appendChild(btn);
 
   new IntersectionObserver(function (entries) {
-    if (entries[0].isIntersecting) {
+    inView = entries[0].isIntersecting;
+    if (inView) {
       if (!finished) { reset(); run(); }
     } else {
       reset();

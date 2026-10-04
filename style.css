@@ -331,8 +331,13 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
 }
 /* On a phone the portrait goes first and the claim follows it. */
 @media (max-width: 700px) {
-  .hs .panel.say.has-face { grid-template-columns: 1fr; grid-template-areas: "face" "lead" "creds"; row-gap: 22px; align-content: start; }
-  .say-face { justify-self: center; height: min(42vh, 340px); }
+  .hs .panel.say.has-face { grid-template-columns: 1fr; grid-template-areas: "face" "lead" "creds"; row-gap: 16px; align-content: start; }
+  /* Sized so the claim and the Message button still fit on the first
+     screen under it: 220px on a tall phone, down to 100px on a short one.
+     At 340px the face took most of the screen and the claim started at
+     the bottom edge. */
+  .say-face { justify-self: center; height: clamp(100px, calc(100svh - 578px), 220px); }
+  .hs .hs-track { padding-top: var(--s5); }
 }
 /* Until the face has landed, the claim and the record wait, so the
    opening is her name and her face alone. site.js lifts this. */
@@ -364,26 +369,18 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
    text laid over the first: generated content gets read out by some
    screen readers, and having a screen reader say the opening of the
    headline twice is a strange way to fix an accessibility problem. */
-.hs .panel.say h2 .dim, .hs .panel.state h3 .dim {
-  color: var(--dim);
-  background-image: linear-gradient(var(--chip), var(--chip));
-  background-repeat: no-repeat;
-  background-size: 0% 100%;
-  border-radius: .05em;
-  box-decoration-break: clone;
-  -webkit-box-decoration-break: clone;
-}
+/* The box is gone (2026-10-04): a reviewer read the blue block behind
+   these words as text left selected by accident. The words now only
+   brighten from dim to muted on arrival, so they stay the quieter half
+   of the sentence and nothing on screen looks like a mistake. */
+.hs .panel.say h2 .dim, .hs .panel.state h3 .dim { color: var(--dim); }
 /* Once, on arrival, and it holds where it finishes. */
 .hs .panel.say.on h2 .dim {
   animation: dim-select 820ms var(--ease-soft) 780ms forwards;
 }
 @keyframes dim-select {
-  from { background-size: 0% 100%;   color: var(--dim); }
-  /* It finishes readable, not loud. On the box these words land at
-     4.08:1 while the claim beside them is at 18.31:1, so they are
-     comfortably above the 3:1 large text needs and still clearly the
-     quieter half of the sentence, which is the job they were given. */
-  to   { background-size: 100% 100%; color: var(--muted); }
+  from { color: var(--dim); }
+  to   { color: var(--muted); }
 }
 .hs .panel.say h2 em, .hs .panel.state h3 em {
   display: inline-block; font-style: normal; color: var(--deep);
@@ -395,6 +392,16 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
 .hs .panel.state h3 em {
   background: var(--chip2); color: var(--chip2-ink);
   box-shadow: 0 0 0 .06em var(--chip2-ring);
+}
+/* On a phone a long chip ("25% more paying customers") is wider than the
+   screen, and nowrap pushed it off the right edge. There it may break,
+   and each line keeps its own rounded ends. */
+@media (max-width: 700px) {
+  .hs .panel.state h3 em .nb { white-space: nowrap; }
+  .hs .panel.state h3 em {
+    display: inline; white-space: normal;
+    box-decoration-break: clone; -webkit-box-decoration-break: clone;
+  }
 }
 .hs .panel.say h2 em svg, .hs .panel.state h3 em svg {
   width: .72em; height: .72em; vertical-align: -.06em; margin-right: .14em;
@@ -436,8 +443,9 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
    beside it is the quieter alternative, so the eye is not asked to choose
    between two equals. */
 .say-cta { display: flex; flex-wrap: wrap; gap: var(--s3); margin-top: clamp(20px, 3.2vh, 30px); }
-.say-cta .cta { display: inline-flex; align-items: center; gap: 9px; padding: 13px 24px; }
-.say-cta .cta svg { width: 18px; height: 18px; fill: currentColor; flex: none; }
+.say-cta .cta, .quote-ways .cta:first-child { display: inline-flex; align-items: center; gap: 9px; }
+.say-cta .cta { padding: 13px 24px; }
+.say-cta .cta svg, .quote-ways .cta svg { width: 18px; height: 18px; fill: currentColor; flex: none; }
 
 .go {
   margin-top: var(--s7); font-family: var(--sans); font-size: 13px; font-weight: 500;
@@ -559,6 +567,14 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
   border-radius: 14px;
 }
 
+/* The call to action at the end of each story. It is a statement card
+   that asks instead of tells: same type, same chip, and the buttons from
+   the first screen, so it reads as the story's last line rather than an
+   advert dropped into it. */
+.hs .panel.state.ask { width: min(640px, 92%); }
+.hs .panel.state.ask .say-cta { margin-top: var(--s6); }
+.hs .panel.state.ask .go { margin-top: var(--s6); }
+
 /* ---- Panel 2 · a happy client ------------------------------- *
    Three real messages from the client, popping in one after
    another, tap tap tap, the way YouTube videos present the
@@ -588,10 +604,12 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
      is art directed here. */
   --tx: 0%; --ty: 0%; --sc: 1; --rt: 0deg;
   transform: translate(-50%, -50%) translate(var(--tx), var(--ty)) scale(var(--sc)) rotate(var(--rt));
-  transition: transform 620ms var(--ease-out);
+  transition: transform 620ms var(--ease-out), left 620ms var(--ease-out), top 620ms var(--ease-out);
   opacity: 0; pointer-events: none;
 }
-.reax-card.on { opacity: 1; }
+/* A landed message can be opened full size (reactions.js). */
+.reax-card.on { opacity: 1; pointer-events: auto; cursor: zoom-in; }
+.reax-card:focus-visible img { outline: 2px solid var(--accent); outline-offset: 3px; }
 .reax-card img {
   display: block; width: 100%; height: auto;
   border: 1px solid var(--line); border-radius: 14px;
@@ -613,14 +631,21 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
    large tilted mass is what makes a collage feel about to slide, and
    the two small cards lean opposite ways with the same energy. Weighted
    by the size of what is leaning, the leans cancel out. */
-.reax-card[data-spot="a"] { width: 58%; --tx: -33%; --ty:   4%; --rt: -1.2deg; z-index: 1; }
-.reax-card[data-spot="b"] { width: 38%; --tx:  44%; --ty: -86%; --rt:  2.4deg; z-index: 2; }
-.reax-card[data-spot="c"] { width: 30%; --tx:  66%; --ty:  30%; --rt: -2.2deg; z-index: 3; }
+/* Rebuilt 2026-10-04, her call: the convert to blocks thread is the
+   one with the most to read, and at 58% its words were 8px tall. It now
+   takes almost three quarters of the frame. The other two are placed by the
+   stage's edges rather than by their own size, so the composition holds
+   whatever height the frame gets: the tall thread pinned top right, the
+   one-line reply pinned bottom right. Both land on the empty wallpaper at
+   the right of the big thread, not on its messages. */
+.reax-card[data-spot="a"] { width: 72%; left: 36%;  top: 50%;  --tx: 0%; --ty: 0%;   --rt: -.6deg; z-index: 1; }
+.reax-card[data-spot="c"] { width: 26%; left: 87%;  top: 0%;   --tx: 0%; --ty: 50%;  --rt: 1.8deg; z-index: 2; }
+.reax-card[data-spot="b"] { width: 27%; left: 86.5%; top: 100%; --tx: 0%; --ty: -50%; --rt: -2deg;  z-index: 3; }
 
 /* The first message gets the middle to itself before the others arrive.
    Bigger than its parked size, straight, on top. Removing this class is
    the shift: the transform transitions from here to the spot above. */
-.reax-card.is-center { --tx: 0%; --ty: 0%; --sc: 1.3; --rt: 0deg; z-index: 4; }
+.reax-card.is-center { left: 50%; top: 50%; --tx: 0%; --ty: 0%; --sc: 1.12; --rt: 0deg; z-index: 4; }
 
 /* The arrival. Small and under, then past the mark and back. A plain
    fade would be an appearance; the overshoot is what makes it a pop.
@@ -635,6 +660,29 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
   100% { opacity: 1; transform: translate(-50%, -50%) translate(var(--tx), var(--ty)) scale(var(--sc)) rotate(var(--rt)); }
 }
 .reax-card.pop { animation: reax-pop 460ms var(--ease-out); }
+
+/* The founder typing, shown only while no message has landed yet. It is
+   a received bubble, dark like his messages in the screenshots, with his
+   name above the dots the way a group chat labels the sender. */
+.reax-typing {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(.9);
+  display: flex; flex-direction: column; gap: 6px;
+  padding: 10px 16px 13px; border-radius: 4px 16px 16px 16px;
+  background: #1f2c34; border: 1px solid var(--line);
+  box-shadow: 0 10px 30px rgba(0,0,0,.4);
+  opacity: 0; transition: opacity 240ms var(--ease-soft), transform 240ms var(--ease-out);
+  pointer-events: none; z-index: 5;
+}
+.is-waiting .reax-typing { opacity: 1; transform: translate(-50%, -50%); }
+.reax-typing .who { font-family: var(--sans); font-size: 12.5px; font-weight: 600; color: #c4a7ff; line-height: 1; }
+.reax-typing .tdots { display: flex; gap: 5px; }
+.reax-typing .tdots i {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--muted);
+  animation: tdot 1.1s ease-in-out infinite;
+}
+.reax-typing .tdots i:nth-child(2) { animation-delay: .16s; }
+.reax-typing .tdots i:nth-child(3) { animation-delay: .32s; }
+@keyframes tdot { 0%, 60%, 100% { opacity: .35; transform: none; } 30% { opacity: 1; transform: translateY(-3px); } }
 
 /* The corner label names where the messages came from. It is one static
    line, because all three are from the same place. */
@@ -659,7 +707,38 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
 @media (hover: hover) and (pointer: fine) { .reax-sound:hover { background: var(--ring); } }
 /* On a phone the card is too narrow for the button and the tag side by
    side, and the tag only repeats the caption underneath it, so it goes. */
-@media (max-width: 700px) { .reax-tag { display: none; } }
+@media (max-width: 700px) { /* A message opened full size. */
+.reax-zoom {
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  padding: clamp(16px, 4vw, 56px);
+  background: rgba(6, 9, 18, .9); cursor: zoom-out;
+  opacity: 0; transition: opacity 200ms var(--ease-soft);
+}
+.reax-zoom.on { opacity: 1; }
+.reax-zoom[hidden] { display: none; }
+.reax-zoom img {
+  max-width: 100%; max-height: 100%; width: auto; height: auto;
+  border-radius: 14px; border: 1px solid var(--line);
+  box-shadow: 0 24px 60px rgba(0,0,0,.6);
+}
+.reax-zoom-hint { display: none; }
+@media (max-width: 700px) and (orientation: portrait) {
+  .reax-zoom { flex-direction: column; gap: 14px; }
+  .reax-zoom img { max-height: 80%; }
+  .reax-zoom-hint {
+    display: block; font-family: var(--sans); font-size: 13.5px; font-weight: 500;
+    color: var(--muted); text-align: center;
+  }
+}
+.reax-zoom-x {
+  position: absolute; top: 14px; right: 14px;
+  width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line);
+  background: var(--plate2); color: var(--ink); font-size: 26px; line-height: 1; cursor: pointer;
+}
+.reax-zoom-x:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.reax-tag { display: none; } }
 
 .reax-tag {
   position: absolute; right: clamp(16px, 2.4vw, 30px); bottom: clamp(12px, 1.8vw, 20px);
@@ -671,6 +750,7 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
 @media (prefers-reduced-motion: reduce) {
   .reax-card.pop { animation: none; }
   .reax-card { transition: opacity 1ms linear; }
+  .reax-typing .tdots i { animation: none; opacity: .7; }
 }
 
 /* On a phone the strip unrolls into a normal column and framed media is
@@ -679,10 +759,13 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
    spots but every card grows, because a 32% card on a phone is a smudge
    rather than a message. */
 @media (max-width: 700px) {
-  .hs .panel.med.proof figure { height: 64vw; min-height: 250px; max-height: 360px; }
-  .reax-card[data-spot="a"] { width: 64%; --tx: -20%; --ty: 4%; }
-  .reax-card[data-spot="b"] { width: 44%; --tx: 38%; --ty: -92%; }
-  .reax-card[data-spot="c"] { width: 34%; --tx: 48%; --ty: 30%; }
+  /* Taller on a phone: the big thread runs the full width along the top
+     and the other two sit side by side under it, nothing overlapping. */
+  .hs .panel.med.proof figure { height: 96vw; min-height: 340px; max-height: 470px; }
+  .reax-card[data-spot="a"] { width: 100%; left: 50%;   top: 0%;  --ty: 50%; --rt: 0deg; }
+  .reax-card[data-spot="c"] { width: 46%;  left: 76%;   top: 41%; --ty: 50%; --rt: 1.4deg; }
+  .reax-card[data-spot="b"] { width: 50%;  left: 25.5%; top: 41%; --ty: 50%; --rt: -1.4deg; }
+  .reax-card.is-center { --sc: 1; }
 }
 
 /* The number sits above the caption rather than beside it, so the frame,
@@ -775,6 +858,22 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
 }
 .rpause svg { width: 13px; height: 13px; fill: currentColor; display: block; }
 .reel.is-paused .rpause { opacity: 1; transform: none; }
+/* Full screen, phones only (site.js explains why). Top right, clear of
+   the pause mark bottom left, and always visible, because a phone has no
+   hover to reveal it. */
+.rfull { display: none; }
+@media (max-width: 700px) {
+  .rfull {
+    position: absolute; right: 14px; top: 14px; z-index: 5;
+    display: flex; align-items: center; gap: 6px;
+    padding: 7px 12px 7px 10px; border-radius: 99px; border: 0;
+    background: rgba(18,24,41,.88); color: var(--ink);
+    font-family: var(--sans); font-size: 12.5px; font-weight: 600; line-height: 1;
+    box-shadow: 0 2px 10px rgba(0,0,0,.5); cursor: pointer;
+  }
+  .rfull svg { width: 14px; height: 14px; display: block; }
+  .rfull:active { transform: scale(.96); }
+}
 
 /* A stopped reel stops its clock too. The filling dot holding steady is
    what says the pause is real and the reel has not simply stalled. */
@@ -927,10 +1026,10 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
 @keyframes reelbar { from { transform: scaleX(0) } to { transform: scaleX(1) } }
 
 @media (prefers-reduced-motion: reduce) {
-  /* No sweep, but the words still have to be readable, so they simply
-     start where the sweep would have finished. */
+  /* No fade, but the words still have to be readable, so they simply
+     start where the fade would have finished. */
   .hs .panel.say h2 .dim, .hs .panel.say.on h2 .dim {
-    animation: none; background-size: 100% 100%; color: var(--muted);
+    animation: none; color: var(--muted);
   }
   /* The introduction's entrance is exempted from the mobile kill above,
      so it must be silenced here for anyone who asked for less motion. */
@@ -1455,6 +1554,11 @@ footer a { color: var(--muted); }
   body { padding: 0; }
   .sheet { box-shadow: none; }
   .topbar { flex-wrap: wrap; gap: var(--s3); }
+  /* On a phone the bar keeps LinkedIn only. Email and phone were a
+     sideways strip that cut the address off mid word, which read as
+     broken, and both are a thumb away in the first screen's buttons and
+     at the end of the page. It also gives the claim back a row. */
+  .topbar .links .pill:not(.solid) { display: none; }
   .quote { flex-direction: column; align-items: flex-start; gap: var(--s4); }
   .owned, .stats, .facts { grid-template-columns: 1fr; }
   .hs .panel.nums .grid { grid-template-columns: 1fr; }

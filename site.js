@@ -286,6 +286,8 @@
   var ICON_PREV  = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.6 6.3L8.9 12l5.7 5.7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   var ICON_NEXT  = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.4 6.3L15.1 12l-5.7 5.7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
+  var ICON_FULL  = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
   function reel(box) {
     var panel = box.closest('.panel');
     var rail = panel && panel.querySelector('.dots');
@@ -447,6 +449,7 @@
     }
 
     function tick() {
+      if (full) return;
       var on = onStage();
       if (!on) {
         /* Leaving keeps the place. A visitor who scrolls on during clip
@@ -482,7 +485,7 @@
        carried on from its middle, and on a phone it kept playing to an
        empty screen. A cheap check, three times a second, closes that. */
     setInterval(function () {
-      if (document.hidden) return;
+      if (document.hidden || full) return;
       if (onStage() !== wasOn) { clearTimeout(timer); tick(); }
     }, 300);
     /* A clip whose metadata has not arrived yet has no duration, so it
@@ -513,7 +516,7 @@
     }
     function restart() {
       clearTimeout(timer);
-      if (held || paused) return;
+      if (held || paused || full) return;
       /* A beat behind the clip's own length, so the ended event is what
          actually advances the reel and this timer only catches a clip
          that stalled or was never allowed to play. */
@@ -564,6 +567,53 @@
     flag.setAttribute('aria-hidden', 'true');
     flag.innerHTML = ICON_PLAY + '<span>Paused</span>';
     box.appendChild(flag);
+
+    /* Full screen, for phones. These are desktop recordings, and at phone
+       width the words inside them are a few pixels tall: the visitor sees
+       something happening but cannot read what. Full screen, turned
+       sideways, gives the clip the whole screen and makes it readable.
+       While it is open the reel holds still and the clip loops, so the
+       picture never swaps underneath someone who is reading it. */
+    var full = false;
+    var fs = document.createElement('button');
+    fs.type = 'button';
+    fs.className = 'rfull';
+    fs.setAttribute('aria-label', 'Watch this clip full screen');
+    fs.innerHTML = ICON_FULL + '<span>Full screen</span>';
+    box.appendChild(fs);
+    function fullOff() {
+      if (!full) return;
+      var v = full; full = false;
+      v.__full = false; v.loop = false; v.controls = false;
+      try { if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); } catch (e) {}
+      restart();
+    }
+    fs.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var v = vids[i];
+      if (!v) return;
+      full = v; v.__full = true;
+      clearTimeout(timer);
+      clearPause();
+      v.loop = true; v.controls = true;
+      if (v.readyState < 2) { try { v.load(); } catch (er) {} }
+      var q = v.play();
+      if (q && q.catch) q.catch(function () {});
+      if (v.requestFullscreen) {
+        v.requestFullscreen().then(function () {
+          if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(function () {});
+        }, fullOff);
+      } else if (v.webkitEnterFullscreen) {
+        /* iPhone: only the video element itself can go full screen. */
+        try { v.webkitEnterFullscreen(); } catch (er) { fullOff(); }
+      } else { fullOff(); }
+    });
+    ['fullscreenchange', 'webkitfullscreenchange'].forEach(function (ev) {
+      document.addEventListener(ev, function () {
+        if (!(document.fullscreenElement || document.webkitFullscreenElement)) fullOff();
+      });
+    });
+    vids.forEach(function (v) { v.addEventListener('webkitendfullscreen', fullOff); });
 
     /* A swipe ends in a click too, so a sideways drag would both change
        the clip and stop it. The swipe sets this, and the click that
@@ -737,7 +787,12 @@
          fight, and the record arrives late or not at all. Stacked, the
          class is off and the entrance takes it back. */
       sec.classList.add('js-beat');
-      dist = Math.max(0, track.scrollWidth - view.clientWidth);
+      /* Measured to the last card's own right edge plus its margin.
+         scrollWidth leaves out a last child's trailing margin, and that
+         is how the strip stopped with the final card cut off by the edge. */
+      var last = track.lastElementChild;
+      var end = last ? last.offsetLeft + last.offsetWidth + (parseFloat(window.getComputedStyle(last).marginRight) || 0) : 0;
+      dist = Math.max(0, Math.max(track.scrollWidth, end) - view.clientWidth);
       /* How far the claim has to travel is measured, not guessed: it is
          half of what the record occupies, which is exactly the distance
          that leaves the claim optically centred while the record is out
@@ -831,7 +886,7 @@
            for one visible frame. */
         /* A clip whose file was missing has already removed itself from
            the document, and this list was captured before that happened. */
-        if (!v.parentNode) return;
+        if (!v.parentNode || v.__full) return;
         if (v.parentNode.classList.contains('reel')) {
           /* Only the clip on screen runs, and a reel the reader has
              paused stays paused however the page is scrolled. */
