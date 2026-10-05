@@ -874,6 +874,14 @@
       }
       if (sayGo) sayGo.style.opacity = String(1 - clamp01(p * 4));
     }
+    /* A section link jumps straight past the opening: the flight lands
+       at once and the hold is dropped, so the jump reaches the card. */
+    document.addEventListener('secnav:jump', function () {
+      if (!fly || flyMode === 'done') return;
+      flyMode = 'done'; flyFloor = 1; flyTarget = 1; flyV = 0; flyTo(1);
+      risen = true; clearTimeout(riseTimer);
+      if (!off()) measure();
+    });
     function chase(now) {
       flyLoop = 0;
       var dt = Math.min(0.05, (now - flyLast) / 1000);
@@ -1011,7 +1019,11 @@
          is how the strip stopped with the final card cut off by the edge. */
       var last = track.lastElementChild;
       var end = last ? last.offsetLeft + last.offsetWidth + (parseFloat(window.getComputedStyle(last).marginRight) || 0) : 0;
-      dist = Math.max(0, Math.max(track.scrollWidth, end) - view.clientWidth);
+      /* Only the last card's edge counts. scrollWidth also counts anything
+         that pokes out of a card, such as the record's flight corridor, and
+         on the home page, where the strip is one card long, that made the
+         first screen slide 4,000px sideways before the page went on down. */
+      dist = Math.max(0, end - view.clientWidth);
       /* How far the claim has to travel is measured, not guessed: it is
          half of what the record occupies, which is exactly the distance
          that leaves the claim optically centred while the record is out
@@ -1447,12 +1459,106 @@
     setTimeout(function () { if (!queued) { queued = true; type(); } }, 9000);
   }
 
+  /* Design work: any piece opens full size, reusing the WhatsApp
+     card's viewer (reactions.js makes .reax-zoom). Esc, a tap or the
+     close button shuts it. */
+  function designWork() {
+    var pieces = document.querySelectorAll('.dw-piece');
+    if (!pieces.length) return;
+    [].forEach.call(pieces, function (b) {
+      b.addEventListener('click', function () {
+        var z = document.querySelector('.reax-zoom');
+        var im = b.querySelector('img');
+        if (!z || !im) return;
+        var zi = z.querySelector('img');
+        zi.src = im.currentSrc || im.src; zi.alt = im.alt;
+        z.classList.add('no-hint');
+        z.hidden = false;
+        requestAnimationFrame(function () { z.classList.add('on'); });
+        var x = z.querySelector('.reax-zoom-x'); if (x) x.focus({ preventScroll: true });
+      });
+    });
+  }
+
+  /* Section links. A plain anchor cannot reach a card inside the pinned
+     strip, because the strip moves sideways while the page scrolls down,
+     so on a laptop the jump is worked out from where that card sits in
+     the strip. On a phone the page is a normal column and the browser's
+     own scroll does it. The phone bar shows after the first screen and
+     marks the section in view. */
+  function sections() {
+    var links = document.querySelectorAll('.secnav a, .secbar a');
+    if (!links.length) return;
+    var sec = document.getElementById('hs');
+    var smooth = reduced.matches ? 'auto' : 'smooth';
+    function stacked() { return window.matchMedia('(max-width: 700px)').matches || reduced.matches; }
+    [].forEach.call(links, function (a) {
+      a.addEventListener('click', function (e) {
+        var href = a.getAttribute('href');
+        if (href.charAt(0) !== '#') return;   /* a link to another page */
+        var id = href.slice(1), el = document.getElementById(id);
+        if (!el) return;
+        e.preventDefault();
+        document.dispatchEvent(new Event('secnav:jump'));
+        var y;
+        if (!stacked() && sec && sec.contains(el)) {
+          var track = document.getElementById('track'), view = sec.querySelector('.hs-view');
+          var x = el.offsetLeft + el.offsetWidth / 2 - view.clientWidth / 2;
+          /* the strip starts after the first screen's hold */
+          var last = track.lastElementChild;
+          var end = last.offsetLeft + last.offsetWidth + (parseFloat(window.getComputedStyle(last).marginRight) || 0);
+          var hold = sec.offsetHeight - window.innerHeight - Math.max(0, end - view.clientWidth);
+          y = sec.offsetTop + Math.max(0, hold) + Math.max(0, x);
+        } else {
+          y = el.getBoundingClientRect().top + window.scrollY - 12;
+        }
+        window.scrollTo({ top: y, behavior: smooth });
+      });
+    });
+    var bar = document.querySelector('.secbar');
+    if (!bar || !('IntersectionObserver' in window)) return;
+    var first = document.querySelector('.panel.say');
+    if (first) new IntersectionObserver(function (en) {
+      bar.classList.toggle('show', !en[0].isIntersecting);
+    }, { threshold: 0.05 }).observe(first);
+    var map = {};
+    [].forEach.call(bar.querySelectorAll('a'), function (a) { map[a.getAttribute('href').slice(1)] = a; });
+    var watch = new IntersectionObserver(function (es) {
+      es.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        var id = en.target.id;
+        /* every client work card counts as Projects */
+        if (!map[id]) id = 'projects';
+        [].forEach.call(bar.querySelectorAll('a'), function (a) { a.classList.toggle('on', map[id] === a); });
+      });
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    ['projects', 'personal', 'design-work'].forEach(function (id) { var el = document.getElementById(id); if (el) watch.observe(el); });
+    [].forEach.call(document.querySelectorAll('#track > .panel:not(.say)'), function (p) { watch.observe(p); });
+  }
+
+  /* The personal project's demo plays silently in view. "Watch with
+     sound" starts it from the beginning with sound, once; after that the
+     player's own controls take over. Turning the sound on from those
+     controls retires the button too. */
+  function demoSound() {
+    var btn = document.querySelector('.pux-sound');
+    var v = btn && btn.parentNode.querySelector('video');
+    if (!v) return;
+    btn.addEventListener('click', function () {
+      v.muted = false; v.loop = false;
+      try { v.currentTime = 0; } catch (e) {}
+      var q = v.play(); if (q && q.catch) q.catch(function () {});
+      btn.hidden = true;
+    });
+    v.addEventListener('volumechange', function () { if (!v.muted) { btn.hidden = true; v.loop = false; } });
+  }
+
   function init() {
     marks(); theatre(); reels(); horizontal(); typeBuilder();
     /* The opening state is set, so the panel can be shown. Same task as
        the setup above, so no frame is ever painted in between. */
     document.documentElement.classList.remove('js-early');
-    copyPills(); progress(); reveal(); compare(); inviewVideo(); hoverVideo(); figures(); arrivals();
+    copyPills(); progress(); reveal(); compare(); inviewVideo(); hoverVideo(); figures(); arrivals(); designWork(); sections(); demoSound();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

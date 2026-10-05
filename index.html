@@ -40,11 +40,20 @@
        pin releases and the page carries on. Phones get a native swipe
        strip instead, because hijacking scroll on touch is always wrong.
        ================================================= -->
-  <section class="hs" id="hs">
+  <section class="hs hs-solo" id="hs">
     <div class="hs-pin">
 
       <header class="topbar over-dark">
     <a class="wordmark" href="index.html">Soumya<span>.</span></a>
+    <!-- Sections, one tap away (2026-10-06): the product work in the
+         strip, her own builds, and her visual work. site.js turns these
+         into jumps inside the pinned strip. -->
+    <nav class="secnav" aria-label="Sections">
+      <a href="#projects">Projects</a>
+      <a href="#personal">Personal</a>
+      <a href="#design-work">Design work</a>
+      <a href="assets/Perla-Soumya-Resume.pdf" download="Perla Soumya - Resume.pdf">Resume ↓</a>
+    </nav>
     <div class="links">
 <!-- Her phone and email are always on show (her call, 2026-10-06), and
            both copy on click like every contact on the page. -->
@@ -67,7 +76,7 @@
                    design canvas, and "builder." ends at a blinking text caret,
                    the way it would in a code editor. -->
               <h2 class="db"><span class="db-sel">Design<i class="db-h tl"></i><i class="db-h tr"></i><i class="db-h bl"></i><i class="db-h br"></i></span><br><span class="db-build">builder.</span><i class="db-caret" aria-hidden="true"></i></h2>
-              <p class="db-sub">I design and develop end-to-end products for founders and startups.</p>
+              <p class="db-sub">I design and develop products for founders and startups.</p>
               <p class="db-text">I turn a founder's intent into a product they can run without me. A developer turned UX designer, I explore how UX and AI can eliminate cognitive load. For UX Gym, I designed and built the entire learning platform solo, cutting project reviews from <mark class="mk">a week to 2 days</mark> and admissions from 5 days to 4 hours.</p>
               <!-- The one thing to do on this page. WhatsApp is the primary
                    route because the founders she works with live on it and
@@ -113,166 +122,6 @@
             <canvas class="face-dots" aria-hidden="true"></canvas>
           </div>
 
-          <!-- The statement card. The claim gets the stage to itself, told in
-               sequence by the stagger, and then the scroll carries the reader
-               into the clips that prove it. -->
-          <div class="panel state">
-            <p class="eyebrow">Client work · UX Gym</p>
-            <h3>The founder wanted learning that doesn't feel like a textbook. I designed and built it, alone, in one month, and student engagement rose <em><span class="nb"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg>from</span> 60% to 80%</em>.</h3>
-            <p class="st-sub">The lessons became interactive exercises students actually finish. Admission takes <mark class="mk">4 hours instead of 5 days</mark>, and the founder runs every batch himself, with no developer.</p>
-            <p class="st-client">Client · <b>UX Anudeep</b> · Founder, UX Gym · ex Amazon · mentored 5,000+ designers</p>
-          </div>
-
-          <!-- Card 01 is a reel: four clips in one frame, crossfading, with
-               dots and a line that changes with the clip. -->
-          <div class="panel med">
-            <figure class="reel">
-              <video class="is-live" src="assets/video/intro.mp4" poster="assets/poster/intro.jpg" muted playsinline preload="metadata"
-                     data-cap="To get the founder's idea in front of students fast, I took it from idea to a tested product in one month, alone. It currently runs 300+ students across 3 batches."></video>
-              <video src="assets/video/canvas.mp4" poster="assets/poster/canvas.jpg" muted playsinline preload="metadata"
-                     data-cap="A workbook asks for effort and gives little back. So I turned every workbook into a canvas students work on like Figma: zoom, drag, answer. 80% to 100% of students finish each exercise."></video>
-              <video src="assets/video/linkedin.mp4" poster="assets/poster/linkedin.jpg" muted playsinline preload="metadata"
-                     data-cap="To turn students' work into reach, I ended every exercise with a ready-to-post download. Sharing on LinkedIn went from 20% to 80%, bringing UX Gym thousands of leads without ads."></video>
-              <video src="assets/video/builder.mp4" poster="assets/poster/builder.jpg" muted playsinline preload="metadata"
-                     data-cap="Laying out every module by hand was slowing the admins down. So I built a page builder: they drop in the content and the page lays itself out. Building a module takes about 80% less of their time."></video>
-            </figure>
-            <div class="cap"><span class="num">01</span>
-              <div>
-                <p class="subt"></p>
-                <div class="dots"></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- ================= PANEL 02 · A HAPPY CLIENT =================
-               Three real messages from the client, popping in one after
-               another, tap tap tap, the way YouTube videos present the
-               comments they got. The first appears in the middle, then
-               slides aside to make room for the next two, and the panel
-               settles as a balanced collage where every message stays
-               visible. Nothing here changes after that: no timer, no
-               controls, just the pile of appreciation.
-               ============================================================ -->
-          <div class="panel med proof">
-            <figure class="reax" id="reax">
-              <div class="reax-stage">
-
-                <article class="reax-card" data-spot="a">
-                  <img src="assets/proof/anudeep-product-thinking.png"
-                    alt="WhatsApp thread. Anudeep says the convert to blocks idea is really amazing and asks how I got it. I explain that a student wanted to paste her notes across from Discord, and our system could already recognise the markdown, so I made it split the pasted text into separate blocks by itself. He replies, amazing Soumya Sri, very good product thinking." />
-                </article>
-
-                <article class="reax-card" data-spot="b">
-                  <img src="assets/proof/anudeep-bulk-import.jpg"
-                    alt="WhatsApp message. Anudeep quotes my video saying the bulk import through text is ready, and replies, this is awesome, with a heart." />
-                </article>
-
-                <article class="reax-card" data-spot="c">
-                  <img src="assets/proof/anudeep-larger-system.jpg"
-                    alt="WhatsApp messages from Anudeep. He says that with the LMS the students are taking things very seriously and feeling like a part of a larger system, instead of feeling like Anudeep is just messaging, and that since the course work is no longer on Discord, they can use Discord as Discord." />
-                </article>
-
-              </div>
-
-            </figure>
-
-            <div class="cap"><span class="num">02</span>
-              <div>
-                <p><b class="said">&ldquo;Because of the LMS, they are taking things very seriously. They are feeling like a part of a larger system.&rdquo;</b></p>
-                <p class="fine">UX Anudeep, founder, on WhatsApp during the build. The first words are translated from Telugu.</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Card 03 is a reel like card 01: four clips, dots, a line
-               that changes with the clip under one constant heading. -->
-          <div class="panel med">
-            <figure class="reel">
-              <video class="is-live" src="assets/video/pokemon.mp4" poster="assets/poster/pokemon.jpg" muted playsinline preload="metadata"
-                     data-cap="To make finishing feel like a reward, the student's own answers become their UX Pokemon card, revealed like opening a pack. 100% of students finish this exercise."></video>
-              <video src="assets/video/explore.mp4" poster="assets/poster/explore.jpg" muted playsinline preload="none"
-                     data-cap="Rather than ask the founder to judge mockups, I built every option for the end-of-module screen for real. He chose by using them, not by imagining them."></video>
-              <video src="assets/video/uxbehindui.mp4" poster="assets/poster/uxbehindui.jpg" muted playsinline preload="none"
-                     data-cap="Design decisions are invisible, which makes them hard to teach. So in UX Behind UI, five of them light up on a WhatsApp chat, one at a time, and students see each one happen."></video>
-              <video src="assets/video/pokeadmin.mp4" poster="assets/poster/pokeadmin.jpg" muted playsinline preload="none"
-                     data-cap="To catch mistakes before students do, the founder can preview any screen exactly as a student will meet it. Errors get fixed by him, not reported by his students."></video>
-            </figure>
-            <div class="cap"><span class="num">03</span>
-              <div>
-                <p class="subt"></p>
-                <div class="dots"></div>
-                <p class="reel-claim">The lessons became interactive exercises that students actually finish.</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- The end of the LMS story asks for the next one. The critique
-               (2026-09-21) wanted a call to action after every piece of work,
-               so a founder convinced by this story does not have to scroll
-               through the rest of the page to reach her. -->
-          <div class="panel state ask">
-            <p class="eyebrow">Your product next</p>
-            <h3>Have an idea people should <em><span class="nb"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg>love</span> using</em>, not just sign up for?</h3>
-            <p class="st-sub">I'll design it and build it around what you intend, and hand you a product you run yourself.</p>
-            <div class="say-cta">
-              <a class="cta" href="https://wa.me/918074889819?text=Hi%20Soumya%2C%20I%20saw%20your%20work%20and%20I%20would%20like%20to%20talk%20about%20my%20product." target="_blank" rel="noopener">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5c-4.7 0-8.5 3.4-8.5 7.6 0 2.3 1.1 4.3 2.9 5.7l-.7 3.2 3.3-1.8c.9.3 1.9.4 3 .4 4.7 0 8.5-3.4 8.5-7.5S16.7 3.5 12 3.5z"/></svg>
-                Message
-              </a>
-              <a class="cta ghost" href="mailto:perlasoumyasri@gmail.com" data-copy="perlasoumyasri@gmail.com" data-action="mail">Email me</a>
-            </div>
-          </div>
-
-          <!-- The launch's statement card. The LMS story opens with one of
-               these and the launch had only a caption under its clips, so the
-               two pieces of work did not arrive the same way. This gives the
-               launch the same stage, and leads on what the client got rather
-               than on what was built. -->
-          <div class="panel state">
-            <p class="eyebrow">Client work · UX Gym</p>
-            <h3>The founder wanted to run a four day live launch from his own phone. I designed and built it, and it brought <em><span class="nb"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg>25%</span> more paying customers</em> than the year before.</h3>
-            <p class="st-sub">Each day's content opened when he chose, nothing waited on a developer, and he could see exactly who was staying while it happened.</p>
-            <p class="st-client">Client · <b>UX Anudeep</b> · Founder, UX Gym · ex Amazon · mentored 5,000+ designers</p>
-          </div>
-
-
-          <!-- The launch's clips, straight after its statement card. Its
-               numbers live in the captions, each one under the clip that
-               earned it, so there is no separate figures card. The LMS story
-               is told in full first. -->
-          <div class="panel med">
-            <figure class="reel">
-              <video class="is-live" src="assets/video/launch2.mp4" poster="assets/poster/launch2.jpg" muted playsinline preload="metadata"
-                     data-cap="So the launch could run without a developer on call, each day's content unlocked on its own, on time. 1,016 people attended, and UX Gym signed up 25% more paying customers than the year before."></video>
-              <video src="assets/video/adminday1.mp4" poster="assets/poster/adminday1.jpg" muted playsinline preload="none"
-                     data-cap="To keep the founder in control on the day, I gave him every one of the site's sixteen states on his phone. He switched them live, and nothing ever went out late."></video>
-              <video src="assets/video/dashboard.mp4" poster="assets/poster/dashboard.jpg" muted playsinline preload="none"
-                     data-cap="So the founder could see his funnel live, I designed an analytics dashboard showing who arrived each day and where people dropped off. After four days that filtered out casual visitors, it showed more than half of day one's audience, 53.3%, still there when the offer opened."></video>
-            </figure>
-            <div class="cap"><span class="num">04</span>
-              <div>
-                <p class="subt"></p>
-                <div class="dots"></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- The end of the launch story asks for the next one. It replaced
-               the closing figures card (2026-10-04): its numbers were already
-               on the first screen, so the last card repeated the first. -->
-          <div class="panel state ask">
-            <p class="eyebrow">Your launch next</p>
-            <h3>Launching something? Let's build a launch that <em><span class="nb"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg>converts</span></em>.</h3>
-            <p class="st-sub">Designed and built end to end, with your funnel in front of you while it runs, so you see who stays and where people drop off.</p>
-            <div class="say-cta">
-              <a class="cta" href="https://wa.me/918074889819?text=Hi%20Soumya%2C%20I%20saw%20your%20launch%20work%20and%20I%20would%20like%20to%20talk%20about%20a%20launch." target="_blank" rel="noopener">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5c-4.7 0-8.5 3.4-8.5 7.6 0 2.3 1.1 4.3 2.9 5.7l-.7 3.2 3.3-1.8c.9.3 1.9.4 3 .4 4.7 0 8.5-3.4 8.5-7.5S16.7 3.5 12 3.5z"/></svg>
-                Message
-              </a>
-              <a class="cta ghost" href="mailto:perlasoumyasri@gmail.com" data-copy="perlasoumyasri@gmail.com" data-action="mail">Email me</a>
-            </div>
-            <p class="go"><i>↓</i> Or find my email and phone below</p>
-          </div>
 
         </div>
       </div>
@@ -287,6 +136,123 @@
 
   
 
+  <!-- ================= PROJECTS =================
+       The home page reads top to bottom (2026-10-06, her call). Each
+       project is one card here; opening it plays that project's own
+       sideways story (lms.html, launch.html). Decision stories will hang
+       off these pages later.
+       ============================================ -->
+  <section class="projs" id="projects" aria-labelledby="projs-h">
+    <p class="pux-k">Projects</p>
+    <!-- Five shipped: the learning platform and the launch for UX Gym, and
+         three at Tata Steel, of which the guest house is shown (her words,
+         2026-10-06). -->
+    <h2 class="projs-h" id="projs-h">I've designed, built and shipped five products. Here are three.</h2>
+
+    <a class="proj" href="lms.html">
+      <div class="proj-media">
+        <video src="assets/video/intro.mp4" poster="assets/poster/intro.jpg" muted loop playsinline preload="none" data-inview aria-hidden="true"></video>
+      </div>
+      <div class="proj-copy">
+        <p class="proj-k">Client work · UX Gym · learning platform</p>
+        <h3>The founder wanted learning that doesn't feel like a textbook. I designed and built it solo, in one month.</h3>
+        <p class="proj-tags"><span>Engagement 60% → 80%</span><span>300+ students in two months</span><span>Reviews: a week → 2 days</span></p>
+        <span class="proj-go">View project <i>→</i></span>
+      </div>
+    </a>
+
+    <a class="proj" href="launch.html">
+      <div class="proj-media">
+        <!-- the founder switching the launch live from his phone, which is
+             what the line beside it says (her pick, 2026-10-06) -->
+        <video class="at-left" src="assets/video/adminday1.mp4" poster="assets/poster/adminday1.jpg" muted loop playsinline preload="none" data-inview aria-hidden="true"></video>
+      </div>
+      <div class="proj-copy">
+        <p class="proj-k">Client work · UX Gym · four day live launch</p>
+        <h3>A live launch the founder ran from his phone, designed and built solo.</h3>
+        <p class="proj-tags"><span>+25% paying customers</span><span>1,016 attendees</span><span>53.3% stayed all four days</span></p>
+        <span class="proj-go">View project <i>→</i></span>
+      </div>
+    </a>
+
+    <a class="proj" href="tata.html">
+      <div class="proj-media">
+        <img src="assets/tata/raw07.jpg" width="490" height="352" loading="lazy" alt="" />
+      </div>
+      <div class="proj-copy">
+        <p class="proj-k">Client work · Tata Steel · guest house booking</p>
+        <h3>Tata Steel ran guest house booking on calls and Excel. I designed and built the system that replaced it, solo.</h3>
+        <p class="proj-tags"><span>30,000 people a year</span><span>2,000–3,000 bookings a month</span><span>Confirmed instantly, no approval queue</span></p>
+        <span class="proj-go">View project <i>→</i></span>
+      </div>
+    </a>
+  </section>
+
+  <!-- ================= PERSONAL UX PROJECTS =================
+       Her own projects, after the client work: what she builds when
+       nobody has asked. A short silent cut of the demo plays in view;
+       the full demo, with her voice, lives on LinkedIn. The comment is
+       Anudeep's, exactly as he posted it.
+       ========================================================= -->
+  <section class="pux" id="personal" aria-labelledby="personal-h">
+    <p class="pux-k">Personal UX projects</p>
+    <div class="pux-proj">
+      <figure class="pux-media">
+        <!-- The full demo, with her voice (2026-10-06). It plays silently
+             in view; the button, or the player's own controls, turn the
+             sound on, and the bar lets a visitor pause or jump anywhere. -->
+        <video src="assets/video/extension-full.mp4" poster="assets/poster/extension.jpg" muted loop playsinline controls preload="metadata" data-inview
+               aria-label="Demo: selecting a word shows its meaning in the context of the page, compared with a dictionary and a search"></video>
+        <button class="pux-sound" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Watch with sound</button>
+      </figure>
+      <div class="pux-copy">
+        <h3 id="personal-h">A dictionary that reads the sentence, not just the word.</h3>
+        <p>A dictionary lists every meaning of a word and leaves the reader to work out which one fits. I built a Chrome extension that reads the sentence around the word and gives the one meaning that fits: on a security page, "salting" is about passwords, not food. It works on email shorthand and Hinglish too.</p>
+        <p class="pux-why">One less thing to figure out, in the middle of reading.</p>
+        <figure class="pux-quote">
+          <img src="assets/proof/anudeep-extension-comment.png" width="1108" height="205" loading="lazy"
+               alt="LinkedIn comment from Anudeep Ayyagari (UX Anudeep), Ex-UX Designer at Amazon: Crazy this is! Loved how micro you thought. That's why the world needs more design-led founders like you, Perla Soumya." />
+          <figcaption>Anudeep Ayyagari, ex UX Designer at Amazon, on the LinkedIn post</figcaption>
+        </figure>
+        <a class="pux-link" href="https://www.linkedin.com/feed/update/urn:li:activity:7431606245842915328/" target="_blank" rel="noopener">See the full demo on LinkedIn ↗</a>
+      </div>
+    </div>
+
+    <!-- Rapido, a concept she designed solo (2026-10-06, her ask). The
+         case study is its own site, so the card opens it in a new tab.
+         The numbers are the ones on her case study. -->
+    <div class="pux-proj pux-flip">
+      <a class="pux-media pux-shot" href="https://rapido-case-study.vercel.app/" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+        <img src="assets/work/rapido-plan-explore.jpg" width="1600" height="892" loading="lazy" alt="" />
+      </a>
+      <div class="pux-copy">
+        <h3>Plan + Explore for Rapido: a day out in one app.</h3>
+        <p>A visitor with one free day in a city plans it across four apps: ideas in one, reviews in another, routes in a map, then a ride booked four times. I designed one flow inside Rapido to find places, check the route works, and book every ride between stops. A concept, designed solo over six weeks.</p>
+        <p class="proj-tags"><span>4 apps → 1</span><span>2.7x cheaper than a rental for the day</span></p>
+        <a class="pux-link" href="https://rapido-case-study.vercel.app/" target="_blank" rel="noopener">Read the case study ↗</a>
+        <a class="pux-link pux-more" href="#design-work">More design work: Instagram campaign pitches for a pen brand ↓</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= DESIGN WORK =================
+       Visual work beside the product work, so one link shows everything
+       (2026-10-06: a recruiter asked for a Behance; this is the answer).
+       One campaign, four pieces in one voice, the same shape so the grid
+       stays even. Any piece opens full size (site.js, designWork).
+       ================================================ -->
+  <section class="dw" id="design-work" aria-labelledby="dw-h">
+    <p class="pux-k">Design work</p>
+    <h3 id="dw-h">Instagram campaign pitches for a pen brand.</h3>
+    <p class="dw-ctx">For S.S. Prime pens, pitched to show range before any were commissioned. Small, true moments every student has had with a pen.</p>
+    <div class="dw-grid">
+        <button class="dw-piece" type="button"><img src="assets/work/ss-missing.jpg" width="1080" height="1350" loading="lazy" alt="Poster styled as a missing notice: Have you seen this pen? With a crossed-out list of places already checked." /><span>Missing</span></button>
+        <button class="dw-piece" type="button"><img src="assets/work/ss-semester.jpg" width="1122" height="1402" loading="lazy" alt="Illustrated poster: Borrowed for a minute. Gone for the semester. A student walks away with a borrowed pen." /><span>Borrowed for a minute</span></button>
+        <button class="dw-piece" type="button"><img src="assets/work/ss-typed-lunch.jpg" width="1122" height="1402" loading="lazy" alt="Illustrated poster: Some things shouldn't be typed. A handwritten note from Amma on a lunchbox." /><span>The lunchbox note</span></button>
+        <button class="dw-piece" type="button"><img src="assets/work/il-pen.jpg" width="896" height="1120" loading="lazy" alt="Illustration: a schoolgirl with a yellow pen tucked in her braid, captioned Where's my pen?" /><span>Where's my pen?</span></button>
+    </div>
+  </section>
+
   <div class="quote">
     <div>
       <p class="close-k">Open to new work</p>
@@ -299,10 +265,19 @@
       </a>
       <a class="cta ghost" href="mailto:perlasoumyasri@gmail.com" data-copy="perlasoumyasri@gmail.com" data-action="mail">perlasoumyasri@gmail.com</a>
       <a class="cta ghost" href="tel:+918074889819" data-copy="+91 80748 89819" data-action="wa">+91 80748 89819</a>
+      <a class="cta ghost" href="#design-work">Design work ↑</a>
+      <a class="cta ghost" href="assets/Perla-Soumya-Resume.pdf" download="Perla Soumya - Resume.pdf">Download resume</a>
     </div>
   </div>
 
 </div>
+
+<nav class="secbar" aria-label="Sections">
+  <a href="#projects">Projects</a>
+  <a href="#personal">Personal</a>
+  <a href="#design-work">Design work</a>
+  <a href="assets/Perla-Soumya-Resume.pdf" download="Perla Soumya - Resume.pdf">Resume</a>
+</nav>
 
 <script src="site.js" defer></script>
 <script src="reactions.js" defer></script>

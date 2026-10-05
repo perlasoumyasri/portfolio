@@ -75,6 +75,7 @@ async function start() {
   const pos = new Float32Array(N * 3), vel = new Float32Array(N * 3);
   const col = new Float32Array(N * 3), size = new Float32Array(N), phase = new Float32Array(N);
   const tPos = new Float32Array(N * 3), tCol = new Float32Array(N * 3), tSize = new Float32Array(N);
+  const alp = new Float32Array(N).fill(1), tAlp = new Float32Array(N).fill(1);
   const speed = new Float32Array(N);
   for (let i = 0; i < N; i++) { phase[i] = Math.random() * 6.283; speed[i] = .55 + (i % 13) / 18; }
 
@@ -82,15 +83,17 @@ async function start() {
   geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
   geo.setAttribute('aColor', new THREE.BufferAttribute(col, 3));
   geo.setAttribute('aSize', new THREE.BufferAttribute(size, 1));
+  geo.setAttribute('aAlpha', new THREE.BufferAttribute(alp, 1));
   const points = new THREE.Points(geo, new THREE.ShaderMaterial({
     uniforms: { uDpr: { value: DPR } }, transparent: true, depthWrite: false, depthTest: false,
     vertexShader: `
-      attribute vec3 aColor; attribute float aSize; uniform float uDpr; varying vec3 vColor;
-      void main(){ vColor = aColor; gl_PointSize = aSize * uDpr; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+      attribute vec3 aColor; attribute float aSize; attribute float aAlpha; uniform float uDpr; varying vec3 vColor; varying float vAlpha;
+      void main(){ vColor = aColor; vAlpha = aAlpha; gl_PointSize = aSize * uDpr; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
     fragmentShader: `
-      varying vec3 vColor;
+      varying vec3 vColor; varying float vAlpha;
       void main(){
         float a = 1.0 - smoothstep(0.4, 0.5, length(gl_PointCoord - 0.5));
+        a *= vAlpha;
         if (a < 0.02) discard;
         gl_FragColor = vec4(vColor, a);
         #include <colorspace_fragment>
@@ -111,7 +114,13 @@ async function start() {
     face = { x, y, w: slot.offsetWidth, h: slot.offsetHeight };
     cell = face.h / IH;
   }
+  /* On a phone the face is about 100px tall, so a dot is half a screen
+     pixel. Dots that fine beat against the pixel grid and drew a lattice
+     of dark diamonds and fat blobs over her face (found 2026-10-06). There
+     the dots overlap so the face is solid, and the soft edge fades out
+     instead of shrinking the dots. */
   function setFace() {
+    const tight = cell * DPR < 1.8;
     for (let i = 0; i < N; i++) {
       const c = cells[i];
       tPos[i * 3] = face.x + (c.x + .5) * cell;
@@ -121,8 +130,15 @@ async function start() {
       /* soft edges at the crop, and the shadows lifted so dark hair and a
          black top still read against a dark page */
       const fade = (1 - smooth(.74, 1, c.y / IH)) * (1 - smooth(.9, 1, c.x / IW)) * (1 - smooth(.9, 1, 1 - c.x / IW));
-      c3.setRGB(Math.pow(c.r, .8), Math.pow(c.g, .8), Math.pow(c.b, .8), THREE.SRGBColorSpace)
-        .multiplyScalar(.35 + .65 * fade).toArray(tCol, i * 3);
+      c3.setRGB(Math.pow(c.r, .8), Math.pow(c.g, .8), Math.pow(c.b, .8), THREE.SRGBColorSpace);
+      if (tight) {
+        c3.toArray(tCol, i * 3);
+        tSize[i] = Math.max(cell * 2.4, 2.6 / DPR);
+        tAlp[i] = fade;
+        continue;
+      }
+      c3.multiplyScalar(.35 + .65 * fade).toArray(tCol, i * 3);
+      tAlp[i] = 1;
       tSize[i] = cell * 1.24 * (.95 + .25 * lum) * (.25 + .75 * fade);
     }
   }
@@ -185,9 +201,9 @@ async function start() {
     state = which;
     if (which === 'face') { setFace(); return; }
     const w = words[which];
-    tPos.set(w.pos); tCol.set(w.col); tSize.set(w.size);
+    tPos.set(w.pos); tCol.set(w.col); tSize.set(w.size); tAlp.fill(1);
   }
-  function snap() { pos.set(tPos); col.set(tCol); size.set(tSize); vel.fill(0); }
+  function snap() { pos.set(tPos); col.set(tCol); size.set(tSize); alp.set(tAlp); vel.fill(0); }
   function scatter() {
     for (let i = 0; i < N; i++) {
       pos[i * 3] = Math.random() * W; pos[i * 3 + 1] = Math.random() * Math.min(H, innerHeight);
@@ -289,6 +305,7 @@ async function start() {
       }
       col[i3] += (tCol[i3] - col[i3]) * ck; col[i3 + 1] += (tCol[i3 + 1] - col[i3 + 1]) * ck; col[i3 + 2] += (tCol[i3 + 2] - col[i3 + 2]) * ck;
       size[i] += (tSize[i] - size[i]) * ck;
+      alp[i] += (tAlp[i] - alp[i]) * ck;
     }
     /* The lean toward the cursor and a slow breath, applied to the whole
        cloud at once, so the face turns and breathes without tearing. It
@@ -300,7 +317,7 @@ async function start() {
     points.matrixWorldNeedsUpdate = true;
     geo.attributes.position.needsUpdate = true;
     geo.attributes.aColor.needsUpdate = true;
-    geo.attributes.aSize.needsUpdate = true;
+    geo.attributes.aSize.needsUpdate = true; geo.attributes.aAlpha.needsUpdate = true;
     renderer.render(scene, camera);
   }
 
@@ -318,7 +335,7 @@ async function start() {
     aim('face'); snap();
     geo.attributes.position.needsUpdate = true;
     geo.attributes.aColor.needsUpdate = true;
-    geo.attributes.aSize.needsUpdate = true;
+    geo.attributes.aSize.needsUpdate = true; geo.attributes.aAlpha.needsUpdate = true;
     renderer.render(scene, camera);
     landed();
   } else {
@@ -338,7 +355,7 @@ async function start() {
       await layout(); aim(state);
       if (reduced) {
         snap();
-        geo.attributes.position.needsUpdate = true; geo.attributes.aColor.needsUpdate = true; geo.attributes.aSize.needsUpdate = true;
+        geo.attributes.position.needsUpdate = true; geo.attributes.aColor.needsUpdate = true; geo.attributes.aSize.needsUpdate = true; geo.attributes.aAlpha.needsUpdate = true;
         renderer.render(scene, camera);
       }
     }, 150);

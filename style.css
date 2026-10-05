@@ -190,6 +190,41 @@ img, video { max-width: 100%; }
   color: var(--ink); text-decoration: none; letter-spacing: -.03em;
 }
 .wordmark span { color: var(--accent); }
+
+/* Section links. Laptop: in the top bar, beside the name. Phone: a
+   small floating bar at the bottom that appears once the first screen
+   has been read, the way jameschugh.com keeps every section one tap
+   away. */
+.secnav { display: flex; gap: 4px; margin-right: auto; margin-left: clamp(16px, 3vw, 40px); }
+.secnav a, .secbar a {
+  font-size: 14px; font-weight: 500; color: var(--iv2); text-decoration: none;
+  padding: 8px 12px; border-radius: 99px; white-space: nowrap;
+  transition: background var(--d-hover) var(--ease-soft), color var(--d-hover) var(--ease-soft);
+}
+@media (hover: hover) and (pointer: fine) { .secnav a:hover { background: var(--ring); color: var(--ink); } }
+.secnav a:focus-visible, .secbar a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.secbar { display: none; }
+/* On a project page the way back is its own control, not one more tab:
+   outlined, with a rule between it and the section links. */
+.secnav a.nav-back { border: 1px solid var(--line); color: var(--ink); margin-right: 12px; position: relative; }
+.secnav a.nav-back::after { content: ""; position: absolute; right: -9px; top: 8px; bottom: 8px; width: 1px; background: var(--line); }
+@media (hover: hover) and (pointer: fine) { .secnav a.nav-back:hover { border-color: var(--iv4); } }
+@media (max-width: 700px) {
+  .secnav { display: none; }
+  .secbar {
+    display: flex; gap: 2px; position: fixed; left: 50%; bottom: 14px; z-index: 30;
+    padding: 5px; border-radius: 99px; background: #121829;
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    border: 1px solid var(--line); box-shadow: 0 10px 30px rgba(0,0,0,.45);
+    transform: translate(-50%, 140%); opacity: 0;
+    transition: transform 320ms var(--ease-out), opacity 320ms var(--ease-out);
+  }
+  .secbar.show { transform: translate(-50%, 0); opacity: 1; }
+  .secbar a { font-size: 13px; padding: 8px 11px; }
+  .secbar a.on { background: var(--ink); color: var(--page); }
+  .secbar a.nav-back { background: var(--ink); color: var(--page); font-weight: 600; }
+}
+@media (prefers-reduced-motion: reduce) { .secbar { transition: none; } }
 .topbar .links { display: flex; gap: var(--s2); align-items: center; }
 
 .pill {
@@ -819,7 +854,9 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
 @media (hover: hover) and (pointer: fine) { .reax-sound:hover { background: var(--ring); } }
 /* On a phone the card is too narrow for the button and the tag side by
    side, and the tag only repeats the caption underneath it, so it goes. */
-@media (max-width: 700px) { /* A message opened full size. */
+@media (max-width: 700px) { .reax-tag { display: none; } }
+
+/* A message opened full size. */
 .reax-zoom {
   position: fixed; inset: 0; z-index: 100;
   display: flex; align-items: center; justify-content: center;
@@ -835,6 +872,7 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
   box-shadow: 0 24px 60px rgba(0,0,0,.6);
 }
 .reax-zoom-hint { display: none; }
+.reax-zoom.no-hint .reax-zoom-hint { display: none !important; }
 @media (max-width: 700px) and (orientation: portrait) {
   .reax-zoom { flex-direction: column; gap: 14px; }
   .reax-zoom img { max-height: 80%; }
@@ -849,8 +887,6 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
   background: var(--plate2); color: var(--ink); font-size: 26px; line-height: 1; cursor: pointer;
 }
 .reax-zoom-x:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-
-.reax-tag { display: none; } }
 
 .reax-tag {
   position: absolute; right: clamp(16px, 2.4vw, 30px); bottom: clamp(12px, 1.8vw, 20px);
@@ -1471,6 +1507,145 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
    the left side as the label PLUS the headline, so the small label above
    dragged the buttons 15px higher than the words they belong to, which
    reads as a near miss rather than as a relationship. */
+/* ---- Home: the first screen alone, then the page reads down ---- */
+.hs-solo .panel.say { margin-right: 0; }
+.hs-solo .hs-track > :last-child { margin-right: var(--gut); }
+.hs-solo .hs-prog { display: none; }
+
+/* ---- Projects (home) ---------------------------------------- */
+.projs { padding: clamp(56px, 7vw, 104px) var(--gut) clamp(24px, 3vw, 40px); border-top: 1px solid var(--rule); background: var(--page); }
+.proj {
+  display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 60px);
+  align-items: center; margin-bottom: clamp(48px, 6vw, 88px); text-decoration: none; color: inherit;
+}
+.proj:nth-of-type(even) { grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); }
+.proj:nth-of-type(even) .proj-media { order: 2; }
+.proj-media {
+  padding: 10px; border-radius: 22px; background: var(--plate2);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 24px 60px rgba(0,0,0,.45);
+  transition: transform 420ms var(--ease-out), box-shadow 420ms var(--ease-out);
+}
+.proj-media video { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 14px; background: #fff; }
+.proj-k { font-size: 13px; font-weight: 500; color: var(--faint); }
+.proj h3 { margin-top: 10px; font-size: clamp(24px, 2.4vw, 34px); font-weight: 800; line-height: 1.12; letter-spacing: -.03em; color: var(--ink); max-width: 24ch; }
+.proj-tags { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px; }
+.proj-tags span { font-size: 13px; font-weight: 600; color: var(--chip2-ink); background: var(--chip2); padding: 5px 11px; border-radius: 99px; }
+.proj-go { display: inline-flex; gap: 8px; align-items: center; margin-top: 20px; font-size: 15.5px; font-weight: 600; color: var(--deep); }
+.proj-go i { font-style: normal; transition: transform 320ms var(--ease-out); }
+@media (hover: hover) and (pointer: fine) {
+  .proj:hover .proj-media { transform: translateY(-4px); box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 32px 70px rgba(0,0,0,.55); }
+  .proj:hover .proj-go i { transform: translateX(5px); }
+}
+.proj:focus-visible { outline: 2px solid var(--accent); outline-offset: 8px; border-radius: 22px; }
+@media (max-width: 860px) {
+  .proj, .proj:nth-of-type(even) { grid-template-columns: 1fr; }
+  .proj:nth-of-type(even) .proj-media { order: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .proj-media, .proj-go i { transition: none; } }
+
+/* A light under each piece of work, the way Vanshika Nagpal's portfolio
+   lights its mockups (her ask, 2026-10-06): a soft pool of the accent
+   blue that spills out below the frame, as if the work were lit from
+   underneath. It sits behind the frame, so it only shows at the edges,
+   and brightens a little when the card is hovered. */
+.proj, .pux-proj { position: relative; z-index: 0; }
+.proj-media, .pux-media { position: relative; }
+.proj-media::before, .pux-media::before {
+  content: ""; position: absolute; z-index: -1; pointer-events: none;
+  left: 10%; right: 10%; bottom: -56px; height: 150px;
+  background: radial-gradient(closest-side, rgba(77,141,255,.85), rgba(59,130,246,.35) 50%, rgba(59,130,246,0));
+  filter: blur(34px); opacity: .8;
+  transition: opacity 520ms var(--ease-soft);
+}
+/* the dark drop shadow under each frame swallowed the light, so the
+   frames lift on a faint shadow and the light does the rest */
+.proj-media, .pux-media { box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 10px 24px rgba(0,0,0,.35); }
+@media (hover: hover) and (pointer: fine) {
+  .proj:hover .proj-media::before, .pux-shot:hover::before { opacity: 1; }
+  .proj:hover .proj-media { box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 14px 30px rgba(0,0,0,.4); }
+}
+@media (max-width: 700px) { .proj-media::before, .pux-media::before { filter: blur(26px); bottom: -36px; height: 100px; } }
+
+/* ---- Project pages: the way on ---- */
+.next-proj { margin-top: var(--s6); font-size: 15px; font-weight: 600; }
+.next-proj a { color: var(--deep); text-decoration: none; border-bottom: 1px solid rgba(147,180,255,.35); }
+@media (hover: hover) and (pointer: fine) { .next-proj a:hover { border-bottom-color: var(--deep); } }
+
+/* ---- Personal UX projects ---------------------------------- */
+.pux {
+  padding: clamp(56px, 7vw, 104px) var(--gut) clamp(40px, 5vw, 72px);
+  border-top: 1px solid var(--rule); background: var(--page);
+}
+.pux-k { font-size: 13px; font-weight: 500; color: var(--faint); margin-bottom: var(--s6); }
+.pux-proj {
+  display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: clamp(28px, 4vw, 64px); align-items: center;
+}
+.pux-media {
+  padding: 10px; border-radius: 22px; background: var(--plate2);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 24px 60px rgba(0,0,0,.45);
+}
+.pux-media video { display: block; width: 100%; height: auto; border-radius: 14px; background: #fff; }
+.pux-media { position: relative; }
+.pux-sound {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 2;
+  display: inline-flex; align-items: center; gap: 9px; cursor: pointer;
+  font: 600 15px var(--sans); color: #fff; background: rgba(10, 14, 26, .86);
+  border: 1px solid rgba(255,255,255,.18); border-radius: 99px; padding: 12px 20px 12px 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.45);
+  transition: transform var(--d-press) var(--ease-out), background var(--d-hover) var(--ease-soft);
+}
+.pux-sound svg { width: 20px; height: 20px; fill: currentColor; }
+.pux-sound:active { transform: translate(-50%, -50%) scale(.96); }
+@media (hover: hover) and (pointer: fine) { .pux-sound:hover { background: #1b2b52; } }
+.pux-sound:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.pux-sound[hidden] { display: none; }
+.pux-copy h3 {
+  font-size: clamp(26px, 2.6vw, 38px); font-weight: 800; line-height: 1.1; letter-spacing: -.03em;
+  color: var(--ink); max-width: 18ch;
+}
+.pux-copy > p { margin-top: var(--s4); font-size: 16.5px; line-height: 1.6; color: var(--iv2); max-width: 52ch; }
+.pux-copy > p.pux-why { margin-top: var(--s3); color: var(--ink); font-weight: 600; }
+.pux-quote { margin-top: var(--s6); }
+.pux-quote img {
+  display: block; width: 100%; max-width: 520px; height: auto;
+  border-radius: 14px; border: 1px solid var(--line);
+  box-shadow: 0 1px 3px rgba(0,0,0,.4), 0 18px 40px rgba(0,0,0,.4);
+}
+.pux-quote figcaption { margin-top: 10px; font-size: 13px; color: var(--faint); }
+.pux-link {
+  display: inline-block; margin-top: var(--s5); font-size: 15px; font-weight: 600;
+  color: var(--deep); text-decoration: none; border-bottom: 1px solid rgba(147,180,255,.35); padding-bottom: 2px;
+}
+@media (hover: hover) and (pointer: fine) { .pux-link:hover { border-bottom-color: var(--deep); } }
+.pux-more { display: block; width: fit-content; margin-top: var(--s3); }
+.pux-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+.pux-proj + .pux-proj { margin-top: clamp(72px, 9vw, 128px); }
+.pux-flip { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); }
+.pux-flip .pux-media { order: 2; }
+.pux-shot { display: block; transition: transform 420ms var(--ease-out); }
+.pux-shot img { display: block; width: 100%; height: auto; border-radius: 14px; }
+@media (hover: hover) and (pointer: fine) { .pux-shot:hover { transform: translateY(-4px); } }
+.pux-copy .proj-tags { margin-top: var(--s4); }
+@media (max-width: 860px) { .pux-proj, .pux-flip { grid-template-columns: 1fr; } .pux-flip .pux-media { order: 0; } }
+
+/* ---- Design work ------------------------------------------- */
+.dw { padding: clamp(48px, 6vw, 88px) var(--gut) clamp(56px, 7vw, 104px); border-top: 1px solid var(--rule); background: var(--page); }
+.dw h3 { font-size: clamp(26px, 2.6vw, 38px); font-weight: 800; line-height: 1.1; letter-spacing: -.03em; color: var(--ink); max-width: 22ch; }
+.dw-ctx { margin-top: var(--s3); font-size: 16.5px; line-height: 1.6; color: var(--iv2); max-width: 58ch; }
+.dw-grid { margin-top: var(--s7); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(14px, 1.8vw, 24px); }
+.dw-piece { background: none; border: 0; padding: 0; text-align: left; font: inherit; color: inherit; cursor: zoom-in; }
+.dw-piece img {
+  display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 14px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.4), 0 14px 32px rgba(0,0,0,.35);
+  transition: transform 380ms var(--ease-out), box-shadow 380ms var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) { .dw-piece:hover img { transform: translateY(-4px); box-shadow: 0 2px 4px rgba(0,0,0,.4), 0 22px 44px rgba(0,0,0,.5); } }
+.dw-piece span { display: block; margin-top: 10px; font-size: 14px; color: var(--iv3); }
+.dw-piece:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; border-radius: 16px; }
+@media (max-width: 860px) { .dw-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (prefers-reduced-motion: reduce) { .dw-piece img { transition: none; } }
+
 .quote {
   display: flex; align-items: flex-end; justify-content: space-between;
   gap: var(--s6); padding: clamp(56px, 6vw, 88px) var(--gut);
@@ -1751,3 +1926,100 @@ footer a { color: var(--muted); }
   .pill:active, .cta:active, .card:active { transform: none; }
   .go i { animation: none; }
 }
+
+/* ---- Case study page, told top to bottom (tata.html) ---------
+   The first project page that reads vertically (2026-10-06). One
+   column of text at a reading width, screenshots in the same lifted
+   frame and blue light as the home cards, and each decision as its
+   options: the one that shipped lit, the others dimmed. */
+.cs { padding: clamp(24px, 4vw, 56px) var(--gut) clamp(40px, 5vw, 72px); max-width: 1120px; margin: 0 auto; }
+.cs-k { font-size: 13px; font-weight: 500; color: var(--faint); }
+.cs-hero h1 {
+  margin-top: var(--s3); font-size: clamp(32px, 4.2vw, 56px); font-weight: 800; line-height: 1.06;
+  letter-spacing: -.035em; color: var(--ink); max-width: 22ch;
+}
+.cs-lede { margin-top: var(--s4); font-size: clamp(17px, 1.5vw, 20px); line-height: 1.55; color: var(--iv2); max-width: 56ch; }
+.cs-nums {
+  list-style: none; margin: clamp(28px, 4vw, 48px) 0 0; padding: 0;
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px;
+  background: var(--line); border: 1px solid var(--line); border-radius: 16px; overflow: hidden;
+}
+.cs-nums li { background: var(--page); padding: 20px 22px; }
+.cs-nums b { display: block; white-space: nowrap; font-size: clamp(24px, 2.4vw, 34px); font-weight: 800; letter-spacing: -.03em; color: var(--chip2-ink); }
+.cs-nums span { display: block; margin-top: 4px; font-size: 14px; line-height: 1.4; color: var(--muted); }
+
+.cs-sec { margin-top: clamp(72px, 9vw, 128px); }
+.cs-sec > p:not(.cs-k):not(.next-proj), .cs-cols p { margin-top: var(--s4); font-size: 17px; line-height: 1.65; color: var(--iv2); max-width: 64ch; }
+.cs-sec h2 { margin-top: var(--s2); font-size: clamp(26px, 2.8vw, 40px); font-weight: 800; line-height: 1.1; letter-spacing: -.03em; color: var(--ink); max-width: 24ch; }
+.cs-sec > h2:first-child { margin-top: 0; }
+.cs-h3 { margin-top: var(--s7); font-size: 18px; font-weight: 700; color: var(--ink); }
+.cs-cols { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: start; }
+.cs-ba { list-style: none; margin: var(--s4) 0 0; padding: 0; display: grid; gap: 12px; }
+.cs-ba li { padding: 18px 20px; border-radius: 14px; background: var(--plate2); border: 1px solid var(--line); font-size: 16px; line-height: 1.55; color: var(--iv2); }
+.cs-tag {
+  display: inline-block; margin-right: 10px; padding: 3px 10px; border-radius: 99px;
+  font-size: 12px; font-weight: 700; letter-spacing: .02em; color: var(--iv2); background: var(--ring);
+}
+.cs-tag.on { color: var(--deep); background: var(--chip); }
+.cs-ba li .cs-tag { display: block; width: fit-content; margin: 0 0 8px; }
+.cs-list { margin: var(--s3) 0 0; padding-left: 20px; display: grid; gap: 8px; font-size: 16.5px; line-height: 1.55; color: var(--iv2); max-width: 64ch; }
+.cs-list li::marker { color: var(--accent); }
+
+.cs-opts { list-style: none; margin: var(--s6) 0 0; padding: 0; display: grid; gap: 10px; max-width: 760px; }
+.cs-opts li {
+  display: grid; grid-template-columns: 34px 1fr; gap: 14px; align-items: start;
+  padding: 16px 18px; border-radius: 14px; border: 1px solid var(--line);
+  font-size: 16px; line-height: 1.55; color: var(--faint);
+}
+.cs-opts li > b {
+  display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px;
+  font-size: 15px; font-weight: 800; color: var(--faint); background: var(--plate2);
+}
+.cs-opts li strong { color: var(--muted); font-weight: 700; }
+.cs-opts li.won { border-color: var(--accent); background: rgba(59,130,246,.08); color: var(--iv2); }
+.cs-opts li.won > b { color: #fff; background: var(--accent); }
+.cs-opts li.won strong { color: var(--ink); }
+.cs-ship {
+  display: inline-block; margin-left: 10px; padding: 2px 9px; border-radius: 99px; vertical-align: 1px;
+  font-size: 12px; font-weight: 700; color: var(--deep); background: var(--chip);
+}
+.cs-why { margin-top: var(--s5); display: grid; grid-template-columns: 1fr 1fr; gap: clamp(16px, 3vw, 40px); max-width: 980px; }
+.cs-why p { font-size: 16.5px; line-height: 1.6; color: var(--iv2); }
+.cs-why b { color: var(--ink); }
+
+/* The screenshots are small captures (about 490px wide), so they are
+   never drawn much past their size: sharp beats big. */
+.cs-shot { margin-top: var(--s7); max-width: 720px; }
+.cs-shot.cs-wide { max-width: 760px; }
+.cs-frame {
+  position: relative; padding: 8px; border-radius: 18px; background: var(--plate2);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 10px 24px rgba(0,0,0,.35);
+}
+.cs-frame::before {
+  content: ""; position: absolute; z-index: -1; pointer-events: none;
+  left: 10%; right: 10%; bottom: -48px; height: 130px;
+  background: radial-gradient(closest-side, rgba(77,141,255,.7), rgba(59,130,246,.28) 50%, rgba(59,130,246,0));
+  filter: blur(32px); opacity: .7;
+}
+.cs-shot, .cs-pair { position: relative; z-index: 0; }
+.cs-frame img { display: block; width: 100%; height: auto; border-radius: 11px; background: #fff; }
+.cs-shot figcaption { margin-top: 14px; font-size: 14.5px; line-height: 1.5; color: var(--muted); max-width: 60ch; }
+.cs-pair { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(20px, 3vw, 40px); }
+.cs-pair .cs-shot { max-width: none; }
+.cs .next-proj { margin-top: clamp(56px, 7vw, 96px); }
+
+@media (max-width: 860px) {
+  .cs-nums { grid-template-columns: 1fr 1fr; }
+  .cs-cols, .cs-why, .cs-pair { grid-template-columns: 1fr; }
+  .cs-pair .cs-shot + .cs-shot { margin-top: var(--s5); }
+}
+@media (max-width: 700px) {
+  .cs-opts li { grid-template-columns: 28px 1fr; gap: 12px; padding: 14px; font-size: 15.5px; }
+  .cs-opts li > b { width: 28px; height: 28px; font-size: 14px; }
+}
+/* the project card on the home page shows a screenshot, not a clip */
+.proj-media img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top left; border-radius: 14px; background: #fff; }
+.projs-h { margin: calc(-1 * var(--s4)) 0 clamp(40px, 5vw, 72px); font-size: clamp(28px, 3.2vw, 46px); font-weight: 800; line-height: 1.08; letter-spacing: -.035em; color: var(--ink); max-width: 25ch; }
+/* the launch clip's point is the founder's switches on its left edge,
+   so the frame trims its right side instead */
+.proj-media video.at-left { object-position: left center; }

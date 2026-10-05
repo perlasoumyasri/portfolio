@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tata Steel guest house booking · Soumya Perla</title>
+  <meta name="description" content="Tata Steel ran guest house booking on calls, emails and Excel. Soumya Perla designed and built the system that replaced it, solo: 2,000 to 3,000 bookings a month." />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Tata Steel guest house booking · Soumya Perla" />
+  <meta property="og:description" content="Tata Steel ran guest house booking on calls, emails and Excel. I designed and built the system that replaced it, solo." />
+  <meta property="og:url" content="https://perlasoumyasri.github.io/portfolio/tata.html" />
+  <meta property="og:image" content="https://perlasoumyasri.github.io/portfolio/assets/og.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://perlasoumyasri.github.io/portfolio/assets/og.png" />
+  <meta name="theme-color" content="#0a0e1a" />
+  <meta name="color-scheme" content="dark" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="manifest" href="site.webmanifest" />
+</head>
+<body>
+<div class="sheet">
+
+  <!-- ================= TATA STEEL · GUEST HOUSE BOOKING =================
+       The first project page told top to bottom (2026-10-06): she wants
+       project pages vertical once they carry decision stories. Every fact
+       here is from her own case study draft. The draft's open "confirm"
+       and "add" notes are left out until she fills them, and the concept
+       screens stay labelled as concepts with sample data.
+       ==================================================================== -->
+  <header class="topbar">
+    <a class="wordmark" href="index.html">Soumya<span>.</span></a>
+    <nav class="secnav" aria-label="Sections">
+      <a class="nav-back" href="index.html#projects">← All projects</a>
+      <a href="index.html#personal">Personal</a>
+      <a href="index.html#design-work">Design work</a>
+      <a href="assets/Perla-Soumya-Resume.pdf" download="Perla Soumya - Resume.pdf">Resume ↓</a>
+    </nav>
+    <div class="links">
+      <a class="pill" href="tel:+918074889819" data-copy="+91 80748 89819" data-action="wa">+91 80748 89819</a>
+      <a class="pill" href="mailto:perlasoumyasri@gmail.com" data-copy="perlasoumyasri@gmail.com" data-action="mail">perlasoumyasri@gmail.com</a>
+      <a class="pill solid" href="https://www.linkedin.com/in/perla-soumya/" target="_blank" rel="noopener">LinkedIn ↗</a>
+    </div>
+  </header>
+
+  <main class="cs">
+
+    <section class="cs-hero">
+      <p class="cs-k">Client work · Tata Steel · guest house booking · 2021 to 2024</p>
+      <h1>Tata Steel ran guest house booking on calls, emails and Excel. I designed and built the system that replaced it, solo.</h1>
+      <p class="cs-lede">Employees travelling to the Kalinganagar plant in Odisha book a stay in four fields and get a confirmed booking at once. Guest house admins run every room, every day, from one table.</p>
+      <ul class="cs-nums">
+        <li><b>30,000</b><span>people a year</span></li>
+        <li><b>2,000–3,000</b><span>bookings a month</span></li>
+        <li><b>3</b><span>guest houses, one only for vendors</span></li>
+        <li><b>1</b><span>person: design, front end, back end</span></li>
+      </ul>
+      <figure class="cs-shot cs-wide">
+        <div class="cs-frame"><img src="assets/tata/raw01.jpg" width="489" height="365" alt="Photo of a laptop running the guest house booking system on the Tata Steel intranet, with the booking form at the top and admin reports below. The URL and personal details are blurred." /></div>
+        <figcaption>The system in production on the company intranet: the booking form at the top, admin reports below. URL and personal details blurred.</figcaption>
+      </figure>
+    </section>
+
+    <section class="cs-sec">
+      <h2>The problem</h2>
+      <div class="cs-cols">
+        <div>
+          <p>People come to Kalinganagar from Jamshedpur, Tata Steel UK and five or six other sites, for projects, audits, training and vendor work. Tata Steel houses them in its own transit guest houses. Their rank decides the room they get, from senior chiefs to contract workers and vendors.</p>
+          <p>All of it ran on calls, emails and a spreadsheet. A traveller called or wrote to the guest house office, and an admin tracked every room in Excel.</p>
+        </div>
+        <ul class="cs-ba">
+          <li><span class="cs-tag">Before</span>A call or an email, then wait. The admin checks Excel, finds a room, writes back.</li>
+          <li><span class="cs-tag on">After</span>The traveller books in the company app and the booking is confirmed on the spot. The admin sees every room for any day and fixes what changes.</li>
+        </ul>
+      </div>
+      <h3 class="cs-h3">What I had to work with</h3>
+      <ul class="cs-list">
+        <li>One person for design, front end and back end.</li>
+        <li>It had to live inside the company's existing Conveyance Booking System, on the intranet.</li>
+        <li>Requirements came as lists from stakeholders, with no time for user research.</li>
+        <li>Many ranks with different room entitlements, all in one interface.</li>
+      </ul>
+    </section>
+
+    <!-- Decision stories: the options she weighed, the one that shipped
+         lit, the others dimmed, then why and what it cost. -->
+    <section class="cs-sec">
+      <p class="cs-k">Decision 1</p>
+      <h2>Remove approvals. The system assigns the room.</h2>
+      <p>In many company systems a booking waits in a queue until a manager or the admin approves it, and then the admin picks a room. At 65 to 100 bookings a day, that is one person doing nothing but approving and assigning.</p>
+      <ol class="cs-opts">
+        <li><b>A</b><div><strong>Approval queue.</strong> The booking waits for an approver, then the admin hand-picks a room.</div></li>
+        <li><b>B</b><div><strong>Pick your own room.</strong> The traveller chooses from free rooms, like a hotel website.</div></li>
+        <li class="won"><b>C</b><div><strong>Instant confirmation, the system picks the room.</strong> Every booking confirms at once, and a room is assigned from what is free, which guest house, and the traveller's rank.<span class="cs-ship">Shipped</span></div></li>
+      </ol>
+      <div class="cs-why">
+        <p><b>Why C.</b> A made every traveller wait on a person and turned the admin into a full-time approver. B let two people grab the same room at the same moment, and invited arguments over who deserves the better room. C confirms instantly; I wrote the room assignment logic myself.</p>
+        <p><b>What it cost.</b> Travellers can't ask for a specific room, like a ground floor or near the lift, so those requests became calls and manual swaps. The room number isn't shown at booking time either.</p>
+      </div>
+      <figure class="cs-shot">
+        <div class="cs-frame"><img src="assets/tata/raw04.jpg" width="489" height="299" loading="lazy" alt="Booking form with location, functional area and dates, and a Booking Confirmed card with a reference number below it." /></div>
+        <figcaption>Location, department and dates in. A confirmed booking and a reference out, with no approval step.</figcaption>
+      </figure>
+    </section>
+
+    <section class="cs-sec">
+      <p class="cs-k">Decision 2</p>
+      <h2>How much power should an admin have?</h2>
+      <p>Real life gets in the way of bookings. An AC breaks. Work runs long and a guest needs two more nights. Someone asks for the ground floor. The admin has to change bookings by hand, and every manual change risks two people in the same room on the same night, found out only when both turn up with their bags.</p>
+      <ol class="cs-opts">
+        <li><b>A</b><div><strong>Full control.</strong> The admin can change anything, even put a guest in a room that is taken.</div></li>
+        <li><b>B</b><div><strong>View only.</strong> The admin sees bookings and downloads reports; every change goes through the normal booking flow.</div></li>
+        <li class="won"><b>C</b><div><strong>Control with a safety check.</strong> Move a guest, change dates, swap two guests, block a room for repairs. The system refuses any change that overlaps another booking in that room.<span class="cs-ship">Shipped</span></div></li>
+      </ol>
+      <div class="cs-why">
+        <p><b>Why C.</b> A trusts the admin completely, so one slip makes a double booking. B is safe but useless in an emergency; admins would go back to Excel and WhatsApp. C gives admins the tools they need, with a check underneath.</p>
+        <p><b>What it cost.</b> Extra validation code. True exceptions, like an extra bed in a suite for one night, can't be handled inside the system, and there was no record of who changed what.</p>
+      </div>
+      <figure class="cs-shot">
+        <div class="cs-frame"><img src="assets/tata/raw05.jpg" width="490" height="352" loading="lazy" alt="Day Wise Room Occupancy table with Modify and Swap actions on occupied rooms." /></div>
+        <figcaption>Admins manage the day from one table, with Modify and Swap on every occupied room.</figcaption>
+      </figure>
+    </section>
+
+    <section class="cs-sec">
+      <p class="cs-k">Decision 3</p>
+      <h2>Filters: one request, not many.</h2>
+      <p>Admins look up bookings all day, across thousands of records on an intranet that can be slow. They narrow the list by dates and by status: confirmed, cancelled, completed. The question was what happens each time a filter changes.</p>
+      <ol class="cs-opts">
+        <li><b>A</b><div><strong>Reload on every change.</strong> Each date and each status is a fresh request to the server.</div></li>
+        <li class="won"><b>B</b><div><strong>Set everything, fetch once.</strong> The admin sets all the filters, then one search fetches and draws the results.<span class="cs-ship">Shipped</span></div></li>
+      </ol>
+      <div class="cs-why">
+        <p><b>Why B.</b> One request instead of three or four: less waiting on a slow network, less load on the server.</p>
+        <p><b>What it cost.</b> One extra click. Every report has its filters plus a Search button.</p>
+      </div>
+      <figure class="cs-shot">
+        <div class="cs-frame"><img src="assets/tata/raw06.jpg" width="490" height="365" loading="lazy" alt="Photo of a laptop showing the admin reports, each with its own filters, a Search button and an Excel export. The URL and names are blurred." /></div>
+        <figcaption>The admin reports in production: date wise, day wise and month wise, each with its own filters, Search and Excel export. URL and names blurred.</figcaption>
+      </figure>
+    </section>
+
+    <section class="cs-sec">
+      <p class="cs-k">What I would do differently</p>
+      <h2>I built exactly what was asked, and that was the mistake.</h2>
+      <p>The requirements came as lists: the fields on the booking form, and three reports for admins. Every conversation with stakeholders cost build time, so I built every field and every report exactly as listed.</p>
+      <div class="cs-why">
+        <p><b>The cost.</b> Two of the reports overlap heavily, one is cluttered and hard to read, and I never learned why it was needed. Some moments got no design at all: when every room was full, the traveller saw a basic error with no next step.</p>
+        <p><b>What I learned.</b> The third report shows the payoff of asking why: it fed finance directly, to recover the cost of stays. I now start every report with one question: what decision does this support?</p>
+      </div>
+    </section>
+
+    <section class="cs-sec">
+      <p class="cs-k">Looking back · a concept, not shipped</p>
+      <h2>Design the platform, not the page.</h2>
+      <p>Guest house booking was being folded into one larger travel app beside cab booking, bus passes and trip planning. My first version had no shared design system; each screen was styled on its own. It also left a real problem open: the ghost booking. A guest books and never turns up, the room is empty, and the system still can't give it to anyone.</p>
+      <p>The proposal: a shared design system first, with one colour per booking status, then an operations board that shows every room's live state, no-shows included.</p>
+      <div class="cs-pair">
+        <figure class="cs-shot">
+          <div class="cs-frame"><img src="assets/tata/raw07.jpg" width="490" height="352" loading="lazy" alt="Shipped occupancy table: each room is Occupied or Vacant." /></div>
+          <figcaption><span class="cs-tag">Shipped</span>Occupied or vacant, nothing in between.</figcaption>
+        </figure>
+        <figure class="cs-shot">
+          <div class="cs-frame"><img src="assets/tata/raw08.jpg" width="490" height="321" loading="lazy" alt="Concept operations grid: rooms marked Reserved, Occupied, Dirty or Vacant, with Check in, Check out and Mark clean on each row." /></div>
+          <figcaption><span class="cs-tag on">Concept</span>Reserved, occupied, dirty and vacant, with check in, check out and mark clean right on the row.</figcaption>
+        </figure>
+      </div>
+      <div class="cs-pair">
+        <figure class="cs-shot">
+          <div class="cs-frame"><img src="assets/tata/raw09.jpg" width="490" height="281" loading="lazy" alt="Concept Control Tower: capacity alerts and pending actions above the bookings list. Sample data." /></div>
+          <figcaption><span class="cs-tag on">Concept, sample data</span>Control Tower: capacity alerts and pending actions above the bookings.</figcaption>
+        </figure>
+        <figure class="cs-shot">
+          <div class="cs-frame"><img src="assets/tata/raw10.jpg" width="489" height="277" loading="lazy" alt="Concept monthly report: occupancy and usage as a readable summary. Sample data." /></div>
+          <figcaption><span class="cs-tag on">Concept, sample data</span>The monthly report as a readable summary instead of a raw export.</figcaption>
+        </figure>
+      </div>
+      <p class="next-proj"><a href="index.html#projects">← All projects</a> · <a href="lms.html">Next: the UX Gym learning platform →</a></p>
+    </section>
+
+  </main>
+
+  <div class="quote">
+    <div>
+      <p class="close-k">Open to new work</p>
+      <h2>Tell me your vision.</h2>
+    </div>
+    <div class="quote-ways">
+      <a class="cta" href="https://wa.me/918074889819?text=Hi%20Soumya%2C%20I%20saw%20your%20portfolio%20and%20I%20would%20like%20to%20talk%20to%20you%20about%20a%20project." target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5c-4.7 0-8.5 3.4-8.5 7.6 0 2.3 1.1 4.3 2.9 5.7l-.7 3.2 3.3-1.8c.9.3 1.9.4 3 .4 4.7 0 8.5-3.4 8.5-7.5S16.7 3.5 12 3.5z"/></svg>
+        Message on WhatsApp
+      </a>
+      <a class="cta ghost" href="mailto:perlasoumyasri@gmail.com" data-copy="perlasoumyasri@gmail.com" data-action="mail">perlasoumyasri@gmail.com</a>
+      <a class="cta ghost" href="tel:+918074889819" data-copy="+91 80748 89819" data-action="wa">+91 80748 89819</a>
+      <a class="cta ghost" href="index.html#design-work">Design work</a>
+      <a class="cta ghost" href="assets/Perla-Soumya-Resume.pdf" download="Perla Soumya - Resume.pdf">Download resume</a>
+    </div>
+  </div>
+
+</div>
+
+<!-- Phones hide the top menu, so a project page keeps this bar on screen
+     the whole time: the way back is always one tap away (2026-10-06). -->
+<nav class="secbar show" aria-label="Sections">
+  <a class="nav-back" href="index.html#projects">← Projects</a>
+  <a href="index.html#personal">Personal</a>
+  <a href="index.html#design-work">Design work</a>
+  <a href="assets/Perla-Soumya-Resume.pdf" download="Perla Soumya - Resume.pdf">Resume</a>
+</nav>
+
+<script src="site.js" defer></script>
+<script src="reactions.js" defer></script>
+</body>
+</html>

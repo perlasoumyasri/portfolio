@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UX Gym learning platform · Soumya Perla</title>
+  <meta name="description" content="Product designer who codes. I specialise in converting a founder's intent into reality: I design every screen, write the code, and you get back a product you can run without me." />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Soumya Perla · Product designer who codes" />
+  <meta property="og:description" content="I specialise in converting a founder's intent into reality. I design every screen, write the code, and you get back a product you can run without me." />
+  <meta property="og:url" content="https://perlasoumyasri.github.io/portfolio/" />
+  <meta property="og:image" content="https://perlasoumyasri.github.io/portfolio/assets/og.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://perlasoumyasri.github.io/portfolio/assets/og.png" />
+  <!-- Runs before the first paint. The opening panel stays hidden until
+       site.js has set its opening state, so the record never shows for a
+       moment and then vanishes while the script is still downloading.
+       If site.js fails, the page shows itself after 3.5s anyway. -->
+  <script>document.documentElement.classList.add('js-early');setTimeout(function(){document.documentElement.classList.remove('js-early')},3500);</script>
+  <meta name="theme-color" content="#0a0e1a" />
+  <meta name="color-scheme" content="dark" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="manifest" href="site.webmanifest" />
+</head>
+<body>
+<div class="sheet">
+
+  
+
+  <!-- ================= FIRST SCREEN =================
+       Pinned horizontal. Scroll down, the panels move sideways, then the
+       pin releases and the page carries on. Phones get a native swipe
+       strip instead, because hijacking scroll on touch is always wrong.
+       ================================================= -->
+  <section class="hs hs-project" id="hs" data-project="lms">
+    <div class="hs-pin">
+
+      <header class="topbar over-dark">
+    <a class="wordmark" href="index.html">Soumya<span>.</span></a>
+    <!-- Sections, one tap away (2026-10-06): the product work in the
+         strip, her own builds, and her visual work. site.js turns these
+         into jumps inside the pinned strip. -->
+    <nav class="secnav" aria-label="Sections">
+      <a class="nav-back" href="index.html#projects">← All projects</a>
+      <a href="index.html#personal">Personal</a>
+      <a href="index.html#design-work">Design work</a>
+      <a href="assets/Perla-Soumya-Resume.pdf" download="Perla Soumya - Resume.pdf">Resume ↓</a>
+    </nav>
+    <div class="links">
+<!-- Her phone and email are always on show (her call, 2026-10-06), and
+           both copy on click like every contact on the page. -->
+      <a class="pill" href="tel:+918074889819" data-copy="+91 80748 89819" data-action="wa">+91 80748 89819</a>
+      <a class="pill" href="mailto:perlasoumyasri@gmail.com" data-copy="perlasoumyasri@gmail.com" data-action="mail">perlasoumyasri@gmail.com</a>
+      <a class="pill solid" href="https://www.linkedin.com/in/perla-soumya/" target="_blank" rel="noopener">LinkedIn ↗</a>
+    </div>
+  </header>
+
+      <div class="hs-view">
+        <div class="hs-track" id="track">
+
+          <!-- The statement card. The claim gets the stage to itself, told in
+               sequence by the stagger, and then the scroll carries the reader
+               into the clips that prove it. -->
+          <div class="panel state">
+            <p class="eyebrow">Client work · UX Gym</p>
+            <h3>The founder wanted learning that doesn't feel like a textbook. I designed and built it, alone, in one month, and student engagement rose <em><span class="nb"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg>from</span> 60% to 80%</em>.</h3>
+            <p class="st-sub">The lessons became interactive exercises students actually finish. Admission takes <mark class="mk">4 hours instead of 5 days</mark>, and the founder runs every batch himself, with no developer.</p>
+            <p class="st-client">Client · <b>UX Anudeep</b> · Founder, UX Gym · ex Amazon · mentored 5,000+ designers, taught 100,000+</p>
+          </div>
+
+          <!-- Card 01 is a reel: four clips in one frame, crossfading, with
+               dots and a line that changes with the clip. -->
+          <div class="panel med">
+            <figure class="reel">
+              <video class="is-live" src="assets/video/intro.mp4" poster="assets/poster/intro.jpg" muted playsinline preload="metadata"
+                     data-cap="To get the founder's idea in front of students fast, I took it from idea to a tested product in one month, alone. Within two months it was running 300+ students across 3 batches, with new batches joining."></video>
+              <video src="assets/video/canvas.mp4" poster="assets/poster/canvas.jpg" muted playsinline preload="metadata"
+                     data-cap="A workbook asks for effort and gives little back. So I turned every workbook into a canvas students work on like Figma: zoom, drag, answer. 80% to 100% of students finish each exercise."></video>
+              <video src="assets/video/linkedin.mp4" poster="assets/poster/linkedin.jpg" muted playsinline preload="metadata"
+                     data-cap="To turn students' work into reach, I ended every exercise with a ready-to-post download. Sharing on LinkedIn went from 20% to 80%, bringing UX Gym thousands of leads without ads."></video>
+              <video src="assets/video/builder.mp4" poster="assets/poster/builder.jpg" muted playsinline preload="metadata"
+                     data-cap="Laying out every module by hand was slowing the admins down. So I built a page builder: they drop in the content and the page lays itself out. Building a module takes about 80% less of their time."></video>
+            </figure>
+            <div class="cap"><span class="num">01</span>
+              <div>
+                <p class="subt"></p>
+                <div class="dots"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ================= PANEL 02 · A HAPPY CLIENT =================
+               Three real messages from the client, popping in one after
+               another, tap tap tap, the way YouTube videos present the
+               comments they got. The first appears in the middle, then
+               slides aside to make room for the next two, and the panel
+               settles as a balanced collage where every message stays
+               visible. Nothing here changes after that: no timer, no
+               controls, just the pile of appreciation.
+               ============================================================ -->
+          <div class="panel med proof">
+            <figure class="reax" id="reax">
+              <div class="reax-stage">
+
+                <article class="reax-card" data-spot="a">
+                  <img src="assets/proof/anudeep-product-thinking.png"
+                    alt="WhatsApp thread. Anudeep says the convert to blocks idea is really amazing and asks how I got it. I explain that a student wanted to paste her notes across from Discord, and our system could already recognise the markdown, so I made it split the pasted text into separate blocks by itself. He replies, amazing Soumya Sri, very good product thinking." />
+                </article>
+
+                <article class="reax-card" data-spot="b">
+                  <img src="assets/proof/anudeep-bulk-import.jpg"
+                    alt="WhatsApp message. Anudeep quotes my video saying the bulk import through text is ready, and replies, this is awesome, with a heart." />
+                </article>
+
+                <article class="reax-card" data-spot="c">
+                  <img src="assets/proof/anudeep-larger-system.jpg"
+                    alt="WhatsApp messages from Anudeep. He says that with the LMS the students are taking things very seriously and feeling like a part of a larger system, instead of feeling like Anudeep is just messaging, and that since the course work is no longer on Discord, they can use Discord as Discord." />
+                </article>
+
+              </div>
+
+            </figure>
+
+            <div class="cap"><span class="num">02</span>
+              <div>
+                <p><b class="said">&ldquo;Because of the LMS, they are taking things very seriously. They are feeling like a part of a larger system.&rdquo;</b></p>
+                <p class="fine">UX Anudeep, founder, on WhatsApp during the build. The first words are translated from Telugu.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 03 is a reel like card 01: four clips, dots, a line
+               that changes with the clip under one constant heading. -->
+          <div class="panel med">
+            <figure class="reel">
+              <video class="is-live" src="assets/video/pokemon.mp4" poster="assets/poster/pokemon.jpg" muted playsinline preload="metadata"
+                     data-cap="To make finishing feel like a reward, the student's own answers become their UX Pokemon card, revealed like opening a pack. 100% of students finish this exercise."></video>
+              <video src="assets/video/explore.mp4" poster="assets/poster/explore.jpg" muted playsinline preload="none"
+                     data-cap="Rather than ask the founder to judge mockups, I built every option for the end-of-module screen for real. He chose by using them, not by imagining them."></video>
+              <video src="assets/video/uxbehindui.mp4" poster="assets/poster/uxbehindui.jpg" muted playsinline preload="none"
+                     data-cap="Design decisions are invisible, which makes them hard to teach. So in UX Behind UI, five of them light up on a WhatsApp chat, one at a time, and students see each one happen."></video>
+              <video src="assets/video/pokeadmin.mp4" poster="assets/poster/pokeadmin.jpg" muted playsinline preload="none"
+                     data-cap="To catch mistakes before students do, the founder can preview any screen exactly as a student will meet it. Errors get fixed by him, not reported by his students."></video>
+            </figure>
+            <div class="cap"><span class="num">03</span>
+              <div>
+                <p class="subt"></p>
+                <div class="dots"></div>
+                <p class="reel-claim">The lessons became interactive exercises that students actually finish.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- The end of the LMS story asks for the next one. The critique
+               (2026-09-21) wanted a call to action after every piece of work,
+               so a founder convinced by this story does not have to scroll
+               through the rest of the page to reach her. -->
+          <div class="panel state ask">
+            <p class="eyebrow">Your product next</p>
+            <h3>Have an idea people should <em><span class="nb"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg>love</span> using</em>, not just sign up for?</h3>
+            <p class="st-sub">I'll design it and build it around what you intend, and hand you a product you run yourself.</p>
+            <div class="say-cta">
+              <a class="cta" href="https://wa.me/918074889819?text=Hi%20Soumya%2C%20I%20saw%20your%20work%20and%20I%20would%20like%20to%20talk%20about%20my%20product." target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5c-4.7 0-8.5 3.4-8.5 7.6 0 2.3 1.1 4.3 2.9 5.7l-.7 3.2 3.3-1.8c.9.3 1.9.4 3 .4 4.7 0 8.5-3.4 8.5-7.5S16.7 3.5 12 3.5z"/></svg>
+                Message
+              </a>
+              <a class="cta ghost" href="mailto:perlasoumyasri@gmail.com" data-copy="perlasoumyasri@gmail.com" data-action="mail">Email me</a>
+            </div>
+            <p class="next-proj"><a href="launch.html">Next project: the AI UX launch →</a></p>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="hs-prog">
+        <span class="count" id="count">01 / 05</span>
+        <div class="rail"><div class="fill" id="fill"></div></div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="quote">
+    <div>
+      <p class="close-k">Open to new work</p>
+      <h2>Tell me your vision.</h2>
+    </div>
+    <div class="quote-ways">
+      <a class="cta" href="https://wa.me/918074889819?text=Hi%20Soumya%2C%20I%20saw%20your%20portfolio%20and%20I%20would%20like%20to%20talk%20to%20you%20about%20a%20project." target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5c-4.7 0-8.5 3.4-8.5 7.6 0 2.3 1.1 4.3 2.9 5.7l-.7 3.2 3.3-1.8c.9.3 1.9.4 3 .4 4.7 0 8.5-3.4 8.5-7.5S16.7 3.5 12 3.5z"/></svg>
+        Message on WhatsApp
+      </a>
+      <a class="cta ghost" href="mailto:perlasoumyasri@gmail.com" data-copy="perlasoumyasri@gmail.com" data-action="mail">perlasoumyasri@gmail.com</a>
+      <a class="cta ghost" href="tel:+918074889819" data-copy="+91 80748 89819" data-action="wa">+91 80748 89819</a>
+      <a class="cta ghost" href="index.html#design-work">Design work</a>
+      <a class="cta ghost" href="assets/Perla-Soumya-Resume.pdf" download="Perla Soumya - Resume.pdf">Download resume</a>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- Phones hide the top menu, so a project page keeps this bar on screen
+     the whole time: the way back is always one tap away (2026-10-06). -->
+<nav class="secbar show" aria-label="Sections">
+  <a class="nav-back" href="index.html#projects">← Projects</a>
+  <a href="index.html#personal">Personal</a>
+  <a href="index.html#design-work">Design work</a>
+  <a href="assets/Perla-Soumya-Resume.pdf" download="Perla Soumya - Resume.pdf">Resume</a>
+</nav>
+
+<script src="site.js" defer></script>
+<script src="reactions.js" defer></script>
+</body>
+</html>

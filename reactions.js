@@ -197,6 +197,7 @@
     var im = card.querySelector('img');
     if (!im) return;
     back = card;
+    zoom.classList.remove('no-hint');
     zImg.src = im.currentSrc || im.src;
     zImg.alt = im.alt;
     zoom.hidden = false;
