@@ -336,7 +336,7 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
      screen under it: 220px on a tall phone, down to 100px on a short one.
      At 340px the face took most of the screen and the claim started at
      the bottom edge. */
-  .say-face { justify-self: center; height: clamp(110px, calc(100svh - 540px), 300px); }
+  .say-face { justify-self: center; height: clamp(100px, calc(100svh - 590px), 300px); }
   .hs .hs-track { padding-top: var(--s5); }
 }
 /* Until the face has landed, the claim and the record wait, so the
@@ -480,8 +480,8 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
 /* steady while typing, like a real caret */
 .db-caret.typing { animation: none; opacity: 1; }
 .hs .panel.say .say-lead > p.db-sub {
-  margin-top: clamp(18px, 3vh, 30px); font-size: clamp(22px, 2.1vw, 30px); font-weight: 700;
-  letter-spacing: -.02em; line-height: 1.2; color: var(--ink);
+  margin-top: clamp(18px, 3vh, 30px); font-size: clamp(20px, 1.75vw, 26px); font-weight: 700;
+  letter-spacing: -.02em; line-height: 1.25; color: var(--ink); max-width: 30ch;
 }
 .hs .panel.say .say-lead > p.db-text { margin-top: 12px; font-size: 16.5px; line-height: 1.55; max-width: 62ch; }
 @media (prefers-reduced-motion: reduce) {
@@ -494,7 +494,7 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
      170px portrait three to one. The headline steps down and the face
      grows, so the face leads and the words follow. */
   .hs .panel.say h2.db { font-size: clamp(42px, 12.4vw, 60px); }
-  .hs .panel.say .say-lead > p.db-sub { font-size: clamp(18px, 5.3vw, 21px); margin-top: 14px; }
+  .hs .panel.say .say-lead > p.db-sub { font-size: clamp(17px, 4.9vw, 20px); margin-top: 10px; }
   .db-h { width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; }
   .hs .panel.say .say-lead > p.db-text { font-size: 15.5px; }
 }
@@ -1285,7 +1285,7 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
   /* A chapter break, not a card gap: the introduction ends here and the
      client work begins, so this seam gets more air than the rest. */
   .hs .panel.state { margin-top: clamp(16px, 6vw, 44px); }
-  /* All three contact pills stay reachable: the row scrolls sideways.
+  /* The pills stay reachable if they ever outgrow the row: it scrolls sideways.
      The padding lets the last pill clear the screen edge when it lands. */
   .topbar { flex-wrap: nowrap; }
   .topbar .links {
@@ -1707,7 +1707,25 @@ footer a { color: var(--muted); }
      sideways strip that cut the address off mid word, which read as
      broken, and both are a thumb away in the first screen's buttons and
      at the end of the page. It also gives the claim back a row. */
-  .topbar .links .pill:not(.solid) { display: none; }
+  /* On a phone the bar is two rows: the wordmark and LinkedIn, then the
+     phone number and email in full as plain links, so neither is ever cut
+     off (the old sideways-scrolling row cut the address mid word). */
+  .topbar {
+    display: grid; grid-template-columns: auto 1fr auto;
+    align-items: center; row-gap: 10px; column-gap: 16px;
+  }
+  .topbar .links { display: contents; }
+  .topbar .wordmark { grid-column: 1; grid-row: 1; }
+  .topbar .links .pill.solid { grid-column: 3; grid-row: 1; }
+  .topbar .links .pill:not(.solid) {
+    grid-row: 2; padding: 0; border: 0; background: none;
+    font-size: 13.5px; color: var(--iv2); text-decoration: underline;
+    text-decoration-color: var(--line); text-underline-offset: 3px;
+  }
+  .topbar .links .pill[data-action="wa"] { grid-column: 1; }
+  .topbar .links .pill[data-action="mail"] { grid-column: 2 / 4; justify-self: start; }
+  .hs-pin .topbar { padding-bottom: 6px; }
+  .hs .hs-track { padding-top: 6px !important; }
   .quote { flex-direction: column; align-items: flex-start; gap: var(--s4); }
   .owned, .stats, .facts { grid-template-columns: 1fr; }
   .hs .panel.nums .grid { grid-template-columns: 1fr; }
