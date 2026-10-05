@@ -323,6 +323,14 @@ img, video { max-width: 100%; }
 /* no script at all, or the dots failed: the photo shows */
 html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: visible; }
 .face-dots { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+/* A tap on the portrait moves it on; it must never select it, flash the
+   tap highlight, or offer "Save image" on a long press (phones did all
+   three, 2026-10-06). */
+.say-face, .say-face img, .face-dots {
+  -webkit-user-select: none; user-select: none;
+  -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent;
+}
+.say-face img { -webkit-user-drag: none; }
 .face-fallback .face-dots { display: none; }
 @media (min-width: 701px) {
   /* the page sheet is at most 1360 wide, so the panel ends where the top
