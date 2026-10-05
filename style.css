@@ -221,9 +221,11 @@ img, video { max-width: 100%; }
   }
   .secbar.show { transform: translate(-50%, 0); opacity: 1; }
   .secbar a { font-size: 13px; padding: 8px 11px; }
+  .secbar { max-width: calc(100vw - 12px); }
   .secbar a.on { background: var(--ink); color: var(--page); }
   .secbar a.nav-back { background: var(--ink); color: var(--page); font-weight: 600; }
 }
+@media (max-width: 380px) { .secbar a { font-size: 12px; padding: 7px 8px; } .secbar { gap: 0; padding: 4px; } }
 @media (prefers-reduced-motion: reduce) { .secbar { transition: none; } }
 .topbar .links { display: flex; gap: var(--s2); align-items: center; }
 
@@ -1513,10 +1515,10 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
 .hs-solo .hs-prog { display: none; }
 
 /* ---- Projects (home) ---------------------------------------- */
-.projs { padding: clamp(56px, 7vw, 104px) var(--gut) clamp(24px, 3vw, 40px); border-top: 1px solid var(--rule); background: var(--page); }
+.projs { padding: clamp(72px, 9vw, 136px) var(--gut) clamp(24px, 3vw, 40px); border-top: 1px solid var(--rule); background: var(--page); }
 .proj {
   display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 60px);
-  align-items: center; margin-bottom: clamp(48px, 6vw, 88px); text-decoration: none; color: inherit;
+  align-items: center; margin-bottom: clamp(88px, 10vw, 152px); text-decoration: none; color: inherit;
 }
 .proj:nth-of-type(even) { grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); }
 .proj:nth-of-type(even) .proj-media { order: 2; }
@@ -1573,7 +1575,7 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
 
 /* ---- Personal UX projects ---------------------------------- */
 .pux {
-  padding: clamp(56px, 7vw, 104px) var(--gut) clamp(40px, 5vw, 72px);
+  padding: clamp(72px, 9vw, 136px) var(--gut) clamp(72px, 8vw, 120px);
   border-top: 1px solid var(--rule); background: var(--page);
 }
 .pux-k { font-size: 13px; font-weight: 500; color: var(--faint); margin-bottom: var(--s6); }
@@ -1620,7 +1622,7 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
 @media (hover: hover) and (pointer: fine) { .pux-link:hover { border-bottom-color: var(--deep); } }
 .pux-more { display: block; width: fit-content; margin-top: var(--s3); }
 .pux-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
-.pux-proj + .pux-proj { margin-top: clamp(72px, 9vw, 128px); }
+.pux-proj + .pux-proj { margin-top: clamp(96px, 11vw, 160px); }
 .pux-flip { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); }
 .pux-flip .pux-media { order: 2; }
 .pux-shot { display: block; transition: transform 420ms var(--ease-out); }
@@ -1630,7 +1632,7 @@ html:not(.js-face) .say-face img, .face-fallback .say-face img { visibility: vis
 @media (max-width: 860px) { .pux-proj, .pux-flip { grid-template-columns: 1fr; } .pux-flip .pux-media { order: 0; } }
 
 /* ---- Design work ------------------------------------------- */
-.dw { padding: clamp(48px, 6vw, 88px) var(--gut) clamp(56px, 7vw, 104px); border-top: 1px solid var(--rule); background: var(--page); }
+.dw { padding: clamp(72px, 9vw, 136px) var(--gut) clamp(72px, 9vw, 136px); border-top: 1px solid var(--rule); background: var(--page); }
 .dw h3 { font-size: clamp(26px, 2.6vw, 38px); font-weight: 800; line-height: 1.1; letter-spacing: -.03em; color: var(--ink); max-width: 22ch; }
 .dw-ctx { margin-top: var(--s3); font-size: 16.5px; line-height: 1.6; color: var(--iv2); max-width: 58ch; }
 .dw-grid { margin-top: var(--s7); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(14px, 1.8vw, 24px); }
