@@ -1465,6 +1465,26 @@
   function designWork() {
     var pieces = document.querySelectorAll('.dw-piece');
     if (!pieces.length) return;
+    /* The viewer came from the WhatsApp collage, which now lives on
+       lms.html, so the home page had none and a tap on a poster did
+       nothing (2026-10-06). It makes its own when the page has none. */
+    if (!document.querySelector('.reax-zoom')) {
+      var nz = document.createElement('div'), back = null;
+      nz.className = 'reax-zoom no-hint';
+      nz.setAttribute('role', 'dialog'); nz.setAttribute('aria-modal', 'true');
+      nz.setAttribute('aria-label', 'Design, full size');
+      nz.hidden = true;
+      nz.innerHTML = '<img alt=""><button type="button" class="reax-zoom-x" aria-label="Close">&times;</button>';
+      document.body.appendChild(nz);
+      var shut = function () {
+        if (nz.hidden) return;
+        nz.classList.remove('on'); nz.hidden = true;
+        if (back) back.focus({ preventScroll: true });
+      };
+      nz.addEventListener('click', shut);
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') shut(); });
+      [].forEach.call(pieces, function (b) { b.addEventListener('click', function () { back = b; }); });
+    }
     [].forEach.call(pieces, function (b) {
       b.addEventListener('click', function () {
         var z = document.querySelector('.reax-zoom');
