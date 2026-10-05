@@ -341,8 +341,11 @@ async function start() {
   } else {
     aim('name'); scatter();
     requestAnimationFrame(frame);
-    timers.push(setTimeout(() => { burst(1); aim('face'); cycling = true; cyc = 0; since = CYCLE[0][1] - FIRST_FACE; }, 2900));
-    timers.push(setTimeout(landed, 3600));
+    /* Her name forms in about a second and holds a short beat, then the
+       face. It was 2.9s to the face and 3.6s to the claim, and she felt
+       the wait (2026-10-06): now 1.7s and 2.3s, still unhurried. */
+    timers.push(setTimeout(() => { burst(1); aim('face'); cycling = true; cyc = 0; since = CYCLE[0][1] - FIRST_FACE; }, 1700));
+    timers.push(setTimeout(landed, 2300));
     const skip = () => { if (!landed.done) finish(); };
     ['wheel', 'keydown', 'touchstart'].forEach(ev => addEventListener(ev, skip, { passive: true }));
     addEventListener('pointerdown', skip);

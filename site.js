@@ -836,7 +836,7 @@
        the box round "Design", "builder." typed, and only then the record
        flies in. At 1800 the flight began while "builder." was still being
        typed, and the two fought for the eye (2026-10-05). */
-    var RISE_AFTER = 2300;
+    var RISE_AFTER = 2000;
     var sayLead = panels[0] && panels[0].querySelector('.say-lead');
     var sayCreds = panels[0] && panels[0].querySelector('.creds');
     /* "Keep scrolling" has done its job the moment the reader scrolls, and

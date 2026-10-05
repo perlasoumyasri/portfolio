@@ -2018,8 +2018,11 @@ footer a { color: var(--muted); }
   .cs-opts li > b { width: 28px; height: 28px; font-size: 14px; }
 }
 /* the project card on the home page shows a screenshot, not a clip */
-.proj-media img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top left; border-radius: 14px; background: #fff; }
+.proj-media img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top left; border-radius: 14px; background: #fff; }
 .projs-h { margin: calc(-1 * var(--s4)) 0 clamp(40px, 5vw, 72px); font-size: clamp(28px, 3.2vw, 46px); font-weight: 800; line-height: 1.08; letter-spacing: -.035em; color: var(--ink); max-width: 25ch; }
 /* the launch clip's point is the founder's switches on its left edge,
    so the frame trims its right side instead */
 .proj-media video.at-left { object-position: left center; }
+/* the client, named under the claim on a project card */
+.proj-client { margin-top: 12px; font-size: 15px; line-height: 1.5; color: var(--muted); max-width: 46ch; }
+.proj-client b { color: var(--ink); font-weight: 600; }
