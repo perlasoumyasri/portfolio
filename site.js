@@ -1573,12 +1573,191 @@
     v.addEventListener('volumechange', function () { if (!v.muted) { btn.hidden = true; v.loop = false; } });
   }
 
+
+  /* Cards on the visual design page move like objects: they sway on their
+     own (CSS), lean toward the cursor with a glare, and give a turn when
+     tapped, so a phone gets a response too (her ask, 2026-10-06). */
+  function cards3d() {
+    var cards = document.querySelectorAll('.c3d');
+    if (!cards.length || reduced.matches) return;
+    var fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    [].forEach.call(cards, function (c) {
+      if (fine) {
+        c.addEventListener('pointermove', function (e) {
+          var r = c.getBoundingClientRect();
+          var x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+          c.style.setProperty('--ry', ((x - .5) * 26).toFixed(1) + 'deg');
+          c.style.setProperty('--rx', ((.5 - y) * 20).toFixed(1) + 'deg');
+          c.style.setProperty('--gx', (x * 100).toFixed(0) + '%');
+          c.style.setProperty('--gy', (y * 100).toFixed(0) + '%');
+          c.classList.add('tilt');
+        });
+        c.addEventListener('pointerleave', function () { c.classList.remove('tilt'); });
+      }
+      c.addEventListener('click', function () {
+        c.classList.remove('tilt', 'turn'); void c.offsetWidth; c.classList.add('turn');
+      });
+      c.addEventListener('animationend', function (e) { if (e.animationName === 'c3d-turn') c.classList.remove('turn'); });
+    });
+  }
+
+  /* Live pieces on the visual design page: the real drill and card pages
+     run inside a frame, drawn at their own size and scaled to fit (or
+     cropped to one part). On a touch screen a page frame waits for a
+     tap, so a swipe past it still scrolls the page. A frame marked
+     data-replay plays its entrance again when it comes into view or when
+     Replay is pressed: a fresh copy loads underneath and fades in over the
+     old one, so the screen never goes blank. */
+  function liveFrames() {
+    var boxes = document.querySelectorAll('.livef');
+    if (!boxes.length) return;
+    var touch = !window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    [].forEach.call(boxes, function (box) {
+      var f = box.querySelector('iframe');
+      var W = +box.dataset.w, H = +box.dataset.h;
+      var c = (box.dataset.crop || ('0,0,' + W + ',' + H)).split(',').map(Number);
+      var still = box.classList.contains('livef-foil');
+      box.style.aspectRatio = c[2] + ' / ' + c[3];
+      function size(fr) {
+        fr.style.width = W + 'px'; fr.style.height = H + 'px';
+        fr.style.transform = 'scale(' + (box.clientWidth / c[2]) + ') translate(' + (-c[0]) + 'px,' + (-c[1]) + 'px)';
+      }
+      function fit() { [].forEach.call(box.querySelectorAll('iframe'), size); }
+      fit();
+      if ('ResizeObserver' in window) new ResizeObserver(fit).observe(box); else window.addEventListener('resize', fit);
+      function prep(fr) {
+        fr.addEventListener('load', function () {
+          var d; try { d = fr.contentDocument; } catch (e) { return; }
+          if (!d) return;
+          fr.dataset.loaded = '1';
+          var st = d.createElement('style');
+          st.textContent = 'html,body{overflow:hidden!important}' + (still ? 'button{pointer-events:none!important}' : '');
+          (d.head || d.documentElement).appendChild(st);
+        });
+      }
+      prep(f);
+      /* a live piece off screen stops drawing: its frame is taken out of
+         rendering until it is near the view again, so only what is on
+         screen ever costs anything */
+      if ('IntersectionObserver' in window) new IntersectionObserver(function (en) {
+        box.classList.toggle('is-off', !en[0].isIntersecting);
+      }, { rootMargin: '300px 0px' }).observe(box);
+      if (box.hasAttribute('data-direct')) box.classList.add('is-on');
+      else if (touch) {
+        f.style.pointerEvents = 'none';
+        var b = document.createElement('button');
+        b.type = 'button'; b.className = 'livef-play'; b.textContent = 'Tap to play';
+        b.addEventListener('click', function () { box.classList.add('is-on'); f.style.pointerEvents = ''; });
+        box.appendChild(b);
+      } else box.classList.add('is-on');
+      if (box.hasAttribute('data-replay')) {
+        var src = f.getAttribute('src') || f.getAttribute('data-src'), busy = false;
+        var replay = function () {
+          if (busy) return;
+          if (!f.getAttribute('src')) { f.src = src; return; }   /* first time: just load it, in view */
+          if (!f.dataset.loaded) return;
+          busy = true;
+          var old = f, nf = document.createElement('iframe');
+          nf.title = old.title; nf.tabIndex = -1;
+          nf.style.opacity = '0'; nf.style.transition = 'opacity 280ms ease';
+          size(nf); prep(nf);
+          nf.addEventListener('load', function () {
+            setTimeout(function () {
+              nf.style.opacity = '1'; f = nf;
+              setTimeout(function () { old.remove(); busy = false; }, 320);
+            }, 300);
+          }, { once: true });
+          nf.src = src;
+          box.appendChild(nf);
+        };
+        /* a card that celebrates plays when it is actually seen: it loads
+           only once half of it is on screen, and plays again each time the
+           visitor comes back to it */
+        if (box.hasAttribute('data-onview') && 'IntersectionObserver' in window) {
+          var seen = false;
+          new IntersectionObserver(function (en) {
+            if (en[0].isIntersecting && !seen) replay();
+            seen = en[0].isIntersecting;
+          }, { threshold: .5 }).observe(box);
+        }
+        var it = box.closest('.vw-item'), rb = it && it.querySelector('.replay');
+        if (rb) rb.addEventListener('click', replay);
+      }
+    });
+  }
+
+  /* The Third Eye scan on the visual design page: the line sweeps across
+     the chair, photo to blueprint and back, and stops for good the moment
+     someone drags it. */
+  function scanner() {
+    var el = document.querySelector('.scan');
+    if (!el) return;
+    var p = 0, dir = 1, held = false, last = 0, visible = true, pause = 0;
+    function set(v) {
+      p = Math.max(0, Math.min(100, v));
+      el.style.setProperty('--p', p + '%');
+      var st = el.closest('.glow') || el;
+      st.classList.toggle('is-user', p < 45);
+      st.classList.toggle('is-designer', p > 55);
+    }
+    set(0);
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (en) { visible = en[0].isIntersecting; }).observe(el);
+    function tick(t) {
+      if (held) return;
+      requestAnimationFrame(tick);
+      var dt = last ? Math.min((t - last) / 1000, .05) : 0; last = t;
+      if (!visible) return;
+      if (pause > 0) { pause -= dt; return; }
+      set(p + dir * dt * 38);
+      if (p <= 0 || p >= 100) { dir = -dir; pause = 1.6; }
+    }
+    requestAnimationFrame(tick);
+    function at(e) { var r = el.getBoundingClientRect(); set((e.clientX - r.left) / r.width * 100); }
+    var resume;
+    el.addEventListener('pointerdown', function (e) { held = true; clearTimeout(resume); el.setPointerCapture(e.pointerId); at(e); });
+    el.addEventListener('pointermove', function (e) { if (held && e.buttons) at(e); });
+    el.addEventListener('pointerup', function () {
+      clearTimeout(resume);
+      resume = setTimeout(function () { held = false; last = 0; dir = p > 50 ? -1 : 1; requestAnimationFrame(tick); }, 2500);
+    });
+  }
+
+  /* A card from the quiz's last page, opened up close: the real card,
+     live, large enough to read and tilt. */
+  function cardViewer() {
+    if (!document.querySelector('.livef-row')) return;
+    var z = document.createElement('div');
+    z.className = 'pk-zoom'; z.hidden = true;
+    z.setAttribute('role', 'dialog'); z.setAttribute('aria-modal', 'true'); z.setAttribute('aria-label', 'Card, up close');
+    z.innerHTML = '<div class="pk-zoom-box"><iframe title="Card, up close"></iframe></div><button type="button" class="reax-zoom-x" aria-label="Close">&times;</button>';
+    document.body.appendChild(z);
+    var f = z.querySelector('iframe'), boxEl = z.querySelector('.pk-zoom-box');
+    function fit() {
+      var s = Math.min((window.innerHeight - 40) / 780, (window.innerWidth - 32) / 456);
+      boxEl.style.width = (456 * s) + 'px'; boxEl.style.height = (780 * s) + 'px';
+      f.style.transform = 'scale(' + s + ') translate(-72px,-60px)';
+    }
+    function close() { z.hidden = true; z.classList.remove('on'); f.src = 'about:blank'; }
+    window.addEventListener('message', function (e) {
+      if (e.data && e.data.pkClose) { if (!z.hidden) close(); return; }
+      if (!e.data || !e.data.pkOpen) return;
+      f.src = 'assets/live/pk-card/?type=' + e.data.pkOpen;
+      fit(); z.hidden = false; requestAnimationFrame(function () { z.classList.add('on'); });
+      /* the click left focus inside the card's frame, where Escape would
+         never reach this page: take it back */
+      if (document.activeElement && document.activeElement.tagName === 'IFRAME') document.activeElement.blur();
+      setTimeout(function () { z.querySelector('.reax-zoom-x').focus({ preventScroll: true }); }, 0);
+    });
+    z.addEventListener('click', function (e) { if (!boxEl.contains(e.target)) close(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !z.hidden) close(); });
+    window.addEventListener('resize', function () { if (!z.hidden) fit(); });
+  }
   function init() {
     marks(); theatre(); reels(); horizontal(); typeBuilder();
     /* The opening state is set, so the panel can be shown. Same task as
        the setup above, so no frame is ever painted in between. */
     document.documentElement.classList.remove('js-early');
-    copyPills(); progress(); reveal(); compare(); inviewVideo(); hoverVideo(); figures(); arrivals(); designWork(); sections(); demoSound();
+    copyPills(); progress(); reveal(); compare(); inviewVideo(); hoverVideo(); figures(); arrivals(); designWork(); sections(); demoSound(); cards3d(); liveFrames(); scanner(); cardViewer();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

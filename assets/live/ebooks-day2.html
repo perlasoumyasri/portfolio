@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>UX Gym — Day 2 Bonus eBook Pair</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--
+  =====================================================================
+  Day 2 Bonus eBook Pair — drop-in HTML for the website.
+
+  HOW TO USE:
+  1. Include the `fonts/` folder alongside this HTML, OR replace the
+     @font-face block below with your own font loader (Google Fonts CDN,
+     self-hosted, etc.). Fonts used: Satoshi (600/700/800) and
+     ClashGrotesk (600/700).
+  2. Drop the markup inside `<body>` anywhere you want the 2 books.
+  3. Style the wrapper background to match the surrounding page —
+     the books carry their own shadow + glow so they sit on any color.
+  4. The `.ebook-shelf` is responsive-aware: at narrow widths the books
+     stack. Override the breakpoint at the bottom of the CSS if needed.
+  =====================================================================
+-->
+<style>
+  /* ---- FONTS (replace with your own loader if you prefer) ---- */
+  @font-face { font-family:"Satoshi"; src:url("fonts/Satoshi-Medium.otf")  format("opentype"); font-weight:500; font-display:block; }
+  @font-face { font-family:"Satoshi"; src:url("fonts/Satoshi-Bold.otf")    format("opentype"); font-weight:700; font-display:block; }
+  @font-face { font-family:"Satoshi"; src:url("fonts/Satoshi-Black.otf")   format("opentype"); font-weight:900; font-display:block; }
+  @font-face { font-family:"ClashGrotesk"; src:url("fonts/ClashGrotesk-Semibold.otf") format("opentype"); font-weight:600; font-display:block; }
+  @font-face { font-family:"ClashGrotesk"; src:url("fonts/ClashGrotesk-Bold.otf")     format("opentype"); font-weight:700; font-display:block; }
+
+  /* ---- DESIGN TOKENS ---- */
+  :root {
+    --ux-brand-orange: #FF5E35;
+    --ux-brand-orange-deep: #E04A20;
+    --ux-ink: #111111;
+    --ux-paper: #F2EAD3;
+  }
+
+  /* ---- SHELF WRAPPER ---- */
+  .ebook-shelf {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 90px;
+    padding: 80px 32px;
+    perspective: 2400px;
+    background: #F3F0EB;
+    font-family: "Satoshi", system-ui, sans-serif;
+    box-sizing: border-box;
+  }
+  .ebook-shelf *, .ebook-shelf *::before, .ebook-shelf *::after { box-sizing: border-box; }
+
+  /* ---- BOOK 3D ---- */
+  .ebook {
+    --cover-w: 400px;
+    --cover-h: 540px;
+    width: var(--cover-w);
+    height: var(--cover-h);
+    position: relative;
+    transform-style: preserve-3d;
+    transform: rotateY(-14deg) rotateX(2deg);
+    transition: transform 400ms ease;
+    flex-shrink: 0;
+  }
+  .ebook:hover {
+    transform: rotateY(-6deg) rotateX(0deg) translateY(-6px);
+  }
+  .ebook .ebook-pages {
+    position: absolute;
+    top: 4px; bottom: 4px;
+    right: -6px;
+    width: 14px;
+    background:
+      repeating-linear-gradient(to bottom,
+        #fff 0px, #fff 2px,
+        #e8e2d4 2px, #e8e2d4 3px);
+    transform: translateZ(-2px) translateX(-2px);
+    border-radius: 0 2px 2px 0;
+    box-shadow: inset -1px 0 0 rgba(0,0,0,0.08);
+  }
+  .ebook .ebook-cover {
+    position: absolute;
+    inset: 0;
+    border-radius: 4px 8px 8px 4px;
+    overflow: hidden;
+    box-shadow:
+      inset 6px 0 0 rgba(0,0,0,0.22),
+      inset 10px 0 12px rgba(0,0,0,0.18),
+      0 0 0 1.5px rgba(255, 255, 255, 0.10),
+      0 0 36px rgba(255, 94, 53, 0.30),
+      0 0 90px rgba(255, 94, 53, 0.18),
+      32px 38px 60px rgba(0, 0, 0, 0.45);
+    transform-style: preserve-3d;
+  }
+  .ebook::after {
+    content: "";
+    position: absolute;
+    left: -8px; right: -8px;
+    bottom: -22px; height: 32px;
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0.35), rgba(0,0,0,0) 70%);
+    filter: blur(3px);
+    z-index: -1;
+  }
+
+  /* ---- COVER LAYOUT (shared) ---- */
+  .ebook-inner {
+    position: absolute;
+    inset: 0;
+    padding: 26px 26px 22px 36px;
+    display: flex;
+    flex-direction: column;
+    color: var(--ux-ink);
+    z-index: 2;
+  }
+  .ebook-top {
+    font-family: "Satoshi", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.20em;
+    text-transform: uppercase;
+    color: var(--ux-ink);
+    opacity: 0.9;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .ebook-top::before {
+    content: "";
+    width: 6px; height: 6px; border-radius: 50%;
+    background: currentColor;
+    display: inline-block;
+  }
+  .ebook-title {
+    margin-top: auto;
+    font-family: "ClashGrotesk", sans-serif;
+    font-weight: 700;
+    line-height: 0.94;
+    letter-spacing: -0.025em;
+    font-size: 54px;
+    color: var(--ux-ink);
+  }
+  .ebook-rule {
+    width: 56px; height: 3px;
+    margin: 16px 0 12px;
+    background: var(--ux-brand-orange);
+  }
+  .ebook-desc {
+    font-family: "Satoshi", sans-serif;
+    font-weight: 500;
+    font-size: 13.5px;
+    line-height: 1.32;
+    text-wrap: pretty;
+    max-width: 320px;
+    color: #3a3a3a;
+  }
+  .ebook-author {
+    margin-top: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .ebook-author .by {
+    font-family: "Satoshi", sans-serif;
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ux-ink);
+  }
+  .ebook-author .by .light { opacity: 0.55; font-weight: 500; margin-right: 4px; }
+  .ebook-author .badge {
+    font-family: "ClashGrotesk", sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.20em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    border-radius: 3px;
+    background: var(--ux-ink);
+    color: #fff;
+    border: 1px solid var(--ux-ink);
+  }
+  .ebook-pattern {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  /* ====== BOOK 1 — The 6-Month Roadmap ====== */
+  .ebook-1 .ebook-cover {
+    background: linear-gradient(170deg, #F2EAD3 0%, #E9DFC1 100%);
+  }
+  .ebook-1 .ebook-title { color: var(--ux-ink); }
+  .ebook-1 .ebook-title .accent { color: var(--ux-brand-orange); }
+  .ebook-1 .ebook-rule { background: var(--ux-brand-orange); }
+  .ebook-1 .ebook-desc { color: #3a3a3a; }
+
+  /* faint dot grid */
+  .pattern-paper {
+    position: absolute; inset: 0;
+    background-image: radial-gradient(rgba(17,17,17,0.18) 1.1px, transparent 1.1px);
+    background-size: 14px 14px;
+    opacity: 0.45;
+  }
+  /* soft orange wash bleeding off upper-right corner */
+  .pattern-wash {
+    position: absolute;
+    top: -70px; right: -100px;
+    width: 300px; height: 300px;
+    background: radial-gradient(closest-side, rgba(255,94,53,0.55), rgba(255,94,53,0));
+  }
+  /* massive thin-outlined "6" */
+  .huge-six {
+    position: absolute;
+    top: 28px; right: -34px;
+    font-family: "ClashGrotesk", sans-serif;
+    font-weight: 700;
+    font-size: 340px;
+    line-height: 0.78;
+    letter-spacing: -0.06em;
+    color: transparent;
+    -webkit-text-stroke: 3px var(--ux-ink);
+    user-select: none;
+  }
+  .huge-six-label {
+    position: absolute;
+    top: 96px; right: 168px;
+    text-align: right;
+    font-family: "Satoshi", sans-serif;
+    font-weight: 800;
+    font-size: 11px;
+    letter-spacing: 0.30em;
+    text-transform: uppercase;
+    color: var(--ux-ink);
+    line-height: 1.7;
+  }
+  .huge-six-label .arrow { color: var(--ux-brand-orange); margin-right: 4px; }
+  .huge-six-label .line { display: block; }
+  .huge-six-label .line.alt { color: var(--ux-brand-orange); }
+  /* 6-dot milestone strip */
+  .milestone-strip {
+    position: absolute;
+    top: 60px; left: 36px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .milestone-strip .dot {
+    width: 9px; height: 9px;
+    border: 1.5px solid var(--ux-ink);
+    border-radius: 50%;
+    background: transparent;
+  }
+  .milestone-strip .dot.end {
+    background: var(--ux-brand-orange);
+    border-color: var(--ux-brand-orange);
+    width: 13px; height: 13px;
+    box-shadow: 0 0 0 2.5px var(--ux-paper), 0 0 0 4px var(--ux-brand-orange);
+  }
+  .milestone-strip .seg {
+    width: 12px; height: 1.5px; background: var(--ux-ink); opacity: 0.55;
+  }
+  .milestone-strip .label {
+    margin-left: 10px;
+    font-family: "Satoshi", sans-serif;
+    font-weight: 800;
+    font-size: 9px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ux-ink);
+    opacity: 0.7;
+  }
+  /* "2026 · AI UX" stamp */
+  .lpa-stamp {
+    position: absolute;
+    bottom: 260px; left: 36px;
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--ux-ink);
+    color: #fff;
+    font-family: "ClashGrotesk", sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+  }
+  .lpa-stamp .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--ux-brand-orange);
+  }
+
+  /* ====== BOOK 2 — 4 AI Tool Classifications ====== */
+  .ebook-2 .ebook-cover {
+    background: linear-gradient(168deg, #FF6E42 0%, #FF5E35 55%, #E84A1F 100%);
+  }
+  .ebook-2 .ebook-inner { color: var(--ux-ink); }
+  .ebook-2 .ebook-top   { color: var(--ux-ink); opacity: 1; }
+  .ebook-2 .ebook-title { color: var(--ux-ink); }
+  .ebook-2 .ebook-title .accent { color: #fff; }
+  .ebook-2 .ebook-rule  { background: var(--ux-ink); }
+  .ebook-2 .ebook-desc  { color: rgba(17,17,17,0.85); }
+  .ebook-2 .ebook-author .by { color: var(--ux-ink); }
+  .ebook-2 .ebook-author .by .light { color: rgba(17,17,17,0.55); }
+  .ebook-2 .ebook-author .badge { background: var(--ux-ink); color: #fff; border-color: var(--ux-ink); }
+
+  /* paper speckle behind grid */
+  .pattern-orange-noise {
+    position: absolute; inset: 0;
+    background-image: radial-gradient(rgba(17,17,17,0.10) 1px, transparent 1px);
+    background-size: 12px 12px;
+    opacity: 0.5;
+  }
+  /* "Four Classifications" caption above grid */
+  .grid-caption {
+    position: absolute;
+    top: 60px; right: 28px;
+    font-family: "Satoshi", sans-serif;
+    font-weight: 800;
+    font-size: 9px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--ux-ink);
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .grid-caption::before {
+    content: "";
+    width: 22px; height: 1.5px; background: var(--ux-ink);
+  }
+  /* 2x2 ink grid */
+  .tool-grid {
+    position: absolute;
+    top: 82px; right: 28px;
+    width: 244px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border: 1.5px solid var(--ux-ink);
+  }
+  .tool-grid .cell {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    position: relative;
+    min-height: 84px;
+  }
+  .tool-grid .cell:nth-child(odd) { border-right: 1.5px solid var(--ux-ink); }
+  .tool-grid .cell:nth-child(-n+2) { border-bottom: 1.5px solid var(--ux-ink); }
+  .tool-grid .cell .num {
+    font-family: "ClashGrotesk", sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 1;
+    color: var(--ux-ink);
+    letter-spacing: -0.02em;
+  }
+  .tool-grid .cell .lbl {
+    font-family: "ClashGrotesk", sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    line-height: 1.05;
+    color: var(--ux-ink);
+    letter-spacing: -0.01em;
+  }
+  .tool-grid .cell .sub {
+    font-family: "Satoshi", sans-serif;
+    font-weight: 800;
+    font-size: 8px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(17,17,17,0.55);
+    margin-top: auto;
+  }
+  .tool-grid .cell.focus { background: var(--ux-ink); }
+  .tool-grid .cell.focus .num,
+  .tool-grid .cell.focus .lbl { color: #fff; }
+  .tool-grid .cell.focus .sub { color: rgba(255,255,255,0.55); }
+  .tool-grid .cell.focus::after {
+    content: "";
+    position: absolute;
+    top: 10px; right: 10px;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--ux-brand-orange);
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 1100px) {
+    .ebook-shelf { gap: 50px; }
+  }
+  @media (max-width: 900px) {
+    .ebook { transform: rotateY(-8deg) rotateX(1deg); }
+  }
+</style>
+</head>
+<body>
+
+<div class="ebook-shelf">
+
+  <!-- ============ BOOK 1 — The 6-Month Roadmap ============ -->
+  <div class="ebook ebook-1">
+    <div class="ebook-pages"></div>
+    <div class="ebook-cover">
+      <div class="ebook-pattern">
+        <div class="pattern-paper"></div>
+        <div class="pattern-wash"></div>
+        <div class="huge-six">6</div>
+        <div class="huge-six-label">
+          <span class="line"><span class="arrow">→</span>MONTHS</span>
+          <span class="line alt">TO 20+ LPA</span>
+        </div>
+        <div class="milestone-strip">
+          <span class="dot"></span><span class="seg"></span>
+          <span class="dot"></span><span class="seg"></span>
+          <span class="dot"></span><span class="seg"></span>
+          <span class="dot"></span><span class="seg"></span>
+          <span class="dot"></span><span class="seg"></span>
+          <span class="dot end"></span>
+          <span class="label">M1 → M6</span>
+        </div>
+        <div class="lpa-stamp"><span class="dot"></span>2026 · AI UX</div>
+      </div>
+      <div class="ebook-inner">
+        <div class="ebook-top">UX GYM FIELD GUIDE</div>
+        <div class="ebook-title">
+          The 6-Month<br>
+          <span class="accent">Roadmap.</span>
+        </div>
+        <div class="ebook-rule"></div>
+        <div class="ebook-desc">
+          How to land a 20+ LPA AI UX role in the next 6 months.
+        </div>
+        <div class="ebook-author">
+          <div class="by"><span class="light">By</span>UX.ANUDEEP</div>
+          <div class="badge">eBook · PDF</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ BOOK 2 — 4 AI Tool Classifications ============ -->
+  <div class="ebook ebook-2">
+    <div class="ebook-pages"></div>
+    <div class="ebook-cover">
+      <div class="ebook-pattern">
+        <div class="pattern-orange-noise"></div>
+        <div class="grid-caption">Four Classifications</div>
+        <div class="tool-grid">
+          <div class="cell">
+            <span class="num">01</span>
+            <span class="lbl">Discovery</span>
+            <span class="sub">Research</span>
+          </div>
+          <div class="cell">
+            <span class="num">02</span>
+            <span class="lbl">Ideation</span>
+            <span class="sub">Sketch</span>
+          </div>
+          <div class="cell focus">
+            <span class="num">03</span>
+            <span class="lbl">Prototyping</span>
+            <span class="sub">Mockup</span>
+          </div>
+          <div class="cell">
+            <span class="num">04</span>
+            <span class="lbl">Build</span>
+            <span class="sub">Ship</span>
+          </div>
+        </div>
+      </div>
+      <div class="ebook-inner">
+        <div class="ebook-top">UX GYM FIELD GUIDE</div>
+        <div class="ebook-title">
+          4 AI Tool<br>
+          <span class="accent">Classifications.</span>
+        </div>
+        <div class="ebook-rule"></div>
+        <div class="ebook-desc">
+          Why mastering the 4 AI tool classifications beats memorising 40 tools.
+        </div>
+        <div class="ebook-author">
+          <div class="by"><span class="light">By</span>UX.ANUDEEP</div>
+          <div class="badge">eBook · PDF</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

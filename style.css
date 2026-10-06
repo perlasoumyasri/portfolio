@@ -2028,3 +2028,266 @@ footer a { color: var(--muted); }
 /* the client, named under the claim on a project card */
 .proj-client { margin-top: 12px; font-size: 15px; line-height: 1.5; color: var(--muted); max-width: 46ch; }
 .proj-client b { color: var(--ink); font-weight: 600; }
+
+/* ---- Visual design work page (visual.html) ---- */
+.vw-sec { margin-top: clamp(72px, 9vw, 136px); }
+.vw-sec h2 { font-size: clamp(26px, 2.8vw, 40px); font-weight: 800; line-height: 1.1; letter-spacing: -.03em; color: var(--ink); max-width: 24ch; }
+/* brochure pages and cards keep their own shape, not the posters' 4:5 */
+.vw-natural { align-items: start; }
+.vw-natural .dw-piece img { aspect-ratio: auto; object-fit: contain; }
+.dw-motion { margin: 0; }
+.dw-motion video { display: block; width: 100%; height: auto; aspect-ratio: 600 / 1058; border-radius: 14px; background: #000; box-shadow: 0 1px 3px rgba(0,0,0,.4), 0 14px 32px rgba(0,0,0,.35); }
+.dw-motion span { display: block; margin-top: 10px; font-size: 14px; color: var(--iv3); }
+.vw .next-proj { margin-top: clamp(56px, 7vw, 96px); }
+.dw-all { margin-top: var(--s7); }
+
+.vw-jump { margin-top: var(--s5); display: flex; flex-wrap: wrap; gap: 8px; }
+.vw-jump a { font-size: 14px; font-weight: 500; color: var(--iv2); text-decoration: none; padding: 7px 13px; border-radius: 99px; border: 1px solid var(--line); }
+@media (hover: hover) and (pointer: fine) { .vw-jump a:hover { color: var(--ink); border-color: var(--iv4); } }
+.vw-sec { scroll-margin-top: 24px; }
+.vw-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s5); }
+.vw-head-t { flex: 1 1 auto; min-width: 0; }
+.vw-dl {
+  flex: none; display: inline-flex; align-items: center; gap: 12px; margin-top: 6px;
+  padding: 12px 18px 12px 14px; border-radius: 14px; text-decoration: none;
+  background: var(--plate2); border: 1px solid var(--chip-ring); color: var(--ink);
+  transition: background var(--d-hover) var(--ease-soft), border-color var(--d-hover) var(--ease-soft), transform var(--d-press) var(--ease-out);
+}
+.vw-dl svg { width: 22px; height: 22px; padding: 7px; box-sizing: content-box; border-radius: 10px; background: var(--accent); color: #fff; }
+.vw-dl span { display: flex; flex-direction: column; font-size: 15px; font-weight: 600; line-height: 1.25; }
+.vw-dl small { font-size: 12.5px; font-weight: 500; color: var(--muted); margin-top: 2px; }
+.vw-dl:active { transform: scale(.98); }
+@media (hover: hover) and (pointer: fine) { .vw-dl:hover { background: var(--chip); border-color: var(--accent); } }
+.vw-dl:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+@media (max-width: 700px) { .vw-head { flex-direction: column; gap: var(--s4); } }
+.vw-h3 { margin-top: clamp(48px, 6vw, 80px); font-size: 15px; font-weight: 600; color: var(--muted); }
+.vw-feature { margin-top: var(--s7); display: grid; grid-template-columns: minmax(0, .42fr) minmax(0, 1fr); gap: clamp(20px, 3vw, 40px); align-items: center; }
+.vw-wide img { aspect-ratio: auto !important; object-fit: contain !important; }
+.secnav a[aria-current="page"] { background: var(--ring); color: var(--ink); }
+
+/* ---- Cards as objects (visual.html) ----
+   Each card sways slowly on its own beat, leans toward the cursor with a
+   glare that follows it, and gives a quick turn when tapped. Reduced
+   motion keeps them still. */
+.vw-cards { margin-top: var(--s5); display: grid; gap: clamp(18px, 2.6vw, 40px); align-items: start; }
+.vw-five { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.vw-three { grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 760px; }
+.vw-two { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 620px; }
+.c3d { margin: 0; perspective: 1000px; cursor: grab; -webkit-tap-highlight-color: transparent; }
+.c3d-in {
+  position: relative; transform-style: preserve-3d; will-change: transform;
+  animation: c3d-sway 5.5s ease-in-out infinite; animation-delay: calc(var(--d, 0s) * -1);
+  filter: drop-shadow(0 18px 28px rgba(0,0,0,.45));
+}
+.c3d-in img { display: block; width: 100%; height: auto; border-radius: 6%/4.2%; user-select: none; -webkit-user-drag: none; }
+.c3d-mod .c3d-in img { border-radius: 6.6%/4.8%; }
+.c3d-square .c3d-in img { border-radius: 2px; }
+.c3d-in::after {
+  content: ""; position: absolute; inset: 0; border-radius: 6%/4.2%; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle at var(--gx, 50%) var(--gy, 30%), rgba(255,255,255,.32), rgba(255,255,255,0) 55%);
+  mix-blend-mode: soft-light; transition: opacity 300ms var(--ease-soft);
+}
+@keyframes c3d-sway {
+  0%, 100% { transform: rotateY(-15deg) rotateX(5deg) translateY(0); }
+  50% { transform: rotateY(15deg) rotateX(-4deg) translateY(-12px); }
+}
+.c3d.tilt .c3d-in { animation: none; transform: rotateY(var(--ry, 0deg)) rotateX(var(--rx, 0deg)) scale(1.04); transition: transform 140ms linear; }
+.c3d.tilt .c3d-in::after { opacity: 1; }
+.c3d.turn .c3d-in { animation: c3d-turn 900ms cubic-bezier(.2, .8, .2, 1); }
+@keyframes c3d-turn {
+  0% { transform: rotateY(0) scale(1); }
+  35% { transform: rotateY(28deg) scale(1.06); }
+  70% { transform: rotateY(-14deg) scale(1.03); }
+  100% { transform: rotateY(0) scale(1); }
+}
+.c3d figcaption { margin-top: 14px; font-size: 14px; color: var(--iv3); text-align: center; }
+.c3d figcaption:empty { display: none; }
+@media (max-width: 860px) {
+  .vw-five { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .vw-three { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .vw-feature { grid-template-columns: 1fr; }
+  .vw-feature .dw-motion { max-width: 220px; margin: 0 auto; }
+}
+@media (max-width: 480px) { .vw-five { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (prefers-reduced-motion: reduce) { .c3d-in, .c3d.turn .c3d-in { animation: none; } }
+
+/* ---- Live pieces: the real pages, running inside a frame ---- */
+.vw-drill { margin-top: var(--s7); display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.7fr); gap: clamp(24px, 4vw, 56px); align-items: center; }
+.vw-drill + .vw-h3 { margin-top: var(--s7); }
+.vw-flip { margin-top: clamp(72px, 9vw, 128px); }
+.vw-drill-t h3 { font-size: clamp(20px, 1.8vw, 26px); font-weight: 800; line-height: 1.2; letter-spacing: -.02em; color: var(--ink); }
+.vw-drill-t p { margin-top: var(--s3); font-size: 16px; line-height: 1.6; color: var(--iv2); }
+.vw-drill-t .pux-link { margin-top: var(--s4); }
+.livef {
+  position: relative; overflow: hidden; border-radius: 16px; background: var(--plate2) center / cover no-repeat;
+  box-shadow: 0 0 0 1px var(--line), 0 18px 40px rgba(0,0,0,.45);
+}
+.livef iframe { position: absolute; left: 0; top: 0; border: 0; transform-origin: 0 0; background: transparent; }
+.livef-card { border-radius: 4.4% / 3.2%; box-shadow: 0 18px 40px rgba(0,0,0,.5); }
+.livef-square { border-radius: 2px; }
+.livef-play {
+  position: absolute; right: 10px; top: 10px; z-index: 2;
+  display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 99px; cursor: pointer;
+  font: 600 14px var(--sans); color: #fff; background: rgba(10,14,26,.86); border: 1px solid rgba(255,255,255,.2);
+  box-shadow: 0 8px 24px rgba(0,0,0,.4);
+}
+.livef.is-on .livef-play { display: none; }
+.vw-mods { margin-top: var(--s6); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(20px, 3vw, 44px); max-width: 900px; }
+.vw-mods figure { margin: 0; }
+.vw-mods figcaption { margin-top: 14px; font-size: 14px; color: var(--iv3); text-align: center; }
+@media (max-width: 860px) {
+  .vw-drill { grid-template-columns: 1fr; }
+  .vw-mods { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 480px) { .vw-mods { grid-template-columns: 1fr; max-width: 280px; margin-left: auto; margin-right: auto; } }
+.vw-mods .livef, .vw-drill .livef { display: block; width: 100%; }
+
+/* ---- Stages (visual.html): every piece of work sits on a lit panel,
+   the way the home page lights its projects. A soft blue pool from
+   below, a faint top edge, the work floating on it. ---- */
+.stage {
+  position: relative; isolation: isolate; margin-top: var(--s6);
+  padding: clamp(20px, 3.4vw, 48px); border-radius: 28px;
+  background:
+    radial-gradient(120% 70% at 50% 110%, rgba(59,130,246,.22), rgba(59,130,246,0) 60%),
+    linear-gradient(180deg, #111830, #0c1222);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 0 0 1px var(--line);
+}
+.stage::before {
+  content: ""; position: absolute; z-index: -1; left: 12%; right: 12%; bottom: -40px; height: 120px;
+  background: radial-gradient(closest-side, rgba(77,141,255,.45), rgba(59,130,246,0));
+  filter: blur(36px); pointer-events: none;
+}
+.stage + .stage { margin-top: var(--s5); }
+.stage.dw-grid, .stage.vw-cards { max-width: none; }
+.stage.vw-three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.stage.vw-three .c3d { max-width: 300px; justify-self: center; width: 100%; }
+.stage .livef { box-shadow: 0 20px 50px rgba(0,0,0,.5); }
+.vw-sub { margin-top: clamp(56px, 7vw, 96px); font-size: clamp(20px, 1.9vw, 27px); font-weight: 800; letter-spacing: -.02em; line-height: 1.2; color: var(--ink); }
+.vw-subp { margin-top: var(--s3); font-size: 16.5px; line-height: 1.6; color: var(--iv2); max-width: 64ch; }
+.vw-inline { margin: 0 0 0 6px !important; display: inline !important; }
+
+/* ---- Foil: a light that slides across each card as it turns ---- */
+.c3d-foil {
+  position: absolute; inset: 0; pointer-events: none; border-radius: 6%/4.2%;
+  mix-blend-mode: color-dodge; opacity: .5;
+  background: linear-gradient(115deg, transparent 20%, rgba(255,255,255,.55) 38%, rgba(160,220,255,.4) 46%, rgba(255,200,240,.35) 54%, transparent 70%);
+  background-size: 260% 260%; background-position: var(--fx, 0%) 50%;
+  animation: foil-run 5.5s ease-in-out infinite; animation-delay: calc(var(--d, 0s) * -1);
+}
+@keyframes foil-run { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+.c3d.tilt .c3d-foil { animation: none; background-position: var(--gx, 50%) 50%; opacity: .75; }
+.c3d-silver .c3d-foil { opacity: .65; background-image: linear-gradient(115deg, transparent 18%, rgba(255,255,255,.8) 34%, rgba(170,230,255,.6) 42%, rgba(230,190,255,.55) 50%, rgba(190,255,220,.5) 58%, transparent 72%); }
+.c3d-gold .c3d-foil { mix-blend-mode: screen; opacity: .35; background-image: linear-gradient(115deg, transparent 25%, rgba(255,190,90,.6) 45%, rgba(255,240,200,.5) 52%, transparent 70%); }
+.c3d-paper .c3d-foil { mix-blend-mode: soft-light; opacity: .5; border-radius: 2px; }
+.c3d-paper .c3d-in img { border-radius: 2px; }
+.c3d-silver .c3d-in img, .c3d-gold .c3d-in img, .c3d-silver .c3d-foil, .c3d-gold .c3d-foil { border-radius: 6.6%/4.8%; }
+
+/* ---- The Third Eye scan: photo on the left of the line, blueprint on
+   the right of it; the line sweeps on its own until someone drags it. ---- */
+.scan { position: relative; border-radius: 18px; overflow: hidden; cursor: ew-resize; user-select: none; touch-action: pan-y; --p: 0%; box-shadow: 0 20px 50px rgba(0,0,0,.5); }
+.scan img { display: block; width: 100%; height: auto; -webkit-user-drag: none; }
+.scan-b { position: absolute; inset: 0; clip-path: inset(0 calc(100% - var(--p)) 0 0); }
+.scan-line { position: absolute; top: 0; bottom: 0; left: var(--p); width: 0; }
+.scan-line::before { content: ""; position: absolute; top: 0; bottom: 0; left: -2px; width: 4px; background: #7fe3ff; box-shadow: 0 0 18px 4px rgba(90,210,255,.7), 0 0 60px 10px rgba(90,210,255,.35); }
+.scan-knob { position: absolute; top: 50%; left: 0; width: 40px; height: 40px; transform: translate(-50%, -50%); border-radius: 50%; background: #0b2440; border: 2px solid #7fe3ff; box-shadow: 0 0 20px rgba(90,210,255,.6); }
+.scan-knob::before { content: "‹ ›"; position: absolute; inset: 0; display: grid; place-items: center; color: #bff1ff; font: 700 14px var(--sans); letter-spacing: 2px; }
+.scan-tag { position: absolute; z-index: 2; left: 50%; top: 18px; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; margin: 0;
+  padding: 8px 16px; border-radius: 99px; background: rgba(10,14,26,.78); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,.14); }
+.scan-tag b { font-size: 14px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); transition: color 300ms; }
+.scan-arrow { width: 34px; height: 2px; background: linear-gradient(90deg, var(--faint), #7fe3ff); position: relative; }
+.scan-arrow::after { content: ""; position: absolute; right: -1px; top: -4px; border: 5px solid transparent; border-left-color: #7fe3ff; border-right: 0; }
+.scan.is-user .u { color: #fff; }
+.scan.is-designer .d { color: #ff8a3d; }
+
+/* ---- Ebook: three pages laid like a small printed booklet ---- */
+.bk { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 2vw, 28px); align-items: center; }
+.bk-page img { aspect-ratio: auto !important; object-fit: contain !important; border-radius: 6px !important; box-shadow: 0 2px 4px rgba(0,0,0,.4), 0 24px 50px rgba(0,0,0,.5) !important; }
+.bk-page { transform: rotate(calc((var(--k) - 1) * 2.5deg)) translateY(calc(var(--k) * 0px)); transition: transform 420ms var(--ease-out); }
+@media (hover: hover) and (pointer: fine) { .bk:hover .bk-page { transform: none; } .bk-page:hover { transform: translateY(-8px) !important; } }
+@media (max-width: 700px) {
+  .bk { grid-template-columns: 1fr; }
+  .bk-page { transform: none; }
+  .stage.vw-three { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .scan-tag { top: 10px; padding: 6px 12px; gap: 8px; } .scan-tag b { font-size: 11px; } .scan-arrow { width: 20px; }
+}
+@media (prefers-reduced-motion: reduce) { .c3d-foil { animation: none; } }
+
+/* ---- visual.html, pass 5 ---- */
+.stage-open { position: absolute; z-index: 3; right: 18px; top: 18px; padding: 9px 15px; border-radius: 99px; font-size: 14px; font-weight: 600; text-decoration: none; color: var(--on-ink); background: var(--ink); box-shadow: 0 8px 24px rgba(0,0,0,.4); }
+@media (hover: hover) and (pointer: fine) { .stage-open:hover { background: #fff; } }
+.stage:has(.stage-open) .livef-play { top: auto; bottom: 10px; }
+.scan-head { display: flex; justify-content: center; align-items: center; gap: clamp(12px, 2vw, 24px); margin: 0 0 clamp(16px, 2vw, 28px); }
+.scan-head b { font-size: clamp(26px, 4vw, 56px); font-weight: 900; letter-spacing: -.02em; color: #2a3350; transition: color 400ms var(--ease-soft), text-shadow 400ms; }
+.scan-head .scan-arrow { width: clamp(40px, 6vw, 90px); }
+.glow.is-user .scan-head .u { color: #e8ecf5; }
+.glow.is-designer .scan-head .u { color: #5d6780; }
+.glow.is-designer .scan-head .d { color: #ff7a2e; text-shadow: 0 0 30px rgba(255,110,40,.45); }
+.c3d-live .c3d-in { filter: drop-shadow(0 18px 28px rgba(0,0,0,.5)); }
+.c3d-live .livef { border-radius: 6.6% / 4.8%; }
+.c3d-live .livef-square { border-radius: 2px; }
+.livef-cover { border-radius: 14px; }
+.stage-solo { display: flex; flex-direction: column; align-items: center; gap: var(--s4); }
+.stage-solo .livef-foil { width: min(100%, 560px); border-radius: 18px; }
+.replay { font: 600 14px var(--sans); color: var(--iv2); background: none; border: 1px solid var(--line); border-radius: 99px; padding: 9px 16px; cursor: pointer; }
+@media (hover: hover) and (pointer: fine) { .replay:hover { color: var(--ink); border-color: var(--iv4); } }
+.stage-hint { margin: var(--s4) 0 0; text-align: center; font-size: 14px; color: var(--faint); }
+.livef-row { background: transparent !important; box-shadow: none !important; }
+.pk-zoom { position: fixed; inset: 0; z-index: 90; display: grid; place-items: center; background: rgba(5,8,16,.88); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); opacity: 0; transition: opacity 260ms var(--ease-soft); }
+.pk-zoom.on { opacity: 1; }
+.pk-zoom[hidden] { display: none; }
+.pk-zoom-box { position: relative; overflow: hidden; }
+.pk-zoom-box iframe { position: absolute; left: 0; top: 0; width: 600px; height: 900px; border: 0; transform-origin: 0 0; background: transparent; }
+/* the Third Eye scan sits a size smaller than the other stages */
+#vw-eye .stage { max-width: 820px; margin-left: auto; margin-right: auto; }
+
+/* ---- visual.html, pass 7: no boxes behind the work (her call,
+   2026-10-06). Each piece floats on the page with a soft light behind
+   it, and there is room around everything. ---- */
+.vw .vw-sec { margin-top: clamp(120px, 14vw, 208px); }
+.vw-item { margin-top: clamp(64px, 8vw, 112px); }
+.vw-item:first-of-type { margin-top: clamp(48px, 6vw, 80px); }
+.vw-label { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; margin: 0 0 var(--s5); font-size: 13px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--iv2); }
+.vw-label span { font-weight: 500; letter-spacing: 0; text-transform: none; font-size: 14.5px; color: var(--faint); }
+.vw-label a, .vw-label .replay { margin-left: auto; letter-spacing: 0; text-transform: none; }
+.vw-label a { font-size: 14px; font-weight: 600; color: var(--deep); text-decoration: none; border-bottom: 1px solid rgba(147,180,255,.35); }
+.glow { position: relative; isolation: isolate; }
+.glow::before {
+  content: ""; position: absolute; z-index: -1; inset: 8% 6% -10%; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(110,150,255,.22), rgba(110,150,255,.06) 60%, rgba(110,150,255,0));
+  filter: blur(40px);
+}
+.glow .livef { box-shadow: 0 30px 70px rgba(0,0,0,.55); }
+.livef iframe { color-scheme: light; }
+.livef-row, .livef-foil { box-shadow: none !important; background: transparent !important; }
+.glow-card { display: flex; justify-content: center; }
+.glow-card .livef-foil { width: min(100%, 460px); }
+.glow-card::before { inset: 10% 20% -4%; background: radial-gradient(closest-side, rgba(255,170,140,.22), rgba(190,170,255,.10) 55%, rgba(0,0,0,0)); }
+.glow-eye { max-width: 760px; margin: 0 auto; }
+.glow-eye .scan { box-shadow: 0 30px 70px rgba(0,0,0,.55); }
+.bk { margin-top: var(--s7); }
+.pk-zoom-box iframe { color-scheme: light; }
+/* pass 8: the live pages at a readable, smaller size like the Third Eye,
+   and the opening of the page pulled closer (her notes, 2026-10-06) */
+.vw .vw-sec { margin-top: clamp(96px, 11vw, 160px); }
+.vw .cs-hero + .vw-sec { margin-top: clamp(56px, 6vw, 88px); }
+.glow:has(.livef-quiz), .glow:has(.livef-cover) { max-width: 760px; margin-left: auto; margin-right: auto; }
+.vw-item:has(.livef-quiz) .vw-label, .vw-item:has(.livef-cover) .vw-label, #vw-eye .vw-label { max-width: 760px; margin-left: auto; margin-right: auto; }
+
+/* pass 9: performance. Off-screen live frames stop rendering, and the
+   glow is a plain gradient (a blur filter on it cost every scroll frame). */
+.livef.is-off iframe { display: none; }
+.glow::before { filter: none; inset: 0% -4% -12%; background: radial-gradient(closest-side, rgba(110,150,255,.16), rgba(110,150,255,.05) 55%, rgba(110,150,255,0)); }
+.glow-card::before { filter: none; }
+
+/* the Daylight card sways on its own, the way the last-page cards do, so
+   a visitor sees it is a thing that turns; it holds still under the cursor
+   and the foil follows the hand instead */
+.glow-card { perspective: 1100px; }
+.glow-card .livef-foil { transform-style: preserve-3d; animation: foil-sway 6s ease-in-out infinite; will-change: transform; }
+@keyframes foil-sway {
+  0%, 100% { transform: rotateY(-14deg) rotateX(4deg) translateY(0); }
+  50% { transform: rotateY(14deg) rotateX(-3deg) translateY(-10px); }
+}
+@media (hover: hover) and (pointer: fine) { .glow-card .livef-foil:hover { animation-play-state: paused; } }
+@media (prefers-reduced-motion: reduce) { .glow-card .livef-foil { animation: none; } }

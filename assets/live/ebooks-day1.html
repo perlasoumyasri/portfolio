@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>UX Gym — Day 1 Bonus eBook Trio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--
+  =====================================================================
+  Day 1 Bonus eBook Trio — drop-in HTML for the website.
+
+  HOW TO USE:
+  1. Include the `fonts/` folder alongside this HTML, OR replace the
+     @font-face block below with your own font loader (Google Fonts CDN,
+     self-hosted, etc.). Fonts used: Satoshi (600/700/800) and
+     ClashGrotesk (600/700).
+  2. Drop the markup inside `<body>` anywhere you want the 3 books.
+  3. Style the wrapper background to match the surrounding page —
+     the books carry their own shadow + glow so they sit on any color.
+  4. The `.ebook-shelf` is responsive-aware: at narrow widths the books
+     stack. Override the breakpoint at the bottom of the CSS if needed.
+  =====================================================================
+-->
+<style>
+  /* ---- FONTS (replace with your own loader if you prefer) ---- */
+  @font-face { font-family:"Satoshi"; src:url("fonts/Satoshi-Medium.otf")  format("opentype"); font-weight:500; font-display:block; }
+  @font-face { font-family:"Satoshi"; src:url("fonts/Satoshi-Bold.otf")    format("opentype"); font-weight:700; font-display:block; }
+  @font-face { font-family:"Satoshi"; src:url("fonts/Satoshi-Black.otf")   format("opentype"); font-weight:900; font-display:block; }
+  @font-face { font-family:"ClashGrotesk"; src:url("fonts/ClashGrotesk-Semibold.otf") format("opentype"); font-weight:600; font-display:block; }
+  @font-face { font-family:"ClashGrotesk"; src:url("fonts/ClashGrotesk-Bold.otf")     format("opentype"); font-weight:700; font-display:block; }
+
+  /* ---- DESIGN TOKENS ---- */
+  :root {
+    --ux-brand-orange: #FF5E35;
+    --ux-brand-orange-deep: #E04A20;
+    --ux-ink: #111111;
+    --ux-cream: #F7F2E8;
+  }
+
+  /* ---- SHELF WRAPPER ---- */
+  .ebook-shelf {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 72px;
+    padding: 80px 32px;
+    perspective: 2400px;
+    background: #F3F0EB; /* page background — change/remove to taste */
+    font-family: "Satoshi", system-ui, sans-serif;
+    box-sizing: border-box;
+  }
+  .ebook-shelf *, .ebook-shelf *::before, .ebook-shelf *::after { box-sizing: border-box; }
+
+  /* ---- BOOK 3D ---- */
+  .ebook {
+    --cover-w: 400px;
+    --cover-h: 540px;
+    width: var(--cover-w);
+    height: var(--cover-h);
+    position: relative;
+    transform-style: preserve-3d;
+    transform: rotateY(-14deg) rotateX(2deg);
+    transition: transform 400ms ease;
+    flex-shrink: 0;
+  }
+  /* nice hover lift for the dev's site */
+  .ebook:hover {
+    transform: rotateY(-6deg) rotateX(0deg) translateY(-6px);
+  }
+  .ebook .ebook-pages {
+    position: absolute;
+    top: 4px; bottom: 4px;
+    right: -6px;
+    width: 14px;
+    background:
+      repeating-linear-gradient(to bottom,
+        #fff 0px, #fff 2px,
+        #e8e2d4 2px, #e8e2d4 3px);
+    transform: translateZ(-2px) translateX(-2px);
+    border-radius: 0 2px 2px 0;
+    box-shadow: inset -1px 0 0 rgba(0,0,0,0.08);
+  }
+  .ebook .ebook-cover {
+    position: absolute;
+    inset: 0;
+    border-radius: 4px 8px 8px 4px;
+    overflow: hidden;
+    box-shadow:
+      inset 6px 0 0 rgba(0,0,0,0.22),
+      inset 10px 0 12px rgba(0,0,0,0.18),
+      0 0 0 1.5px rgba(255, 255, 255, 0.10),
+      0 0 36px rgba(255, 94, 53, 0.30),
+      0 0 90px rgba(255, 94, 53, 0.18),
+      32px 38px 60px rgba(0, 0, 0, 0.45);
+    transform-style: preserve-3d;
+  }
+  .ebook::after {
+    content: "";
+    position: absolute;
+    left: -8px; right: -8px;
+    bottom: -22px; height: 32px;
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0.35), rgba(0,0,0,0) 70%);
+    filter: blur(3px);
+    z-index: -1;
+  }
+
+  /* ---- COVER LAYOUT (shared) ---- */
+  .ebook-inner {
+    position: absolute;
+    inset: 0;
+    padding: 26px 26px 22px 36px;
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+  }
+  .ebook-top {
+    font-family: "Satoshi", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.20em;
+    text-transform: uppercase;
+    opacity: 0.85;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .ebook-top::before {
+    content: "";
+    width: 6px; height: 6px; border-radius: 50%;
+    background: currentColor;
+    display: inline-block;
+  }
+  .ebook-title {
+    margin-top: auto;
+    font-family: "ClashGrotesk", sans-serif;
+    font-weight: 700;
+    line-height: 0.94;
+    letter-spacing: -0.025em;
+    font-size: 56px;
+    z-index: 2;
+    color: #fff;
+  }
+  .ebook-rule {
+    width: 56px; height: 3px;
+    margin: 16px 0 12px;
+    background: var(--ux-brand-orange);
+    z-index: 2;
+  }
+  .ebook-desc {
+    font-family: "Satoshi", sans-serif;
+    font-weight: 500;
+    font-size: 13.5px;
+    line-height: 1.32;
+    z-index: 2;
+    text-wrap: pretty;
+    max-width: 320px;
+  }
+  .ebook-author {
+    margin-top: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 2;
+  }
+  .ebook-author .by {
+    font-family: "Satoshi", sans-serif;
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .ebook-author .by .light { opacity: 0.55; font-weight: 500; margin-right: 4px; }
+  .ebook-author .badge {
+    font-family: "ClashGrotesk", sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.20em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+  }
+  .ebook-pattern {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  /* ====== BOOK 1 — Radar / 6-Second Scan ====== */
+  .ebook-1 .ebook-cover { background: linear-gradient(160deg, #0e0e0e 0%, #1b1b1b 60%, #232323 100%); }
+  .ebook-1 .ebook-title { color: #fff; }
+  .ebook-1 .ebook-title .accent { color: var(--ux-brand-orange); }
+  .ebook-1 .ebook-desc  { color: rgba(255,255,255,0.78); }
+  .ebook-1 .ebook-top   { color: #fff; }
+
+  .pattern-scan {
+    position: absolute;
+    top: -200px; right: -220px;
+    width: 500px; height: 500px;
+  }
+  .pattern-scan .ring {
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 94, 53, 0.40);
+  }
+  .pattern-scan .ring.r2 { inset: 60px;  border-color: rgba(255, 94, 53, 0.55); }
+  .pattern-scan .ring.r3 { inset: 120px; border-color: rgba(255, 94, 53, 0.72); border-width: 2px; }
+  .pattern-scan .ring.r4 { inset: 180px; border-color: rgba(255, 94, 53, 0.88); border-width: 2px; }
+  .pattern-scan .ring.r5 {
+    inset: 234px;
+    background: radial-gradient(circle, #FF5E35 0%, #FF5E35 40%, rgba(255,94,53,0.0) 70%);
+    border: none;
+    filter: blur(0.5px);
+  }
+  .pattern-scan .ring.r5::after {
+    content: ""; position: absolute; inset: 28px;
+    background: var(--ux-brand-orange);
+    border-radius: 50%;
+    box-shadow: 0 0 18px rgba(255,94,53,0.7);
+  }
+  .pattern-scan .sweep {
+    position: absolute; inset: 0;
+    background: conic-gradient(from 200deg, rgba(255,94,53,0.0) 0deg, rgba(255,94,53,0.25) 30deg, rgba(255,94,53,0.0) 60deg);
+    border-radius: 50%;
+  }
+  .pattern-scan .tick {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 1px; height: 270px;
+    background: linear-gradient(to bottom, transparent, rgba(255,94,53,0.35) 30%, rgba(255,94,53,0.35) 70%, transparent);
+    transform-origin: top center;
+    transform: translate(-50%, 0) rotate(var(--a));
+  }
+  .scan-ticker {
+    position: absolute;
+    right: 28px; top: 96px;
+    z-index: 2;
+    text-align: right;
+    color: var(--ux-brand-orange);
+    font-family: "ClashGrotesk", sans-serif;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .scan-ticker .num {
+    font-size: 92px;
+    letter-spacing: -0.04em;
+    color: #fff;
+    text-shadow: 0 0 30px rgba(255,94,53,0.4);
+  }
+  .scan-ticker .num .s { font-size: 40px; color: var(--ux-brand-orange); margin-left: 4px; }
+  .scan-ticker .lbl {
+    margin-top: 6px;
+    font-family: "Satoshi", sans-serif;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.30em;
+    color: rgba(255,255,255,0.55);
+    text-transform: uppercase;
+  }
+  .pattern-scanlines {
+    position: absolute; inset: 0;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 3px,
+      rgba(255,255,255,0.02) 3px,
+      rgba(255,255,255,0.02) 4px
+    );
+    pointer-events: none;
+  }
+
+  /* ====== BOOK 2 — AI Product Types / Node grid ====== */
+  .ebook-2 .ebook-cover { background: linear-gradient(170deg, #F7F2E8 0%, #ECE5D3 100%); color: var(--ux-ink); }
+  .ebook-2 .ebook-inner { color: var(--ux-ink); }
+  .ebook-2 .ebook-top   { color: var(--ux-ink); opacity: 1; }
+  .ebook-2 .ebook-title { color: var(--ux-ink); font-size: 54px; }
+  .ebook-2 .ebook-title .accent { color: var(--ux-brand-orange); }
+  .ebook-2 .ebook-desc  { color: #3a3a3a; }
+  .ebook-2 .ebook-author .badge { background: var(--ux-ink); color: #fff; border-color: var(--ux-ink); }
+
+  .pattern-nodes { position: absolute; inset: 0; }
+  .pattern-nodes .grid-bg {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(to right, rgba(17,17,17,0.08) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(17,17,17,0.08) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  .pattern-nodes svg {
+    position: absolute;
+    top: 40px; right: -40px;
+    width: 300px; height: 300px;
+  }
+  .node-tag {
+    position: absolute;
+    font-family: "Satoshi", sans-serif;
+    font-weight: 800;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    background: #fff;
+    color: var(--ux-ink);
+    padding: 6px 10px;
+    border-radius: 3px;
+    border: 1.5px solid var(--ux-ink);
+    box-shadow: 3px 3px 0 var(--ux-ink);
+  }
+  .node-tag.orange { background: var(--ux-brand-orange); color: #fff; border-color: var(--ux-ink); }
+  .node-tag.t1 { top: 64px;  right: 28px; }
+  .node-tag.t2 { top: 110px; right: 124px; transform: rotate(-4deg); }
+  .node-tag.t3 { top: 158px; right: 36px; }
+  .node-tag.t4 { top: 206px; right: 134px; transform: rotate(3deg); }
+  .node-tag.t5 { top: 252px; right: 44px; }
+
+  /* ====== BOOK 3 — Five Questions / Giant 5 ====== */
+  .ebook-3 .ebook-cover { background: linear-gradient(165deg, #FF6A3F 0%, #E04A20 100%); }
+  .ebook-3 .ebook-title { color: #fff; }
+  .ebook-3 .ebook-title .accent { color: var(--ux-ink); }
+  .ebook-3 .ebook-rule  { background: var(--ux-ink); }
+  .ebook-3 .ebook-desc  { color: rgba(255,255,255,0.95); }
+  .ebook-3 .ebook-top   { color: #fff; }
+  .ebook-3 .ebook-author .badge { background: var(--ux-ink); border-color: var(--ux-ink); color: #fff; }
+
+  .pattern-five { position: absolute; inset: 0; overflow: hidden; }
+  .pattern-five .giant {
+    position: absolute;
+    right: -50px; top: 40px;
+    font-family: "ClashGrotesk", sans-serif;
+    font-weight: 700;
+    font-size: 440px;
+    line-height: 0.78;
+    color: rgba(255,255,255,0.16);
+    letter-spacing: -0.06em;
+    user-select: none;
+  }
+  .pattern-five .giant.outline {
+    color: transparent;
+    -webkit-text-stroke: 2px rgba(255,255,255,0.5);
+    right: -44px; top: 32px;
+  }
+  .pattern-five .q {
+    position: absolute;
+    font-family: "ClashGrotesk", sans-serif;
+    font-weight: 700;
+    color: rgba(17,17,17,0.16);
+  }
+  .pattern-five .q.q1 { top: 64px;  left: 40px;  font-size: 46px; transform: rotate(-12deg); color: rgba(255,255,255,0.32); }
+  .pattern-five .q.q2 { top: 154px; left: 32px;  font-size: 32px; transform: rotate(8deg);   color: rgba(17,17,17,0.22); }
+  .pattern-five .q.q3 { top: 220px; left: 220px; font-size: 26px; transform: rotate(-6deg);  color: rgba(255,255,255,0.32); }
+  .pattern-five .q.q4 { top: 264px; left: 80px;  font-size: 22px; transform: rotate(14deg);  color: rgba(17,17,17,0.25); }
+  .pattern-five .q.q5 { top: 56px; right: 26px;  font-size: 18px; transform: rotate(-8deg);  color: rgba(255,255,255,0.4); }
+  .pattern-five .corner {
+    position: absolute;
+    bottom: 22px; left: 22px;
+    width: 54px; height: 54px;
+    border: 2px solid rgba(255,255,255,0.35);
+    border-right: none; border-top: none;
+    z-index: 1;
+  }
+  .pattern-five .corner-tr {
+    position: absolute;
+    top: 22px; right: 22px;
+    width: 54px; height: 54px;
+    border: 2px solid rgba(255,255,255,0.35);
+    border-left: none; border-bottom: none;
+    z-index: 1;
+  }
+
+  /* ---- Responsive: stack at narrow widths ---- */
+  @media (max-width: 1320px) {
+    .ebook-shelf { gap: 40px; }
+  }
+  @media (max-width: 900px) {
+    .ebook { transform: rotateY(-8deg) rotateX(1deg); }
+  }
+</style>
+</head>
+<body>
+
+<div class="ebook-shelf">
+
+  <!-- ============ BOOK 1 — The 6-Second Scan ============ -->
+  <div class="ebook ebook-1">
+    <div class="ebook-pages"></div>
+    <div class="ebook-cover">
+      <div class="ebook-pattern">
+        <div class="pattern-scan">
+          <div class="sweep"></div>
+          <div class="ring r1"></div>
+          <div class="ring r2"></div>
+          <div class="ring r3"></div>
+          <div class="ring r4"></div>
+          <div class="ring r5"></div>
+          <div class="tick" style="--a:0deg"></div>
+          <div class="tick" style="--a:60deg"></div>
+          <div class="tick" style="--a:120deg"></div>
+          <div class="tick" style="--a:180deg"></div>
+          <div class="tick" style="--a:240deg"></div>
+          <div class="tick" style="--a:300deg"></div>
+        </div>
+        <div class="pattern-scanlines"></div>
+        <div class="scan-ticker">
+          <div class="num">06<span class="s">s</span></div>
+          <div class="lbl">Time on screen</div>
+        </div>
+      </div>
+      <div class="ebook-inner">
+        <div class="ebook-top">UX GYM FIELD GUIDE</div>
+        <div class="ebook-title">
+          The 6-Second<br>
+          <span class="accent">Scan.</span>
+        </div>
+        <div class="ebook-rule"></div>
+        <div class="ebook-desc">
+          How to pass the recruiter's 6-second scan &amp; scrutiny of your UX portfolio.
+        </div>
+        <div class="ebook-author">
+          <div class="by"><span class="light">By</span>UX.ANUDEEP</div>
+          <div class="badge">eBook · PDF</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ BOOK 2 — AI Product Types ============ -->
+  <div class="ebook ebook-2">
+    <div class="ebook-pages"></div>
+    <div class="ebook-cover">
+      <div class="ebook-pattern">
+        <div class="pattern-nodes">
+          <div class="grid-bg"></div>
+          <svg viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg">
+            <g fill="none" stroke="#111" stroke-width="1.4" opacity="0.55">
+              <path d="M40 80 L 180 80 L 180 180 L 320 180"/>
+              <path d="M40 200 L 120 200 L 120 280 L 260 280"/>
+              <path d="M180 80 L 180 40 L 320 40"/>
+              <path d="M120 200 L 60 200 L 60 320"/>
+            </g>
+            <g>
+              <circle cx="40"  cy="80"  r="5" fill="#FF5E35"/>
+              <circle cx="180" cy="80"  r="5" fill="#111"/>
+              <circle cx="180" cy="40"  r="5" fill="#FF5E35"/>
+              <circle cx="320" cy="40"  r="5" fill="#111"/>
+              <circle cx="320" cy="180" r="5" fill="#FF5E35"/>
+              <circle cx="180" cy="180" r="5" fill="#111"/>
+              <circle cx="120" cy="200" r="5" fill="#FF5E35"/>
+              <circle cx="60"  cy="200" r="5" fill="#111"/>
+              <circle cx="60"  cy="320" r="5" fill="#111"/>
+              <circle cx="260" cy="280" r="5" fill="#FF5E35"/>
+            </g>
+          </svg>
+          <div class="node-tag t1">Copilot</div>
+          <div class="node-tag t2 orange">Agentic</div>
+          <div class="node-tag t3">Generative</div>
+          <div class="node-tag t4 orange">Decision UI</div>
+          <div class="node-tag t5">Retrieval</div>
+        </div>
+      </div>
+      <div class="ebook-inner">
+        <div class="ebook-top">UX GYM FIELD GUIDE</div>
+        <div class="ebook-title">
+          AI Product<br>
+          <span class="accent">Types.</span>
+        </div>
+        <div class="ebook-rule"></div>
+        <div class="ebook-desc">
+          How to identify &amp; design for the AI product types companies are hiring for in 2026.
+        </div>
+        <div class="ebook-author">
+          <div class="by"><span class="light">By</span>UX.ANUDEEP</div>
+          <div class="badge">eBook · PDF</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ BOOK 3 — The Five Questions ============ -->
+  <div class="ebook ebook-3">
+    <div class="ebook-pages"></div>
+    <div class="ebook-cover">
+      <div class="ebook-pattern">
+        <div class="pattern-five">
+          <div class="giant outline">5</div>
+          <div class="giant">5</div>
+          <div class="q q1">?</div>
+          <div class="q q2">?</div>
+          <div class="q q3">?</div>
+          <div class="q q4">?</div>
+          <div class="q q5">?</div>
+          <div class="corner"></div>
+          <div class="corner-tr"></div>
+        </div>
+      </div>
+      <div class="ebook-inner">
+        <div class="ebook-top">UX GYM FIELD GUIDE</div>
+        <div class="ebook-title">
+          The Five<br>
+          <span class="accent">Questions.</span>
+        </div>
+        <div class="ebook-rule"></div>
+        <div class="ebook-desc">
+          The 5 questions every UX portfolio must answer — before a recruiter even opens it.
+        </div>
+        <div class="ebook-author">
+          <div class="by"><span class="light">By</span>UX.ANUDEEP</div>
+          <div class="badge">eBook · PDF</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
