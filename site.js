@@ -1749,6 +1749,9 @@
      live, large enough to read and tilt. */
   function cardViewer() {
     if (!document.querySelector('.livef-row')) return;
+    [].forEach.call(document.querySelectorAll('.pk-still'), function (b) {
+      b.addEventListener('click', function () { window.postMessage({ pkOpen: b.getAttribute('data-type') }, '*'); });
+    });
     var z = document.createElement('div');
     z.className = 'pk-zoom'; z.hidden = true;
     z.setAttribute('role', 'dialog'); z.setAttribute('aria-modal', 'true'); z.setAttribute('aria-label', 'Card, up close');

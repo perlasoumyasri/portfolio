@@ -2310,3 +2310,15 @@ footer a { color: var(--muted); }
   .vw .dw-ctx { margin-top: 10px; }
   .vw .dw-grid { margin-top: 28px; gap: 16px; }
 }
+/* last-page cards: live on a laptop; on a phone, pictures of the same
+   cards that float, and a tap opens the one card live */
+.pk-stills { display: none; }
+@media (max-width: 700px) {
+  .glow-wide:has(.livef-row) { display: none; }
+  .pk-stills { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 18px; }
+  .pk-still { background: none; border: 0; padding: 0; cursor: zoom-in; animation: pkStillFloat 6s ease-in-out infinite; animation-delay: calc(var(--k) * -1.2s); -webkit-tap-highlight-color: transparent; }
+  .pk-still:last-child { grid-column: 1 / -1; width: calc(50% - 9px); justify-self: center; }
+  .pk-still img { display: block; width: 100%; height: auto; filter: drop-shadow(0 16px 24px rgba(0,0,0,.5)); }
+}
+@keyframes pkStillFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@media (prefers-reduced-motion: reduce) { .pk-still { animation: none; } }
