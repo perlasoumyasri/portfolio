@@ -653,17 +653,17 @@
       return k && e[k].onMouseMove && e.offsetWidth > 300;
     });
     if (!tg) return;
-    var inner = tg.querySelector('div') || tg, CYCLE = 6.2, wasOut = true;
+    var inner = tg.querySelector('div') || tg, CYCLE = 5.2, wasOut = true;
     requestAnimationFrame(function tick(t) {
       requestAnimationFrame(tick);
       if (user) { wasOut = true; return; }
       if (!t0) t0 = t;
       var k = ((t - t0) / 1000) % CYCLE;
-      if (k < 1.0 || k > 4.8) {
+      if (k < .5 || k > 4.5) {
         if (!wasOut) { inner.dispatchEvent(new MouseEvent('mouseout', { bubbles: true, relatedTarget: document.body })); tg.dispatchEvent(new MouseEvent('mouseleave', { bubbles: false })); }
         wasOut = true; return;
       }
-      var p = (k - 1.0) / 3.8, e = p * p * (3 - 2 * p), r = tg.getBoundingClientRect();
+      var p = (k - .5) / 4.0, e = p * p * (3 - 2 * p), r = tg.getBoundingClientRect();
       var x = r.left + r.width * (.12 + .76 * e), y = r.top + r.height * (.30 + .30 * Math.sin(e * Math.PI));
       var o = { clientX: x, clientY: y, bubbles: true, view: window };
       if (wasOut) { inner.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, clientX: x, clientY: y, relatedTarget: document.body })); wasOut = false; }

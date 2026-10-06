@@ -2299,3 +2299,14 @@ footer a { color: var(--muted); }
 /* the pen campaign: four posts in one centred row; two by two on a phone */
 .dw-grid.dw-quad { grid-template-columns: repeat(4, minmax(0, 1fr)); max-width: 1120px; margin-left: auto; margin-right: auto; }
 @media (max-width: 700px) { .dw-grid.dw-quad { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* phones: the section bar is always on screen, so nothing sits under it;
+   and the visual design page breathes a little more */
+@media (max-width: 700px) {
+  .sheet { padding-bottom: 76px; }
+  .vw .vw-sec { margin-top: 112px; }
+  .vw .cs-hero + .vw-sec { margin-top: 64px; }
+  .vw-item { margin-top: 72px; }
+  .vw-label { margin-bottom: 18px; }
+  .vw .dw-ctx { margin-top: 10px; }
+  .vw .dw-grid { margin-top: 28px; gap: 16px; }
+}

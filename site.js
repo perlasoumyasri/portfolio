@@ -1491,7 +1491,7 @@
         var im = b.querySelector('img');
         if (!z || !im) return;
         var zi = z.querySelector('img');
-        zi.src = im.currentSrc || im.src; zi.alt = im.alt;
+        zi.src = im.getAttribute('data-full') || im.currentSrc || im.src; zi.alt = im.alt;
         z.classList.add('no-hint');
         z.hidden = false;
         requestAnimationFrame(function () { z.classList.add('on'); });
@@ -1539,7 +1539,7 @@
     if (!bar || !('IntersectionObserver' in window)) return;
     var first = document.querySelector('.panel.say');
     if (first) new IntersectionObserver(function (en) {
-      bar.classList.toggle('show', !en[0].isIntersecting);
+      bar.classList.add('show');
     }, { threshold: 0.05 }).observe(first);
     var map = {};
     [].forEach.call(bar.querySelectorAll('a'), function (a) { map[a.getAttribute('href').slice(1)] = a; });
@@ -1614,6 +1614,14 @@
     var touch = !window.matchMedia('(hover: hover) and (pointer: fine)').matches;
     [].forEach.call(boxes, function (box) {
       var f = box.querySelector('iframe');
+      /* on a phone the five last-page cards stack two to a row: one strip
+         2400px wide drew at a seventh of its size and loaded in pieces */
+      if (box.classList.contains('livef-row') && window.matchMedia('(max-width: 700px)').matches) {
+        box.dataset.w = '880'; box.dataset.h = '2400'; box.dataset.crop = '0,0,880,2380';
+        f.setAttribute('data-src', f.getAttribute('data-src') + '&wrap=1');
+      }
+      /* the ebook covers only answer a mouse; on a phone they are pictures */
+      if (box.classList.contains('livef-cover') && touch) { box.setAttribute('data-direct', ''); f.style.pointerEvents = 'none'; }
       var W = +box.dataset.w, H = +box.dataset.h;
       var c = (box.dataset.crop || ('0,0,' + W + ',' + H)).split(',').map(Number);
       var still = box.classList.contains('livef-foil');
@@ -1636,6 +1644,15 @@
         });
       }
       prep(f);
+      /* a live piece loads only when the visitor is near it, so the page
+         itself opens fast */
+      if (f.getAttribute('data-src') && !box.hasAttribute('data-onview')) {
+        var go = function () { if (!f.getAttribute('src')) f.src = f.getAttribute('data-src'); };
+        if ('IntersectionObserver' in window) {
+          var lo = new IntersectionObserver(function (en) { if (en[0].isIntersecting) { go(); lo.disconnect(); } }, { rootMargin: '700px 0px' });
+          lo.observe(box);
+        } else go();
+      }
       /* a live piece off screen stops drawing: its frame is taken out of
          rendering until it is near the view again, so only what is on
          screen ever costs anything */
@@ -1692,7 +1709,7 @@
   function scanner() {
     var el = document.querySelector('.scan');
     if (!el) return;
-    var p = 0, dir = 1, held = false, last = 0, visible = true, pause = 0;
+    var p = 0, dir = 1, held = false, last = 0, visible = false, pause = 0;
     function set(v) {
       p = Math.max(0, Math.min(100, v));
       el.style.setProperty('--p', p + '%');
@@ -1701,7 +1718,13 @@
       st.classList.toggle('is-designer', p > 55);
     }
     set(0);
-    if ('IntersectionObserver' in window) new IntersectionObserver(function (en) { visible = en[0].isIntersecting; }).observe(el);
+    /* it plays only while most of it is on screen, and every time it comes
+       into view it starts from the user's side, so the change is seen */
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (en) {
+      var now = en[0].intersectionRatio >= .6;
+      if (now && !visible && !held) { set(0); dir = 1; pause = .9; }
+      visible = now;
+    }, { threshold: [0, .6] }).observe(el);
     function tick(t) {
       if (held) return;
       requestAnimationFrame(tick);
@@ -1741,7 +1764,7 @@
     window.addEventListener('message', function (e) {
       if (e.data && e.data.pkClose) { if (!z.hidden) close(); return; }
       if (!e.data || !e.data.pkOpen) return;
-      f.src = 'assets/live/pk-card/?type=' + e.data.pkOpen;
+      f.src = 'assets/live/pk-card/?v=5&type=' + e.data.pkOpen;
       fit(); z.hidden = false; requestAnimationFrame(function () { z.classList.add('on'); });
       /* the click left focus inside the card's frame, where Escape would
          never reach this page: take it back */
