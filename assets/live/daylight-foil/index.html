@@ -646,24 +646,28 @@
     }
   }, true);
   function sway() {
+    /* the card's own tilt and foil, driven on a loop until a real visitor
+       moves over it: rest straight, sweep across, settle straight again */
+    var tg = [].find.call(document.querySelectorAll('div'), function (e) {
+      var k = Object.keys(e).find(function (n) { return n.indexOf('__reactProps') === 0; });
+      return k && e[k].onMouseMove && e.offsetWidth > 300;
+    });
+    if (!tg) return;
+    var inner = tg.querySelector('div') || tg, CYCLE = 6.2, wasOut = true;
     requestAnimationFrame(function tick(t) {
       requestAnimationFrame(tick);
-      if (user || !card || (window.__skip = !window.__skip)) return;
+      if (user) { wasOut = true; return; }
       if (!t0) t0 = t;
-      var k = (t - t0) / 1000,
-        r = card.getBoundingClientRect();
-      var x = r.left + r.width * (.5 + .42 * Math.sin(k * 1.1)),
-        y = r.top + r.height * (.45 + .18 * Math.sin(k * .7));
-      var o = {
-        clientX: x,
-        clientY: y,
-        bubbles: true,
-        view: window
-      };
-      var tg = card;
-      tg.dispatchEvent(new MouseEvent('mousemove', o));
-      tg.dispatchEvent(new PointerEvent('pointermove', o));
-      tg.dispatchEvent(new MouseEvent('mouseover', o));
+      var k = ((t - t0) / 1000) % CYCLE;
+      if (k < 1.0 || k > 4.8) {
+        if (!wasOut) { inner.dispatchEvent(new MouseEvent('mouseout', { bubbles: true, relatedTarget: document.body })); tg.dispatchEvent(new MouseEvent('mouseleave', { bubbles: false })); }
+        wasOut = true; return;
+      }
+      var p = (k - 1.0) / 3.8, e = p * p * (3 - 2 * p), r = tg.getBoundingClientRect();
+      var x = r.left + r.width * (.12 + .76 * e), y = r.top + r.height * (.30 + .30 * Math.sin(e * Math.PI));
+      var o = { clientX: x, clientY: y, bubbles: true, view: window };
+      if (wasOut) { inner.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, clientX: x, clientY: y, relatedTarget: document.body })); wasOut = false; }
+      inner.dispatchEvent(new MouseEvent('mousemove', o));
     });
   }
   requestAnimationFrame(clean);

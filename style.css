@@ -2284,10 +2284,18 @@ footer a { color: var(--muted); }
    a visitor sees it is a thing that turns; it holds still under the cursor
    and the foil follows the hand instead */
 .glow-card { perspective: 1100px; }
-.glow-card .livef-foil { transform-style: preserve-3d; animation: foil-sway 6s ease-in-out infinite; will-change: transform; }
+.glow-card .livef-foil { transform-style: preserve-3d; }
 @keyframes foil-sway {
   0%, 100% { transform: rotateY(-14deg) rotateX(4deg) translateY(0); }
   50% { transform: rotateY(14deg) rotateX(-3deg) translateY(-10px); }
 }
 @media (hover: hover) and (pointer: fine) { .glow-card .livef-foil:hover { animation-play-state: paused; } }
 @media (prefers-reduced-motion: reduce) { .glow-card .livef-foil { animation: none; } }
+/* the pen campaign: two posts, side by side at a size that reads */
+.dw-grid.dw-pair { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 640px; margin-left: auto; margin-right: auto; }
+/* the pen campaign: three posts, a centred row */
+.dw-grid.dw-trio { grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 900px; margin-left: auto; margin-right: auto; }
+@media (max-width: 700px) { .dw-grid.dw-trio { grid-template-columns: repeat(2, minmax(0, 1fr)); } .dw-grid.dw-trio .dw-piece:first-child { grid-column: 1 / -1; max-width: 70%; justify-self: center; } }
+/* the pen campaign: four posts in one centred row; two by two on a phone */
+.dw-grid.dw-quad { grid-template-columns: repeat(4, minmax(0, 1fr)); max-width: 1120px; margin-left: auto; margin-right: auto; }
+@media (max-width: 700px) { .dw-grid.dw-quad { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
