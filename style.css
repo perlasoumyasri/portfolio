@@ -229,6 +229,25 @@ img, video { max-width: 100%; }
 @media (prefers-reduced-motion: reduce) { .secbar { transition: none; } }
 .topbar .links { display: flex; gap: var(--s2); align-items: center; }
 
+/* The copy of the bar that stays on screen once the page scrolls (see
+   stickyBar in site.js). It matches the sheet's width and sits in the
+   exact spot of the original, so the hand-over is invisible; only the
+   backing fades in, so text scrolling under it stays readable. */
+.topbar-fixed {
+  position: fixed; top: 0; left: 50%; z-index: 50;
+  width: 100%; max-width: 1360px; transform: translateX(-50%);
+  visibility: hidden; background: rgba(10,14,26,0);
+  border-bottom: 1px solid transparent;
+  transition: background 240ms var(--ease-soft), border-color 240ms var(--ease-soft), visibility 0s 240ms;
+}
+.topbar-fixed.on {
+  visibility: visible; background: rgba(10,14,26,.97);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  border-bottom-color: var(--line);
+  transition: background 240ms var(--ease-soft), border-color 240ms var(--ease-soft), visibility 0s;
+}
+html { scroll-padding-top: 96px; }
+
 .pill {
   border: 1px solid transparent; border-radius: 99px;
   padding: 9px 14px; font-family: var(--sans); font-size: 14px; font-weight: 500;
@@ -1910,6 +1929,11 @@ footer a { color: var(--muted); }
   .topbar .links .pill[data-action="wa"] { grid-column: 1; }
   .topbar .links .pill[data-action="mail"] { grid-column: 2 / 4; justify-self: start; }
   .hs-pin .topbar { padding-bottom: 6px; }
+  html { scroll-padding-top: 92px; }
+  /* Once it follows the page, the bar tightens so it costs less of a
+     small screen; the number and email stay in full. */
+  .topbar-fixed { padding-top: 10px; padding-bottom: 10px; row-gap: 6px; }
+  .topbar-fixed .pill.solid { padding: 6px 12px; font-size: 13px; }
   .hs .hs-track { padding-top: 6px !important; }
   .quote { flex-direction: column; align-items: flex-start; gap: var(--s4); }
   .owned, .stats, .facts { grid-template-columns: 1fr; }

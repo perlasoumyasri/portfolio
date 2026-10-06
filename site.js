@@ -1506,6 +1506,45 @@
      the strip. On a phone the page is a normal column and the browser's
      own scroll does it. The phone bar shows after the first screen and
      marks the section in view. */
+  /* The top bar stays on screen on every page (her call, 2026-10-06), so
+     her phone number, email and the section links are always one glance
+     away. On three pages the bar lives inside the pinned first screen,
+     where CSS sticky cannot hold it once the pin lets go, so a copy is
+     fixed to the top and takes over the moment the original starts to
+     leave. The two are identical, so the hand-over cannot be seen. Runs
+     before the copy and section handlers so the copy gets them too. */
+  function stickyBar() {
+    var orig = document.querySelector('.topbar');
+    if (!orig) return;
+    var bar = orig.cloneNode(true);
+    bar.classList.add('topbar-fixed');
+    bar.setAttribute('inert', '');
+    bar.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(bar);
+    var on = false, queued = false;
+    function update() {
+      queued = false;
+      var past = orig.getBoundingClientRect().top < -1;
+      if (past === on) return;
+      on = past;
+      bar.classList.toggle('on', on);
+      if (on) { bar.removeAttribute('inert'); bar.removeAttribute('aria-hidden'); }
+      else { bar.setAttribute('inert', ''); bar.setAttribute('aria-hidden', 'true'); }
+    }
+    window.addEventListener('scroll', function () {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(update);
+    }, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+  /* Height a jump has to clear so its target does not land under the bar. */
+  function barHeight() {
+    var b = document.querySelector('.topbar-fixed');
+    return b ? b.offsetHeight : 0;
+  }
+
   function sections() {
     var links = document.querySelectorAll('.secnav a, .secbar a');
     if (!links.length) return;
@@ -1530,7 +1569,7 @@
           var hold = sec.offsetHeight - window.innerHeight - Math.max(0, end - view.clientWidth);
           y = sec.offsetTop + Math.max(0, hold) + Math.max(0, x);
         } else {
-          y = el.getBoundingClientRect().top + window.scrollY - 12;
+          y = el.getBoundingClientRect().top + window.scrollY - 12 - barHeight();
         }
         window.scrollTo({ top: y, behavior: smooth });
       });
@@ -1778,12 +1817,21 @@
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !z.hidden) close(); });
     window.addEventListener('resize', function () { if (!z.hidden) fit(); });
   }
+
+  /* Phones get the brochure with every page flattened to a picture: the
+     iPhone PDF viewer half-draws the original's gradient headlines (page 3
+     first). Laptops keep the original, sharp at any zoom. */
+  function brochureLink() {
+    var a = document.querySelector('.vw-dl');
+    if (!a || !window.matchMedia('(max-width: 700px), (hover: none)').matches) return;
+    a.href = 'assets/visual/UX-Gym-Blaze-Brochure-2026-mobile.pdf';
+  }
   function init() {
     marks(); theatre(); reels(); horizontal(); typeBuilder();
     /* The opening state is set, so the panel can be shown. Same task as
        the setup above, so no frame is ever painted in between. */
     document.documentElement.classList.remove('js-early');
-    copyPills(); progress(); reveal(); compare(); inviewVideo(); hoverVideo(); figures(); arrivals(); designWork(); sections(); demoSound(); cards3d(); liveFrames(); scanner(); cardViewer();
+    stickyBar(); copyPills(); progress(); reveal(); compare(); inviewVideo(); hoverVideo(); figures(); arrivals(); designWork(); sections(); demoSound(); cards3d(); liveFrames(); scanner(); cardViewer(); brochureLink();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
