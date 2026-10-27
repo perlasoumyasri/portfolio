@@ -1427,7 +1427,7 @@
     var h = el.closest('h2'), panel = el.closest('.panel'), sec = el.closest('.hs');
     var caret = h.querySelector('.db-caret');
     var full = el.textContent;
-    h.setAttribute('aria-label', 'Design builder.');
+    h.setAttribute('aria-label', 'Designer builder.');
     el.textContent = '';
     var queued = false;
     function type() {
